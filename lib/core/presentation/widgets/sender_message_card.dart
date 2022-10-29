@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:whatsapp_ui/colors.dart';
+import 'package:whatsapp_ui/core/presentation/utils/colors.dart';
 
 class SenderMessageCard extends StatelessWidget {
   const SenderMessageCard({

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:whatsapp_ui/colors.dart';
-import 'package:whatsapp_ui/widgets/contacts_list.dart';
+import 'package:whatsapp_ui/core/presentation/utils/colors.dart';
+import 'package:whatsapp_ui/core/presentation/widgets/contacts_list.dart';
 
 class MobileLayoutScreen extends StatelessWidget {
   const MobileLayoutScreen({Key? key}) : super(key: key);
@@ -15,7 +15,7 @@ class MobileLayoutScreen extends StatelessWidget {
           backgroundColor: appBarColor,
           centerTitle: false,
           title: const Text(
-            'WhatsApp',
+            'Simple Chat',
             style: TextStyle(
               fontSize: 20,
               color: Colors.grey,
