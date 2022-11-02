@@ -1,31 +1,32 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:material_color_generator/material_color_generator.dart';
 import 'package:whatsapp_ui/core/presentation/utils/colors.dart';
-import 'package:whatsapp_ui/core/presentation/mobile_layout_screen.dart';
-import 'package:whatsapp_ui/core/presentation/web_layout_screen.dart';
 import 'package:whatsapp_ui/firebase_options.dart';
-import 'package:whatsapp_ui/core/presentation/utils/responsive_layout.dart';
+import 'package:whatsapp_ui/routing/app_router.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
+  Widget build(BuildContext context, WidgetRef ref) {
+    final goRouter = ref.watch(goRouterProvider);
+
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      title: 'Simple chat app',
-      theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: backgroundColor,
-      ),
-      home: const ResponsiveLayout(
-        mobileScreenLayout: MobileLayoutScreen(),
-        webScreenLayout: WebLayoutScreen(),
+      routerConfig: goRouter,
+      restorationScopeId: 'app',
+      onGenerateTitle: (BuildContext context) => 'Simple Chat',
+      theme: ThemeData(
+        primarySwatch: generateMaterialColor(color: backgroundColor),
+        backgroundColor: backgroundColor,
       ),
     );
   }

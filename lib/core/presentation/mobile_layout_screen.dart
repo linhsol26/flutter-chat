@@ -11,6 +11,7 @@ class MobileLayoutScreen extends StatelessWidget {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           elevation: 0,
           backgroundColor: appBarColor,
           centerTitle: false,
