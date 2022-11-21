@@ -103,4 +103,12 @@ class AuthRepository {
     String downloadUrl = await snap.ref.getDownloadURL();
     return downloadUrl;
   }
+
+  Stream<UserModel> getUserById(String id) {
+    return _firestore
+        .collection(CollectionPath.users)
+        .doc(id)
+        .snapshots()
+        .map((user) => UserModel.fromJson(user.data()!));
+  }
 }

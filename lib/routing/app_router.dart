@@ -1,8 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:whatsapp_ui/auth/domain/user_model.dart';
 import 'package:whatsapp_ui/auth/presentation/login_screen.dart';
 import 'package:whatsapp_ui/auth/presentation/user_screen.dart';
 import 'package:whatsapp_ui/auth/shared/providers.dart';
+import 'package:whatsapp_ui/contacts/presentation/contacts_screen.dart';
+import 'package:whatsapp_ui/chat/presentation/mobile_chat_screen.dart';
 import 'package:whatsapp_ui/core/presentation/mobile_layout_screen.dart';
 import 'package:whatsapp_ui/core/presentation/not_found_screen.dart';
 import 'package:whatsapp_ui/core/presentation/utils/responsive_layout.dart';
@@ -10,12 +13,7 @@ import 'package:whatsapp_ui/core/presentation/web_layout_screen.dart';
 import 'package:whatsapp_ui/landing/presentation/landing_screen.dart';
 import 'package:whatsapp_ui/routing/go_router_refresh_stream.dart';
 
-enum AppRoute {
-  landing,
-  home,
-  login,
-  user,
-}
+enum AppRoute { landing, home, login, user, contacts, dicrectChat }
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   final authRepository = ref.watch(authRepositoryProvider);
@@ -61,6 +59,20 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 webScreenLayout: WebLayoutScreen(),
               );
             },
+            routes: [
+              GoRoute(
+                path: 'contacts',
+                name: AppRoute.contacts.name,
+                builder: (context, state) => const ContactsScreen(),
+              ),
+              GoRoute(
+                path: 'direct-chat',
+                name: AppRoute.dicrectChat.name,
+                builder: (context, state) => MobileChatScreen(
+                  user: state.extra as UserModel,
+                ),
+              ),
+            ],
           ),
         ],
       ),

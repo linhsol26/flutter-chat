@@ -10,7 +10,7 @@ class UserModel with _$UserModel {
     required String name,
     required String uid,
     required String profilePic,
-    @Default(true) isOnline,
+    @Default(true) bool isOnline,
     required String phoneNumber,
     @Default([]) List<String> groupId,
   }) = _UserModel;

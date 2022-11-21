@@ -10,7 +10,7 @@ _$_UserModel _$$_UserModelFromJson(Map<String, dynamic> json) => _$_UserModel(
       name: json['name'] as String,
       uid: json['uid'] as String,
       profilePic: json['profilePic'] as String,
-      isOnline: json['isOnline'] ?? true,
+      isOnline: json['isOnline'] as bool? ?? true,
       phoneNumber: json['phoneNumber'] as String,
       groupId: (json['groupId'] as List<dynamic>?)
               ?.map((e) => e as String)

@@ -43,6 +43,8 @@
 	<false/>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Request to pick file</string>
+	<key>NSContactsUsageDescription</key>
+    <string>Request to access to the contact list</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 </dict>

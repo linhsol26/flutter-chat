@@ -23,7 +23,7 @@ mixin _$UserModel {
   String get name => throw _privateConstructorUsedError;
   String get uid => throw _privateConstructorUsedError;
   String get profilePic => throw _privateConstructorUsedError;
-  dynamic get isOnline => throw _privateConstructorUsedError;
+  bool get isOnline => throw _privateConstructorUsedError;
   String get phoneNumber => throw _privateConstructorUsedError;
   List<String> get groupId => throw _privateConstructorUsedError;
 
@@ -42,7 +42,7 @@ abstract class $UserModelCopyWith<$Res> {
       {String name,
       String uid,
       String profilePic,
-      dynamic isOnline,
+      bool isOnline,
       String phoneNumber,
       List<String> groupId});
 }
@@ -83,7 +83,7 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
       isOnline: null == isOnline
           ? _value.isOnline
           : isOnline // ignore: cast_nullable_to_non_nullable
-              as dynamic,
+              as bool,
       phoneNumber: null == phoneNumber
           ? _value.phoneNumber
           : phoneNumber // ignore: cast_nullable_to_non_nullable
@@ -107,7 +107,7 @@ abstract class _$$_UserModelCopyWith<$Res> implements $UserModelCopyWith<$Res> {
       {String name,
       String uid,
       String profilePic,
-      dynamic isOnline,
+      bool isOnline,
       String phoneNumber,
       List<String> groupId});
 }
@@ -143,7 +143,10 @@ class __$$_UserModelCopyWithImpl<$Res>
           ? _value.profilePic
           : profilePic // ignore: cast_nullable_to_non_nullable
               as String,
-      isOnline: null == isOnline ? _value.isOnline : isOnline,
+      isOnline: null == isOnline
+          ? _value.isOnline
+          : isOnline // ignore: cast_nullable_to_non_nullable
+              as bool,
       phoneNumber: null == phoneNumber
           ? _value.phoneNumber
           : phoneNumber // ignore: cast_nullable_to_non_nullable
@@ -180,7 +183,7 @@ class _$_UserModel extends _UserModel {
   final String profilePic;
   @override
   @JsonKey()
-  final dynamic isOnline;
+  final bool isOnline;
   @override
   final String phoneNumber;
   final List<String> _groupId;
@@ -205,7 +208,8 @@ class _$_UserModel extends _UserModel {
             (identical(other.uid, uid) || other.uid == uid) &&
             (identical(other.profilePic, profilePic) ||
                 other.profilePic == profilePic) &&
-            const DeepCollectionEquality().equals(other.isOnline, isOnline) &&
+            (identical(other.isOnline, isOnline) ||
+                other.isOnline == isOnline) &&
             (identical(other.phoneNumber, phoneNumber) ||
                 other.phoneNumber == phoneNumber) &&
             const DeepCollectionEquality().equals(other._groupId, _groupId));
@@ -213,14 +217,8 @@ class _$_UserModel extends _UserModel {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      name,
-      uid,
-      profilePic,
-      const DeepCollectionEquality().hash(isOnline),
-      phoneNumber,
-      const DeepCollectionEquality().hash(_groupId));
+  int get hashCode => Object.hash(runtimeType, name, uid, profilePic, isOnline,
+      phoneNumber, const DeepCollectionEquality().hash(_groupId));
 
   @JsonKey(ignore: true)
   @override
@@ -241,7 +239,7 @@ abstract class _UserModel extends UserModel {
       {required final String name,
       required final String uid,
       required final String profilePic,
-      final dynamic isOnline,
+      final bool isOnline,
       required final String phoneNumber,
       final List<String> groupId}) = _$_UserModel;
   const _UserModel._() : super._();
@@ -256,7 +254,7 @@ abstract class _UserModel extends UserModel {
   @override
   String get profilePic;
   @override
-  dynamic get isOnline;
+  bool get isOnline;
   @override
   String get phoneNumber;
   @override

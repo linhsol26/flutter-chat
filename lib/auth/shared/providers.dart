@@ -23,3 +23,7 @@ final authNotifierProvider = StateNotifierProvider<AuthNotifier, AsyncValue>((re
 final currentUserProvider = FutureProvider.autoDispose<UserModel?>((ref) async {
   return await ref.watch(authRepositoryProvider).currentUserData;
 });
+
+final getUserByIdProvider = StreamProvider.autoDispose.family<UserModel, String>((ref, id) {
+  return ref.watch(authRepositoryProvider).getUserById(id);
+});

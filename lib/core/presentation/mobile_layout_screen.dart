@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:whatsapp_ui/core/presentation/utils/colors.dart';
 import 'package:whatsapp_ui/core/presentation/widgets/contacts_list.dart';
+import 'package:whatsapp_ui/routing/app_router.dart';
 
 class MobileLayoutScreen extends StatelessWidget {
   const MobileLayoutScreen({Key? key}) : super(key: key);
@@ -56,7 +58,7 @@ class MobileLayoutScreen extends StatelessWidget {
         ),
         body: const ContactsList(),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () => context.goNamed(AppRoute.contacts.name),
           backgroundColor: tabColor,
           child: const Icon(
             Icons.comment,

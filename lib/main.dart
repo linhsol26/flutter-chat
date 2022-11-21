@@ -1,7 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:material_color_generator/material_color_generator.dart';
 import 'package:whatsapp_ui/core/presentation/utils/colors.dart';
 import 'package:whatsapp_ui/firebase_options.dart';
 import 'package:whatsapp_ui/routing/app_router.dart';
@@ -24,8 +23,7 @@ class MyApp extends ConsumerWidget {
       routerConfig: goRouter,
       restorationScopeId: 'app',
       onGenerateTitle: (BuildContext context) => 'Simple Chat',
-      theme: ThemeData(
-        primarySwatch: generateMaterialColor(color: backgroundColor),
+      theme: ThemeData.dark().copyWith(
         backgroundColor: backgroundColor,
       ),
     );

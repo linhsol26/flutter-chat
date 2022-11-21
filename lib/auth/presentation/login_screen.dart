@@ -15,7 +15,7 @@ import 'package:whatsapp_ui/routing/app_router.dart';
 
 extension ErrorEx on Failure {
   void show(BuildContext context) =>
-      when((msg) => showError(context, msg!), noConnection: showNoConnectionError(context));
+      when((msg) => showError(context, msg!), noConnection: () => showNoConnectionError(context));
 }
 
 enum FormType { signup, signin }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:whatsapp_ui/auth/domain/user_model.dart';
 import 'package:whatsapp_ui/core/presentation/utils/colors.dart';
-import 'package:whatsapp_ui/core/presentation/mobile_chat_screen.dart';
 import 'package:whatsapp_ui/info.dart';
 
 class ContactsList extends StatelessWidget {
@@ -18,10 +19,13 @@ class ContactsList extends StatelessWidget {
             children: [
               InkWell(
                 onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const MobileChatScreen(),
-                    ),
+                  context.push(
+                    '/home/direct-chat',
+                    extra: UserModel(
+                        name: info[index]['name']!,
+                        uid: '$index',
+                        profilePic: info[index]['profilePic'].toString(),
+                        phoneNumber: '+00000'),
                   );
                 },
                 child: Padding(
