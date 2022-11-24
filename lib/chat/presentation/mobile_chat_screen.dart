@@ -6,6 +6,7 @@ import 'package:whatsapp_ui/core/presentation/utils/colors.dart';
 import 'package:whatsapp_ui/chat/presentation/widgets/chat_input_field.dart';
 import 'package:whatsapp_ui/chat/presentation/widgets/chat_list.dart';
 import 'package:whatsapp_ui/core/presentation/widgets/error_widget.dart';
+import 'package:whatsapp_ui/core/shared/enums.dart';
 
 class MobileChatScreen extends StatelessWidget {
   const MobileChatScreen({Key? key, required this.user}) : super(key: key);
@@ -27,7 +28,7 @@ class MobileChatScreen extends StatelessWidget {
                 children: [
                   Text(_.name),
                   Text(
-                    _.isOnline ? 'online' : 'offline',
+                    _.isOnline ? UserStatus.online.name : UserStatus.offline.name,
                     style: const TextStyle(fontSize: 13),
                   ),
                 ],

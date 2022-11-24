@@ -8,3 +8,5 @@ enum MessageType {
   const MessageType(this.type);
   final String type;
 }
+
+enum UserStatus { online, offline }
