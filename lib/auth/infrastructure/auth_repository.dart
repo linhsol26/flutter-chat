@@ -111,4 +111,10 @@ class AuthRepository {
         .snapshots()
         .map((user) => UserModel.fromJson(user.data()!));
   }
+
+  Future<void> updateUserState(bool isOnline) async {
+    await _firestore.collection(CollectionPath.users).doc(_auth.currentUser!.uid).update({
+      'isOnline': isOnline,
+    });
+  }
 }

@@ -131,4 +131,52 @@ class ChatRepository {
         .doc(messageId)
         .set(message.toJson());
   }
+
+  Stream<List<ChatContact>> getChatContacts() {
+    return _firestore
+        .collection(CollectionPath.users)
+        .doc(_auth.currentUser!.uid)
+        .collection(CollectionPath.chats)
+        .snapshots()
+        .asyncMap((snapshot) async {
+      List<ChatContact> chatContacts = [];
+
+      for (var contact in snapshot.docs) {
+        final chatContact = ChatContact.fromJson(contact.data());
+        final userData =
+            await _firestore.collection(CollectionPath.users).doc(chatContact.contactId).get();
+
+        final user = UserModel.fromJson(userData.data()!);
+
+        chatContacts.add(ChatContact(
+            name: user.name,
+            profilePic: user.profilePic,
+            contactId: chatContact.contactId,
+            timeSent: chatContact.timeSent,
+            lastMessage: chatContact.lastMessage));
+      }
+
+      return chatContacts;
+    });
+  }
+
+  Stream<List<Message>> getChatMessages(String receiverId) {
+    return _firestore
+        .collection(CollectionPath.users)
+        .doc(_auth.currentUser!.uid)
+        .collection(CollectionPath.chats)
+        .doc(receiverId)
+        .collection(CollectionPath.messages)
+        .orderBy('timeSent')
+        .snapshots()
+        .map((snapshot) {
+      List<Message> messages = [];
+
+      for (var msg in snapshot.docs) {
+        messages.add(Message.fromJson(msg.data()));
+      }
+
+      return messages;
+    });
+  }
 }

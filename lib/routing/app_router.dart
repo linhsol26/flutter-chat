@@ -27,8 +27,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           return '/home';
         }
       } else {
-        if (state.location == '/account' || state.location == '/orders') {
-          return '/';
+        if (state.location == '/home') {
+          return '/login';
         }
       }
       return null;

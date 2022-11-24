@@ -55,8 +55,8 @@ class MobileChatScreen extends StatelessWidget {
         ),
         body: Column(
           children: [
-            const Expanded(
-              child: ChatList(),
+            Expanded(
+              child: ChatList(receiverId: user.uid),
             ),
             ChatInputField(receiverId: user.uid),
           ],
