@@ -5,7 +5,6 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
-import 'package:whatsapp_ui/auth/presentation/login_screen.dart';
 import 'package:whatsapp_ui/auth/presentation/widgets/input_form_widget.dart';
 import 'package:whatsapp_ui/auth/shared/providers.dart';
 import 'package:whatsapp_ui/core/domain/failure.dart';
@@ -13,6 +12,7 @@ import 'package:whatsapp_ui/core/presentation/snackbar/snackbar.dart';
 import 'package:whatsapp_ui/core/presentation/utils/colors.dart';
 import 'package:whatsapp_ui/core/presentation/utils/files.dart';
 import 'package:whatsapp_ui/core/presentation/utils/sizes.dart';
+import 'package:whatsapp_ui/core/shared/extensions.dart';
 import 'package:whatsapp_ui/core/shared/mixins.dart';
 import 'package:whatsapp_ui/routing/app_router.dart';
 

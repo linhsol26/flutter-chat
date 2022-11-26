@@ -5,17 +5,20 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:multiple_result/multiple_result.dart';
 import 'package:uuid/uuid.dart';
 import 'package:whatsapp_ui/auth/domain/user_model.dart';
+import 'package:whatsapp_ui/auth/infrastructure/auth_repository.dart';
 import 'package:whatsapp_ui/chat/domain/chat_contact.dart';
 import 'package:whatsapp_ui/chat/domain/message.dart';
 import 'package:whatsapp_ui/core/domain/failure.dart';
 import 'package:whatsapp_ui/core/infrastructure/collection_path.dart';
 import 'package:whatsapp_ui/core/shared/enums.dart';
+import 'package:whatsapp_ui/core/shared/extensions.dart';
 
 class ChatRepository {
   final FirebaseFirestore _firestore;
   final FirebaseAuth _auth;
+  final AuthRepository _authRepository;
 
-  ChatRepository(this._firestore, this._auth);
+  ChatRepository(this._firestore, this._auth, this._authRepository);
 
   Future<Result<Failure, bool>> sendTextMsg({
     required String message,
@@ -178,5 +181,49 @@ class ChatRepository {
 
       return messages;
     });
+  }
+
+  Future<Result<Failure, void>> sendFileMessage({
+    required File file,
+    required String receiverUid,
+    required UserModel sender,
+    required MessageType messageType,
+  }) async {
+    try {
+      final timeSent = DateTime.now();
+      final messageId = const Uuid().v1();
+      final ref = 'chat/${messageType.type}/${sender.uid}/$receiverUid/$messageId';
+
+      final imgUrl = await _authRepository.storeFileToFirebase(ref, file);
+
+      final receiver = await _firestore
+          .collection(CollectionPath.users)
+          .doc(receiverUid)
+          .get()
+          .then((data) => UserModel.fromJson(data.data()!));
+
+      await _saveDataToContactSubCollection(
+        senderUser: sender,
+        receiverUser: receiver,
+        text: messageType.convert,
+        timeSent: timeSent,
+      );
+
+      await _saveMessageToMessageSubCollection(
+        receiverUserId: receiverUid,
+        text: imgUrl,
+        messageId: messageId,
+        username: sender.name,
+        receiverUsername: receiver.name,
+        messageType: messageType,
+        timeSent: timeSent,
+      );
+
+      return const Success(null);
+    } on SocketException {
+      return const Error(Failure.noConnection());
+    } catch (e) {
+      return const Error(Failure());
+    }
   }
 }

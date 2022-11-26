@@ -53,7 +53,7 @@ class AuthRepository {
       final uid = _auth.currentUser?.uid;
 
       if (image != null) {
-        imgPath = await _storeFileToFirebase('profilePic/$uid', image);
+        imgPath = await storeFileToFirebase('profilePic/$uid', image);
       }
 
       final user = UserModel(
@@ -97,7 +97,7 @@ class AuthRepository {
 
   Future<void> signOut() async => await _auth.signOut();
 
-  Future<String> _storeFileToFirebase(String ref, File file) async {
+  Future<String> storeFileToFirebase(String ref, File file) async {
     UploadTask uploadTask = _storage.ref().child(ref).putFile(file);
     TaskSnapshot snap = await uploadTask;
     String downloadUrl = await snap.ref.getDownloadURL();

@@ -8,7 +8,11 @@ import 'package:whatsapp_ui/chat/domain/message.dart';
 import 'package:whatsapp_ui/chat/infrastructure/chat_repository.dart';
 
 final chatRepositoryProvider = Provider<ChatRepository>((ref) {
-  return ChatRepository(FirebaseFirestore.instance, FirebaseAuth.instance);
+  return ChatRepository(
+    FirebaseFirestore.instance,
+    FirebaseAuth.instance,
+    ref.watch(authRepositoryProvider),
+  );
 });
 
 final chatNotifierProvider = StateNotifierProvider<ChatNotifier, AsyncValue<void>>((ref) {

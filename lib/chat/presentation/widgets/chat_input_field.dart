@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:whatsapp_ui/chat/shared/providers.dart';
+import 'package:whatsapp_ui/core/presentation/snackbar/snackbar.dart';
 import 'package:whatsapp_ui/core/presentation/utils/colors.dart';
+import 'package:whatsapp_ui/core/presentation/utils/files.dart';
+import 'package:whatsapp_ui/core/shared/enums.dart';
 
 class ChatInputField extends HookConsumerWidget {
   const ChatInputField({
@@ -50,14 +53,39 @@ class ChatInputField extends HookConsumerWidget {
                 width: 100,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
-                  children: const [
-                    Icon(
-                      Icons.camera_alt,
-                      color: Colors.grey,
+                  children: [
+                    IconButton(
+                      onPressed: () async {
+                        final image = await pickImageFromGallery(context);
+                        if (image != null) {
+                          ref.read(chatNotifierProvider.notifier).sendFileMessage(
+                                image,
+                                receiverId,
+                                MessageType.image,
+                              );
+                        } else {
+                          showError(context);
+                        }
+                      },
+                      icon: const Icon(Icons.camera_alt, color: Colors.grey),
                     ),
-                    Icon(
-                      Icons.attach_file,
-                      color: Colors.grey,
+                    IconButton(
+                      onPressed: () async {
+                        final video = await pickVideoFromGallery(context);
+                        if (video != null) {
+                          ref.read(chatNotifierProvider.notifier).sendFileMessage(
+                                video,
+                                receiverId,
+                                MessageType.image,
+                              );
+                        } else {
+                          showError(context);
+                        }
+                      },
+                      icon: const Icon(
+                        Icons.attach_file,
+                        color: Colors.grey,
+                      ),
                     ),
                   ],
                 ),
@@ -81,7 +109,6 @@ class ChatInputField extends HookConsumerWidget {
             backgroundColor: const Color(0xFF128C73),
             child: IconButton(
               onPressed: () {
-                debugPrint('pressed');
                 if (showSend.value) {
                   ref
                       .read(chatNotifierProvider.notifier)

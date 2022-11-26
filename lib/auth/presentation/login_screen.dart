@@ -11,12 +11,8 @@ import 'package:whatsapp_ui/core/domain/failure.dart';
 import 'package:whatsapp_ui/core/presentation/snackbar/snackbar.dart';
 import 'package:whatsapp_ui/core/presentation/utils/colors.dart';
 import 'package:whatsapp_ui/core/presentation/utils/sizes.dart';
+import 'package:whatsapp_ui/core/shared/extensions.dart';
 import 'package:whatsapp_ui/routing/app_router.dart';
-
-extension ErrorEx on Failure {
-  void show(BuildContext context) =>
-      when((msg) => showError(context, msg!), noConnection: () => showNoConnectionError(context));
-}
 
 enum FormType { signup, signin }
 
