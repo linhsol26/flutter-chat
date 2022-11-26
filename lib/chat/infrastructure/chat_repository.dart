@@ -222,8 +222,45 @@ class ChatRepository {
       return const Success(null);
     } on SocketException {
       return const Error(Failure.noConnection());
+    } on FirebaseException catch (e) {
+      return Error(Failure(msg: e.message));
+    }
+  }
+
+  Future<Result<Failure, bool>> sendGifMsg({
+    required String gifUrl,
+    required String receiverUserId,
+    required UserModel senderUser,
+  }) async {
+    try {
+      final timeSent = DateTime.now();
+      final receiverUser = await _firestore
+          .collection(CollectionPath.users)
+          .doc(receiverUserId)
+          .get()
+          .then((info) => UserModel.fromJson(info.data()!));
+
+      await _saveDataToContactSubCollection(
+        senderUser: senderUser,
+        receiverUser: receiverUser,
+        text: 'GIF',
+        timeSent: timeSent,
+      );
+
+      await _saveMessageToMessageSubCollection(
+        receiverUserId: receiverUserId,
+        receiverUsername: receiverUser.name,
+        text: gifUrl,
+        timeSent: timeSent,
+        messageType: MessageType.gif,
+        username: senderUser.name,
+        messageId: const Uuid().v1(),
+      );
+      return const Success(true);
+    } on SocketException {
+      return const Error(Failure.noConnection());
     } catch (e) {
-      return const Error(Failure());
+      return Error(Failure(msg: e.toString()));
     }
   }
 }

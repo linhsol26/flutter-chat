@@ -19,7 +19,8 @@ extension ResultHandler<T> on Result<Failure, T> {
 
 extension ErrorEx on Failure {
   void show(BuildContext context) =>
-      when((msg) => showError(context, msg!), noConnection: () => showNoConnectionError(context));
+      when((msg) => showError(context, msg ?? 'Something wrong happened.'),
+          noConnection: () => showNoConnectionError(context));
 }
 
 extension MessageTypeEx on MessageType {

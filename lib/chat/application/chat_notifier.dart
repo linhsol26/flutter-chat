@@ -40,4 +40,20 @@ class ChatNotifier extends StateNotifier<AsyncValue<void>> {
             ),
         (success) => const AsyncData(null));
   }
+
+  Future<void> sendGifMessage(String gifUrl, String receiverId) async {
+    final senderUser = await _auth.currentUserData;
+    final gifUrlPathIndex = gifUrl.lastIndexOf('-') + 1;
+    final gifUrlPart = gifUrl.substring(gifUrlPathIndex);
+    final newGifUrl = 'https://i.giphy.com/media/$gifUrlPart/200.gif';
+    final result = await _repo.sendTextMsg(
+        message: newGifUrl, receiverUserId: receiverId, senderUser: senderUser!);
+
+    state = result.when(
+        (error) => AsyncError(
+              error,
+              StackTrace.fromString(error.toString()),
+            ),
+        (success) => const AsyncData(null));
+  }
 }
