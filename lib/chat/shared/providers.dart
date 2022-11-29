@@ -5,6 +5,7 @@ import 'package:whatsapp_ui/auth/shared/providers.dart';
 import 'package:whatsapp_ui/chat/application/chat_notifier.dart';
 import 'package:whatsapp_ui/chat/domain/chat_contact.dart';
 import 'package:whatsapp_ui/chat/domain/message.dart';
+import 'package:whatsapp_ui/chat/domain/message_reply.dart';
 import 'package:whatsapp_ui/chat/infrastructure/chat_repository.dart';
 
 final chatRepositoryProvider = Provider<ChatRepository>((ref) {
@@ -26,3 +27,5 @@ final getChatContactsProvider = StreamProvider<List<ChatContact>>((ref) {
 final getChatMessagesProvider = StreamProvider.family<List<Message>, String>((ref, receiverId) {
   return ref.watch(chatRepositoryProvider).getChatMessages(receiverId);
 });
+
+final messageReplyProvider = StateProvider<MessageReply?>((_) => null);

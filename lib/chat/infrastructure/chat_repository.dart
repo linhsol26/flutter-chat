@@ -8,6 +8,7 @@ import 'package:whatsapp_ui/auth/domain/user_model.dart';
 import 'package:whatsapp_ui/auth/infrastructure/auth_repository.dart';
 import 'package:whatsapp_ui/chat/domain/chat_contact.dart';
 import 'package:whatsapp_ui/chat/domain/message.dart';
+import 'package:whatsapp_ui/chat/domain/message_reply.dart';
 import 'package:whatsapp_ui/core/domain/failure.dart';
 import 'package:whatsapp_ui/core/infrastructure/collection_path.dart';
 import 'package:whatsapp_ui/core/shared/enums.dart';
@@ -24,6 +25,7 @@ class ChatRepository {
     required String message,
     required String receiverUserId,
     required UserModel senderUser,
+    required MessageReply? messageReply,
   }) async {
     try {
       final timeSent = DateTime.now();
@@ -48,6 +50,8 @@ class ChatRepository {
         messageType: MessageType.text,
         username: senderUser.name,
         messageId: const Uuid().v1(),
+        messageReply: messageReply,
+        senderUsername: senderUser.name,
       );
       return const Success(true);
     } on SocketException {
@@ -102,6 +106,8 @@ class ChatRepository {
     required String receiverUsername,
     required MessageType messageType,
     required DateTime timeSent,
+    required MessageReply? messageReply,
+    required String senderUsername,
   }) async {
     final senderId = _auth.currentUser!.uid;
     final message = Message(
@@ -112,6 +118,13 @@ class ChatRepository {
       timeSent: timeSent,
       messageId: messageId,
       isSeen: false,
+      repliedMessage: messageReply?.message ?? '',
+      repliedTo: messageReply != null
+          ? messageReply.isMe
+              ? senderUsername
+              : receiverUsername
+          : '',
+      repliedMessageType: messageReply?.messageType ?? MessageType.text,
     );
 
     /// Save to [sender]
@@ -188,6 +201,7 @@ class ChatRepository {
     required String receiverUid,
     required UserModel sender,
     required MessageType messageType,
+    required MessageReply? messageReply,
   }) async {
     try {
       final timeSent = DateTime.now();
@@ -217,6 +231,8 @@ class ChatRepository {
         receiverUsername: receiver.name,
         messageType: messageType,
         timeSent: timeSent,
+        messageReply: messageReply,
+        senderUsername: sender.name,
       );
 
       return const Success(null);
@@ -231,6 +247,7 @@ class ChatRepository {
     required String gifUrl,
     required String receiverUserId,
     required UserModel senderUser,
+    required MessageReply? messageReply,
   }) async {
     try {
       final timeSent = DateTime.now();
@@ -255,6 +272,8 @@ class ChatRepository {
         messageType: MessageType.gif,
         username: senderUser.name,
         messageId: const Uuid().v1(),
+        messageReply: messageReply,
+        senderUsername: senderUser.name,
       );
       return const Success(true);
     } on SocketException {

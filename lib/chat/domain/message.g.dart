@@ -14,6 +14,11 @@ _$_Message _$$_MessageFromJson(Map<String, dynamic> json) => _$_Message(
       timeSent: DateTime.parse(json['timeSent'] as String),
       messageId: json['messageId'] as String,
       isSeen: json['isSeen'] as bool,
+      repliedMessage: json['repliedMessage'] as String? ?? '',
+      repliedTo: json['repliedTo'] as String? ?? '',
+      repliedMessageType: $enumDecodeNullable(
+              _$MessageTypeEnumMap, json['repliedMessageType']) ??
+          MessageType.text,
     );
 
 Map<String, dynamic> _$$_MessageToJson(_$_Message instance) =>
@@ -25,6 +30,9 @@ Map<String, dynamic> _$$_MessageToJson(_$_Message instance) =>
       'timeSent': instance.timeSent.toIso8601String(),
       'messageId': instance.messageId,
       'isSeen': instance.isSeen,
+      'repliedMessage': instance.repliedMessage,
+      'repliedTo': instance.repliedTo,
+      'repliedMessageType': _$MessageTypeEnumMap[instance.repliedMessageType]!,
     };
 
 const _$MessageTypeEnumMap = {

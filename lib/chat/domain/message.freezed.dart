@@ -27,6 +27,9 @@ mixin _$Message {
   DateTime get timeSent => throw _privateConstructorUsedError;
   String get messageId => throw _privateConstructorUsedError;
   bool get isSeen => throw _privateConstructorUsedError;
+  String get repliedMessage => throw _privateConstructorUsedError;
+  String get repliedTo => throw _privateConstructorUsedError;
+  MessageType get repliedMessageType => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -45,7 +48,10 @@ abstract class $MessageCopyWith<$Res> {
       MessageType type,
       DateTime timeSent,
       String messageId,
-      bool isSeen});
+      bool isSeen,
+      String repliedMessage,
+      String repliedTo,
+      MessageType repliedMessageType});
 }
 
 /// @nodoc
@@ -68,6 +74,9 @@ class _$MessageCopyWithImpl<$Res, $Val extends Message>
     Object? timeSent = null,
     Object? messageId = null,
     Object? isSeen = null,
+    Object? repliedMessage = null,
+    Object? repliedTo = null,
+    Object? repliedMessageType = null,
   }) {
     return _then(_value.copyWith(
       senderId: null == senderId
@@ -98,6 +107,18 @@ class _$MessageCopyWithImpl<$Res, $Val extends Message>
           ? _value.isSeen
           : isSeen // ignore: cast_nullable_to_non_nullable
               as bool,
+      repliedMessage: null == repliedMessage
+          ? _value.repliedMessage
+          : repliedMessage // ignore: cast_nullable_to_non_nullable
+              as String,
+      repliedTo: null == repliedTo
+          ? _value.repliedTo
+          : repliedTo // ignore: cast_nullable_to_non_nullable
+              as String,
+      repliedMessageType: null == repliedMessageType
+          ? _value.repliedMessageType
+          : repliedMessageType // ignore: cast_nullable_to_non_nullable
+              as MessageType,
     ) as $Val);
   }
 }
@@ -116,7 +137,10 @@ abstract class _$$_MessageCopyWith<$Res> implements $MessageCopyWith<$Res> {
       MessageType type,
       DateTime timeSent,
       String messageId,
-      bool isSeen});
+      bool isSeen,
+      String repliedMessage,
+      String repliedTo,
+      MessageType repliedMessageType});
 }
 
 /// @nodoc
@@ -136,6 +160,9 @@ class __$$_MessageCopyWithImpl<$Res>
     Object? timeSent = null,
     Object? messageId = null,
     Object? isSeen = null,
+    Object? repliedMessage = null,
+    Object? repliedTo = null,
+    Object? repliedMessageType = null,
   }) {
     return _then(_$_Message(
       senderId: null == senderId
@@ -166,6 +193,18 @@ class __$$_MessageCopyWithImpl<$Res>
           ? _value.isSeen
           : isSeen // ignore: cast_nullable_to_non_nullable
               as bool,
+      repliedMessage: null == repliedMessage
+          ? _value.repliedMessage
+          : repliedMessage // ignore: cast_nullable_to_non_nullable
+              as String,
+      repliedTo: null == repliedTo
+          ? _value.repliedTo
+          : repliedTo // ignore: cast_nullable_to_non_nullable
+              as String,
+      repliedMessageType: null == repliedMessageType
+          ? _value.repliedMessageType
+          : repliedMessageType // ignore: cast_nullable_to_non_nullable
+              as MessageType,
     ));
   }
 }
@@ -180,7 +219,10 @@ class _$_Message extends _Message {
       required this.type,
       required this.timeSent,
       required this.messageId,
-      required this.isSeen})
+      required this.isSeen,
+      this.repliedMessage = '',
+      this.repliedTo = '',
+      this.repliedMessageType = MessageType.text})
       : super._();
 
   factory _$_Message.fromJson(Map<String, dynamic> json) =>
@@ -200,10 +242,19 @@ class _$_Message extends _Message {
   final String messageId;
   @override
   final bool isSeen;
+  @override
+  @JsonKey()
+  final String repliedMessage;
+  @override
+  @JsonKey()
+  final String repliedTo;
+  @override
+  @JsonKey()
+  final MessageType repliedMessageType;
 
   @override
   String toString() {
-    return 'Message(senderId: $senderId, receiverId: $receiverId, text: $text, type: $type, timeSent: $timeSent, messageId: $messageId, isSeen: $isSeen)';
+    return 'Message(senderId: $senderId, receiverId: $receiverId, text: $text, type: $type, timeSent: $timeSent, messageId: $messageId, isSeen: $isSeen, repliedMessage: $repliedMessage, repliedTo: $repliedTo, repliedMessageType: $repliedMessageType)';
   }
 
   @override
@@ -221,13 +272,29 @@ class _$_Message extends _Message {
                 other.timeSent == timeSent) &&
             (identical(other.messageId, messageId) ||
                 other.messageId == messageId) &&
-            (identical(other.isSeen, isSeen) || other.isSeen == isSeen));
+            (identical(other.isSeen, isSeen) || other.isSeen == isSeen) &&
+            (identical(other.repliedMessage, repliedMessage) ||
+                other.repliedMessage == repliedMessage) &&
+            (identical(other.repliedTo, repliedTo) ||
+                other.repliedTo == repliedTo) &&
+            (identical(other.repliedMessageType, repliedMessageType) ||
+                other.repliedMessageType == repliedMessageType));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, senderId, receiverId, text, type,
-      timeSent, messageId, isSeen);
+  int get hashCode => Object.hash(
+      runtimeType,
+      senderId,
+      receiverId,
+      text,
+      type,
+      timeSent,
+      messageId,
+      isSeen,
+      repliedMessage,
+      repliedTo,
+      repliedMessageType);
 
   @JsonKey(ignore: true)
   @override
@@ -251,7 +318,10 @@ abstract class _Message extends Message {
       required final MessageType type,
       required final DateTime timeSent,
       required final String messageId,
-      required final bool isSeen}) = _$_Message;
+      required final bool isSeen,
+      final String repliedMessage,
+      final String repliedTo,
+      final MessageType repliedMessageType}) = _$_Message;
   const _Message._() : super._();
 
   factory _Message.fromJson(Map<String, dynamic> json) = _$_Message.fromJson;
@@ -270,6 +340,12 @@ abstract class _Message extends Message {
   String get messageId;
   @override
   bool get isSeen;
+  @override
+  String get repliedMessage;
+  @override
+  String get repliedTo;
+  @override
+  MessageType get repliedMessageType;
   @override
   @JsonKey(ignore: true)
   _$$_MessageCopyWith<_$_Message> get copyWith =>

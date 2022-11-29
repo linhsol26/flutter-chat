@@ -15,6 +15,9 @@ class Message with _$Message {
     required DateTime timeSent,
     required String messageId,
     required bool isSeen,
+    @Default('') String repliedMessage,
+    @Default('') String repliedTo,
+    @Default(MessageType.text) MessageType repliedMessageType,
   }) = _Message;
 
   factory Message.fromJson(Map<String, dynamic> json) => _$MessageFromJson(json);
