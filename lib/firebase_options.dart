@@ -17,11 +17,17 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        return android;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for android - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
@@ -46,30 +52,13 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyB4m8G9Cgxd6bg-mrbyZAuur5XskrEJ8Fg',
-    appId: '1:311037790873:web:15a1ff09cf6c6ef58e4608',
-    messagingSenderId: '311037790873',
-    projectId: 'chat-611aa',
-    authDomain: 'chat-611aa.firebaseapp.com',
-    storageBucket: 'chat-611aa.appspot.com',
-  );
-
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCtMDWNvXD1sxczZnruFneEIvM5RUQjN6E',
-    appId: '1:311037790873:android:d58d29f038bbe4958e4608',
-    messagingSenderId: '311037790873',
-    projectId: 'chat-611aa',
-    storageBucket: 'chat-611aa.appspot.com',
-  );
-
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyCLGxCEVNP6nZ_X0mSLTqAWBP6HSM9Kw1w',
-    appId: '1:311037790873:ios:31a688ced59087058e4608',
+    appId: '1:311037790873:ios:d4cf66ec17de261b8e4608',
     messagingSenderId: '311037790873',
     projectId: 'chat-611aa',
     storageBucket: 'chat-611aa.appspot.com',
-    iosClientId: '311037790873-iss29f23c8hmdqh7vjfhi0froic3ceh3.apps.googleusercontent.com',
-    iosBundleId: 'com.example.whatsappUi',
+    iosClientId: '311037790873-krffjck17h6tgin62p8e1mjbuksm9msl.apps.googleusercontent.com',
+    iosBundleId: 'com.nglinh.chatapp',
   );
 }
