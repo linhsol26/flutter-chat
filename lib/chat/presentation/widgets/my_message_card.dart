@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:swipe_to/swipe_to.dart';
 import 'package:whatsapp_ui/core/presentation/utils/colors.dart';
+import 'package:whatsapp_ui/core/presentation/utils/sizes.dart';
 import 'package:whatsapp_ui/core/shared/enums.dart';
 import 'package:whatsapp_ui/core/shared/extensions.dart';
 
@@ -12,20 +13,23 @@ class MyMessageCard extends StatelessWidget {
   final String repliedText;
   final String username;
   final MessageType repliedMessageType;
+  final bool isSeen;
 
-  const MyMessageCard({
-    Key? key,
-    required this.message,
-    required this.date,
-    required this.messageType,
-    required this.onLeftSwipe,
-    required this.repliedText,
-    required this.username,
-    required this.repliedMessageType,
-  }) : super(key: key);
+  const MyMessageCard(
+      {Key? key,
+      required this.message,
+      required this.date,
+      required this.messageType,
+      required this.onLeftSwipe,
+      required this.repliedText,
+      required this.username,
+      required this.repliedMessageType,
+      required this.isSeen})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final isReplying = repliedText.isNotEmpty;
     return SwipeTo(
       onLeftSwipe: onLeftSwipe,
       child: Align(
@@ -43,7 +47,26 @@ class MyMessageCard extends StatelessWidget {
               children: [
                 Padding(
                   padding: messageType.padding,
-                  child: messageType.display(message),
+                  child: Column(
+                    children: [
+                      if (isReplying) ...[
+                        Text(
+                          username,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        gapH4,
+                        Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: const BoxDecoration(
+                              color: backgroundColor,
+                              borderRadius: BorderRadius.all(Radius.circular(5)),
+                            ),
+                            child: messageType.display(repliedText)),
+                        gapH8,
+                      ],
+                      messageType.display(message),
+                    ],
+                  ),
                 ),
                 Positioned(
                   bottom: 4,
@@ -60,10 +83,10 @@ class MyMessageCard extends StatelessWidget {
                       const SizedBox(
                         width: 5,
                       ),
-                      const Icon(
-                        Icons.done_all,
+                      Icon(
+                        isSeen ? Icons.done_all : Icons.done,
                         size: 20,
-                        color: Colors.white60,
+                        color: isSeen ? messageColor : Colors.white60,
                       ),
                     ],
                   ),

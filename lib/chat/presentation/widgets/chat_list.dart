@@ -37,11 +37,18 @@ class ChatList extends HookConsumerWidget {
         itemBuilder: (context, index) {
           final msg = messages[index];
           final isMe = msg.senderId == ref.read(authRepositoryProvider).currentUser?.uid;
+          final notMe = msg.receiverId == ref.read(authRepositoryProvider).currentUser?.uid;
           final timeSent = DateFormat.Hm().format(msg.timeSent);
 
           SchedulerBinding.instance.addPostFrameCallback((_) {
             scrollController.jumpTo(scrollController.position.maxScrollExtent);
           });
+
+          if (!msg.isSeen && notMe) {
+            ref
+                .read(chatNotifierProvider.notifier)
+                .setSeen(receiverId: receiverId, messageId: msg.messageId);
+          }
 
           if (isMe) {
             return MyMessageCard(
@@ -52,15 +59,30 @@ class ChatList extends HookConsumerWidget {
               repliedMessageType: msg.repliedMessageType,
               username: msg.repliedTo,
               onLeftSwipe: () {
-                ref.read(messageReplyProvider.state).update((state) => MessageReply(
-                      message: msg.text,
-                      isMe: isMe,
-                      messageType: msg.type,
-                    ));
+                ref.read(messageReplyProvider.notifier).state = MessageReply(
+                  message: msg.text,
+                  isMe: isMe,
+                  messageType: msg.type,
+                );
               },
+              isSeen: msg.isSeen,
             );
           }
-          return SenderMessageCard(message: msg.text, date: timeSent, messageType: msg.type);
+          return SenderMessageCard(
+            message: msg.text,
+            date: timeSent,
+            messageType: msg.type,
+            username: msg.repliedTo,
+            repliedText: msg.repliedMessage,
+            repliedMessageType: msg.repliedMessageType,
+            onLeftSwipe: () {
+              ref.read(messageReplyProvider.notifier).state = MessageReply(
+                message: msg.text,
+                isMe: isMe,
+                messageType: msg.type,
+              );
+            },
+          );
         },
       ),
       error: (error, _) => const CustomErrorWidget(),

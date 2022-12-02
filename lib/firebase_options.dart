@@ -24,10 +24,7 @@ class DefaultFirebaseOptions {
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for android - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return android;
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
@@ -52,13 +49,21 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCLGxCEVNP6nZ_X0mSLTqAWBP6HSM9Kw1w',
-    appId: '1:311037790873:ios:d4cf66ec17de261b8e4608',
+  static const FirebaseOptions android = FirebaseOptions(
+    apiKey: 'AIzaSyCtMDWNvXD1sxczZnruFneEIvM5RUQjN6E',
+    appId: '1:311037790873:android:d58d29f038bbe4958e4608',
     messagingSenderId: '311037790873',
     projectId: 'chat-611aa',
     storageBucket: 'chat-611aa.appspot.com',
-    iosClientId: '311037790873-krffjck17h6tgin62p8e1mjbuksm9msl.apps.googleusercontent.com',
-    iosBundleId: 'com.nglinh.chatapp',
+  );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyCLGxCEVNP6nZ_X0mSLTqAWBP6HSM9Kw1w',
+    appId: '1:311037790873:ios:31a688ced59087058e4608',
+    messagingSenderId: '311037790873',
+    projectId: 'chat-611aa',
+    storageBucket: 'chat-611aa.appspot.com',
+    iosClientId: '311037790873-iss29f23c8hmdqh7vjfhi0froic3ceh3.apps.googleusercontent.com',
+    iosBundleId: 'com.example.whatsappUi',
   );
 }

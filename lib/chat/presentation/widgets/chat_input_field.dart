@@ -60,15 +60,15 @@ class ChatInputField extends HookConsumerWidget {
                           ),
                           IconButton(
                             onPressed: () async {
-                              final gif = await pickGif(context);
+                              // final gif = await pickGif(context);
 
-                              if (gif != null) {
-                                ref.read(chatNotifierProvider.notifier).sendGifMessage(
-                                      gif.url,
-                                      receiverId,
-                                      messageReply,
-                                    );
-                              }
+                              // if (gif != null) {
+                              //   ref.read(chatNotifierProvider.notifier).sendGifMessage(
+                              //         gif.url,
+                              //         receiverId,
+                              //         messageReply,
+                              //       );
+                              // }
                             },
                             icon: const Icon(Icons.gif, color: Colors.grey),
                           ),
@@ -91,6 +91,8 @@ class ChatInputField extends HookConsumerWidget {
                                     MessageType.image,
                                     messageReply,
                                   );
+
+                              ref.read(messageReplyProvider.notifier).state = null;
                             }
                           },
                           icon: const Icon(Icons.camera_alt, color: Colors.grey),
@@ -105,6 +107,8 @@ class ChatInputField extends HookConsumerWidget {
                                     MessageType.image,
                                     messageReply,
                                   );
+
+                              ref.read(messageReplyProvider.notifier).state = null;
                             }
                           },
                           icon: const Icon(

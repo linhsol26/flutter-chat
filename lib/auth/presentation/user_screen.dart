@@ -10,7 +10,6 @@ import 'package:whatsapp_ui/auth/shared/providers.dart';
 import 'package:whatsapp_ui/core/domain/failure.dart';
 import 'package:whatsapp_ui/core/presentation/snackbar/snackbar.dart';
 import 'package:whatsapp_ui/core/presentation/utils/colors.dart';
-import 'package:whatsapp_ui/core/presentation/utils/files.dart';
 import 'package:whatsapp_ui/core/presentation/utils/sizes.dart';
 import 'package:whatsapp_ui/core/shared/extensions.dart';
 import 'package:whatsapp_ui/core/shared/mixins.dart';
@@ -73,8 +72,8 @@ class UserScreen extends HookConsumerWidget with DismissKeyboard {
                           bottom: -10,
                           left: 80,
                           child: IconButton(
-                            onPressed: () async =>
-                                image.value = await pickImageFromGallery(context),
+                            onPressed: () async {},
+                            // image.value = await pickImageFromGallery(context),
                             icon: const Icon(
                               Icons.add_a_photo,
                             ),

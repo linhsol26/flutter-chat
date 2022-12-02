@@ -68,4 +68,18 @@ class ChatNotifier extends StateNotifier<AsyncValue<void>> {
             ),
         (success) => const AsyncData(null));
   }
+
+  Future<void> setSeen({
+    required String receiverId,
+    required String messageId,
+  }) async {
+    final result = await _repo.setSeen(receiverId: receiverId, messageId: messageId);
+
+    state = result.when(
+        (error) => AsyncError(
+              error,
+              StackTrace.fromString(error.toString()),
+            ),
+        (success) => const AsyncData(null));
+  }
 }

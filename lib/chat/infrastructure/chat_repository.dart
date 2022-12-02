@@ -282,4 +282,39 @@ class ChatRepository {
       return Error(Failure(msg: e.toString()));
     }
   }
+
+  Future<Result<Failure, void>> setSeen({
+    required String receiverId,
+    required String messageId,
+  }) async {
+    try {
+      final senderId = _auth.currentUser!.uid;
+
+      /// Save to [sender]
+      await _firestore
+          .collection(CollectionPath.users)
+          .doc(senderId)
+          .collection(CollectionPath.chats)
+          .doc(receiverId)
+          .collection(CollectionPath.messages)
+          .doc(messageId)
+          .update({'isSeen': true});
+
+      /// Save to [receiver]
+      await _firestore
+          .collection(CollectionPath.users)
+          .doc(receiverId)
+          .collection(CollectionPath.chats)
+          .doc(senderId)
+          .collection(CollectionPath.messages)
+          .doc(messageId)
+          .update({'isSeen': true});
+
+      return const Success(null);
+    } on SocketException {
+      return const Error(Failure.noConnection());
+    } catch (e) {
+      return Error(Failure(msg: e.toString()));
+    }
+  }
 }
