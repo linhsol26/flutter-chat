@@ -6,6 +6,20 @@ import 'package:whatsapp_ui/core/domain/failure.dart';
 import 'package:whatsapp_ui/core/presentation/snackbar/snackbar.dart';
 import 'package:whatsapp_ui/core/shared/enums.dart';
 
+extension UIThemeEx on BuildContext {
+  TextStyle get h1 => Theme.of(this).textTheme.displayLarge!;
+  TextStyle get h2 => Theme.of(this).textTheme.displayMedium!;
+  TextStyle get h3 => Theme.of(this).textTheme.displaySmall!;
+  TextStyle get h4 => Theme.of(this).textTheme.headlineMedium!;
+  TextStyle get p1 => Theme.of(this).textTheme.bodyLarge!;
+  TextStyle get p2 => Theme.of(this).textTheme.bodyMedium!;
+  TextStyle get p3 => Theme.of(this).textTheme.bodySmall!;
+  TextStyle get p4 => Theme.of(this).textTheme.titleSmall!;
+  TextStyle get sub1 => Theme.of(this).textTheme.labelSmall!;
+  TextStyle get sub2 => Theme.of(this).textTheme.labelMedium!;
+  TextStyle get sub3 => Theme.of(this).textTheme.labelLarge!;
+}
+
 extension ResultHandler<T> on Result<Failure, T> {
   T? success(BuildContext context) {
     if (isSuccess()) {

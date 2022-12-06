@@ -21,3 +21,10 @@ final selectContactProvider = FutureProvider.autoDispose.family((ref, Contact se
 
   return result;
 });
+
+final getUsersListProvider = FutureProvider.autoDispose((ref) async {
+  final repo = ref.watch(contactsRepositoryProvider);
+  final result = await repo.getUsersList();
+
+  return result;
+});

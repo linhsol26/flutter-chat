@@ -48,6 +48,7 @@ class MyMessageCard extends StatelessWidget {
                 Padding(
                   padding: messageType.padding,
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       if (isReplying) ...[
                         Text(
@@ -56,12 +57,26 @@ class MyMessageCard extends StatelessWidget {
                         ),
                         gapH4,
                         Container(
-                            padding: const EdgeInsets.all(10),
+                            constraints:
+                                BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.65),
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                            margin: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
                             decoration: const BoxDecoration(
                               color: backgroundColor,
-                              borderRadius: BorderRadius.all(Radius.circular(5)),
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(15),
+                                bottomRight: Radius.circular(15),
+                                bottomLeft: Radius.circular(15),
+                              ),
                             ),
                             child: messageType.display(repliedText)),
+                        // Container(
+                        //     padding: const EdgeInsets.all(10),
+                        //     decoration: const BoxDecoration(
+                        //       color: backgroundColor,
+                        //       borderRadius: BorderRadius.all(Radius.circular(5)),
+                        //     ),
+                        //     child: messageType.display(repliedText)),
                         gapH8,
                       ],
                       messageType.display(message),
@@ -86,7 +101,7 @@ class MyMessageCard extends StatelessWidget {
                       Icon(
                         isSeen ? Icons.done_all : Icons.done,
                         size: 20,
-                        color: isSeen ? messageColor : Colors.white60,
+                        color: isSeen ? Colors.grey : Colors.white60,
                       ),
                     ],
                   ),

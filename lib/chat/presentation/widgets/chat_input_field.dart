@@ -9,19 +9,20 @@ import 'package:whatsapp_ui/core/presentation/utils/files.dart';
 import 'package:whatsapp_ui/core/shared/enums.dart';
 
 class ChatInputField extends HookConsumerWidget {
-  const ChatInputField({
-    Key? key,
-    required this.receiverId,
-  }) : super(key: key);
+  const ChatInputField({Key? key, required this.receiverId, required this.callback})
+      : super(key: key);
 
   final String receiverId;
+  final VoidCallback callback;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final showSend = useValueNotifier(false);
     final showEmoji = useValueNotifier(false);
     final focusNode = useFocusNode();
     final messageController = useTextEditingController();
+
+    final showSend =
+        useListenableSelector(messageController, () => messageController.text.isNotEmpty);
 
     final messageReply = ref.watch(messageReplyProvider);
 
@@ -30,52 +31,31 @@ class ChatInputField extends HookConsumerWidget {
         messageReply != null ? const MessageReplyPreview() : const SizedBox.shrink(),
         Row(
           children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 0, 8, 2),
+              child: CircleAvatar(
+                backgroundColor: messageColor,
+                child: IconButton(
+                  onPressed: () {
+                    showEmoji.value = !showEmoji.value;
+
+                    if (showEmoji.value) {
+                      focusNode.unfocus();
+                    } else {
+                      focusNode.requestFocus();
+                    }
+                  },
+                  icon: const Icon(Icons.emoji_emotions, color: Colors.white),
+                ),
+              ),
+            ),
             Expanded(
               child: TextFormField(
                 focusNode: focusNode,
                 controller: messageController,
-                onChanged: (v) {
-                  showSend.value = v.isNotEmpty;
-                },
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: mobileChatBoxColor,
-                  prefixIcon: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: SizedBox(
-                      width: 100,
-                      child: Row(
-                        children: [
-                          IconButton(
-                            onPressed: () {
-                              showEmoji.value = !showEmoji.value;
-
-                              if (showEmoji.value) {
-                                focusNode.unfocus();
-                              } else {
-                                focusNode.requestFocus();
-                              }
-                            },
-                            icon: const Icon(Icons.emoji_emotions, color: Colors.grey),
-                          ),
-                          IconButton(
-                            onPressed: () async {
-                              // final gif = await pickGif(context);
-
-                              // if (gif != null) {
-                              //   ref.read(chatNotifierProvider.notifier).sendGifMessage(
-                              //         gif.url,
-                              //         receiverId,
-                              //         messageReply,
-                              //       );
-                              // }
-                            },
-                            icon: const Icon(Icons.gif, color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
                   suffixIcon: SizedBox(
                     width: 100,
                     child: Row(
@@ -111,10 +91,7 @@ class ChatInputField extends HookConsumerWidget {
                               ref.read(messageReplyProvider.notifier).state = null;
                             }
                           },
-                          icon: const Icon(
-                            Icons.attach_file,
-                            color: Colors.grey,
-                          ),
+                          icon: const Icon(Icons.attach_file, color: Colors.grey),
                         ),
                       ],
                     ),
@@ -132,31 +109,29 @@ class ChatInputField extends HookConsumerWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(2, 0, 8, 2),
+              padding: const EdgeInsets.fromLTRB(8, 0, 8, 2),
               child: CircleAvatar(
                 radius: 25,
                 backgroundColor: const Color(0xFF128C73),
                 child: IconButton(
-                  onPressed: () {
-                    if (showSend.value) {
-                      ref.read(chatNotifierProvider.notifier).sendTextMessage(
-                            messageController.text.trim(),
-                            receiverId,
-                            messageReply,
-                          );
+                    onPressed: () async {
+                      if (showSend) {
+                        ref.read(chatNotifierProvider.notifier).sendTextMessage(
+                              messageController.text.trim(),
+                              receiverId,
+                              messageReply,
+                            );
 
-                      messageController.clear();
-                    }
-                  },
-                  icon: ValueListenableBuilder<bool>(
-                      valueListenable: showSend,
-                      builder: (context, isShow, _) {
-                        return Icon(
-                          isShow ? Icons.send : Icons.mic,
-                          color: Colors.white,
-                        );
-                      }),
-                ),
+                        messageController.clear();
+                        ref.read(messageReplyProvider.notifier).state = null;
+
+                        callback.call();
+                      }
+                    },
+                    icon: Icon(
+                      showSend ? Icons.send : Icons.mic,
+                      color: Colors.white,
+                    )),
               ),
             ),
           ],

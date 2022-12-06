@@ -13,6 +13,7 @@ class ChatNotifier extends StateNotifier<AsyncValue<void>> {
   final AuthRepository _auth;
 
   Future<void> sendTextMessage(String text, String receiverId, [MessageReply? mesasgeReply]) async {
+    state = const AsyncLoading();
     final senderUser = await _auth.currentUserData;
     final result = await _repo.sendTextMsg(
       message: text,
@@ -31,6 +32,7 @@ class ChatNotifier extends StateNotifier<AsyncValue<void>> {
 
   Future<void> sendFileMessage(File file, String receiverId, MessageType messageType,
       [MessageReply? mesasgeReply]) async {
+    state = const AsyncLoading();
     final sender = await _auth.currentUserData;
     final result = await _repo.sendFileMessage(
       file: file,
@@ -50,6 +52,7 @@ class ChatNotifier extends StateNotifier<AsyncValue<void>> {
 
   Future<void> sendGifMessage(String gifUrl, String receiverId,
       [MessageReply? mesasgeReply]) async {
+    state = const AsyncLoading();
     final senderUser = await _auth.currentUserData;
     final gifUrlPathIndex = gifUrl.lastIndexOf('-') + 1;
     final gifUrlPart = gifUrl.substring(gifUrlPathIndex);
@@ -72,14 +75,6 @@ class ChatNotifier extends StateNotifier<AsyncValue<void>> {
   Future<void> setSeen({
     required String receiverId,
     required String messageId,
-  }) async {
-    final result = await _repo.setSeen(receiverId: receiverId, messageId: messageId);
-
-    state = result.when(
-        (error) => AsyncError(
-              error,
-              StackTrace.fromString(error.toString()),
-            ),
-        (success) => const AsyncData(null));
-  }
+  }) async =>
+      await _repo.setSeen(receiverId: receiverId, messageId: messageId);
 }

@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:whatsapp_ui/core/presentation/utils/colors.dart';
 import 'package:whatsapp_ui/firebase_options.dart';
@@ -26,6 +27,7 @@ class MyApp extends ConsumerWidget {
       theme: ThemeData.dark().copyWith(
         backgroundColor: backgroundColor,
       ),
+      builder: EasyLoading.init(),
     );
   }
 }

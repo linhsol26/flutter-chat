@@ -54,4 +54,28 @@ class ContactsRepository {
       return Error(Failure(msg: e.toString()));
     }
   }
+
+  Future<Result<Failure, List<UserModel>>> getUsersList() async {
+    try {
+      List<UserModel> users = [];
+      await _firestore
+          .collection(CollectionPath.users)
+          .where('uid', isNotEqualTo: _auth.currentUser?.uid)
+          .get()
+          .then(
+        (snapshot) {
+          for (var e in snapshot.docs) {
+            final user = UserModel.fromJson(e.data());
+            users.add(user);
+          }
+        },
+      );
+
+      return Success(users);
+    } on SocketException {
+      return const Error(Failure.noConnection());
+    } catch (e) {
+      return Error(Failure(msg: e.toString()));
+    }
+  }
 }

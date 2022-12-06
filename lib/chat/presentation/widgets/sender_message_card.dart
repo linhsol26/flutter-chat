@@ -11,7 +11,7 @@ class SenderMessageCard extends StatelessWidget {
     required this.message,
     required this.date,
     required this.messageType,
-    required this.onLeftSwipe,
+    required this.onRightSwipe,
     required this.repliedText,
     required this.username,
     required this.repliedMessageType,
@@ -19,7 +19,7 @@ class SenderMessageCard extends StatelessWidget {
   final String message;
   final String date;
   final MessageType messageType;
-  final VoidCallback onLeftSwipe;
+  final VoidCallback onRightSwipe;
   final String repliedText;
   final String username;
   final MessageType repliedMessageType;
@@ -28,7 +28,7 @@ class SenderMessageCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isReplying = repliedText.isNotEmpty;
     return SwipeTo(
-      onLeftSwipe: onLeftSwipe,
+      onRightSwipe: onRightSwipe,
       child: Align(
         alignment: Alignment.centerLeft,
         child: ConstrainedBox(
@@ -45,6 +45,7 @@ class SenderMessageCard extends StatelessWidget {
                 Padding(
                   padding: messageType.padding,
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       if (isReplying) ...[
                         Text(
