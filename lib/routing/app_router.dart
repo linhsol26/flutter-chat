@@ -1,19 +1,17 @@
 import 'dart:io';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:whatsapp_ui/auth/domain/user_model.dart';
 import 'package:whatsapp_ui/auth/presentation/login_screen.dart';
 import 'package:whatsapp_ui/auth/presentation/user_screen.dart';
 import 'package:whatsapp_ui/auth/shared/providers.dart';
 import 'package:whatsapp_ui/contacts/presentation/contact_user_wrapper.dart';
 import 'package:whatsapp_ui/contacts/presentation/contacts_screen.dart';
-import 'package:whatsapp_ui/chat/presentation/mobile_chat_screen.dart';
+import 'package:whatsapp_ui/chat/presentation/chat_screen.dart';
 import 'package:whatsapp_ui/contacts/presentation/users_list_screen.dart';
-import 'package:whatsapp_ui/core/presentation/mobile_layout_screen.dart';
+import 'package:whatsapp_ui/core/presentation/home_screen.dart';
 import 'package:whatsapp_ui/core/presentation/not_found_screen.dart';
-import 'package:whatsapp_ui/core/presentation/utils/responsive_layout.dart';
-import 'package:whatsapp_ui/core/presentation/web_layout_screen.dart';
 import 'package:whatsapp_ui/landing/presentation/landing_screen.dart';
 import 'package:whatsapp_ui/routing/go_router_refresh_stream.dart';
 import 'package:whatsapp_ui/status/domain/status_model.dart';
@@ -88,10 +86,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             path: 'home',
             name: AppRoute.home.name,
             builder: (context, state) {
-              return const ResponsiveLayout(
-                mobileScreenLayout: MobileLayoutScreen(),
-                webScreenLayout: WebLayoutScreen(),
-              );
+              return const HomeScreen();
             },
             routes: [
               GoRoute(
@@ -120,7 +115,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: 'direct-chat',
                 name: AppRoute.dicrectChat.name,
-                builder: (context, state) => MobileChatScreen(
+                builder: (context, state) => ChatScreen(
                   user: state.extra as UserModel,
                 ),
               ),

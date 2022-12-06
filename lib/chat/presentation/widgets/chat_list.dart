@@ -24,6 +24,7 @@ class ChatList extends HookConsumerWidget {
       duration: const Duration(milliseconds: 500),
       scrollController: scrollController,
       scrollPhysics: const BouncingScrollPhysics(),
+      reverse: true,
       streamList: messages,
       itemBuilder: (Message msg, context, index, animation) {
         final isMe = msg.senderId == ref.read(authRepositoryProvider).currentUser?.uid;

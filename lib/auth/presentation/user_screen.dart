@@ -9,7 +9,7 @@ import 'package:whatsapp_ui/auth/presentation/widgets/input_form_widget.dart';
 import 'package:whatsapp_ui/auth/shared/providers.dart';
 import 'package:whatsapp_ui/core/domain/failure.dart';
 import 'package:whatsapp_ui/core/presentation/snackbar/snackbar.dart';
-import 'package:whatsapp_ui/core/presentation/utils/colors.dart';
+import 'package:whatsapp_ui/core/presentation/theme/colors.dart';
 import 'package:whatsapp_ui/core/presentation/utils/files.dart';
 import 'package:whatsapp_ui/core/presentation/utils/sizes.dart';
 import 'package:whatsapp_ui/core/shared/extensions.dart';
@@ -48,7 +48,7 @@ class UserScreen extends HookConsumerWidget with DismissKeyboard {
     return GestureDetector(
       onTap: () => dismiss(),
       child: Scaffold(
-        backgroundColor: backgroundColor,
+        backgroundColor: backgroundLightColor,
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -96,7 +96,7 @@ class UserScreen extends HookConsumerWidget with DismissKeyboard {
                     gapH32,
                     RoundedLoadingButton(
                       controller: btnCtrl,
-                      color: messageColor,
+                      color: primaryColor,
                       animateOnTap: false,
                       onPressed: () {
                         if (formKey.currentState!.validate()) {

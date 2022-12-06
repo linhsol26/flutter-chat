@@ -4,6 +4,7 @@ import 'package:multiple_result/multiple_result.dart';
 import 'package:whatsapp_ui/chat/presentation/widgets/video_player_item.dart';
 import 'package:whatsapp_ui/core/domain/failure.dart';
 import 'package:whatsapp_ui/core/presentation/snackbar/snackbar.dart';
+import 'package:whatsapp_ui/core/presentation/theme/colors.dart';
 import 'package:whatsapp_ui/core/shared/enums.dart';
 
 extension UIThemeEx on BuildContext {
@@ -53,10 +54,21 @@ extension MessageTypeEx on MessageType {
     }
   }
 
-  Widget display(String msg) {
+  Widget display(String msg, [BuildContext? context]) {
     switch (this) {
       case MessageType.text:
-        return Text(msg, style: const TextStyle(fontSize: 16));
+        return Text(msg, style: context!.p2.copyWith(color: blackColor, fontSize: 16));
+      case MessageType.video:
+        return VideoPlayerItem(videoUrl: msg);
+      default:
+        return CachedNetworkImage(imageUrl: msg);
+    }
+  }
+
+  Widget displayReply(String msg, [BuildContext? context]) {
+    switch (this) {
+      case MessageType.text:
+        return Text(msg, style: context!.p2.copyWith(color: brownColor, fontSize: 16));
       case MessageType.video:
         return VideoPlayerItem(videoUrl: msg);
       default:

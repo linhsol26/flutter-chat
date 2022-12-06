@@ -192,7 +192,7 @@ class ChatRepository {
         messages.add(Message.fromJson(msg.data()));
       }
 
-      return messages;
+      return messages.reversed.toList();
     });
   }
 

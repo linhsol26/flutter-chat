@@ -6,7 +6,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:whatsapp_ui/auth/presentation/user_screen.dart';
 import 'package:whatsapp_ui/contacts/shared/providers.dart';
 import 'package:whatsapp_ui/core/presentation/snackbar/snackbar.dart';
-import 'package:whatsapp_ui/core/presentation/utils/colors.dart';
 import 'package:whatsapp_ui/core/presentation/widgets/error_widget.dart';
 import 'package:whatsapp_ui/core/presentation/widgets/loading_widget.dart';
 import 'package:whatsapp_ui/core/shared/extensions.dart';
@@ -18,7 +17,6 @@ class ContactsScreen extends HookConsumerWidget {
     final contacts = ref.watch(getContactsProvider);
 
     return Scaffold(
-      backgroundColor: backgroundColor,
       body: contacts.when(
         data: (async) {
           if (async.isSuccess()) {

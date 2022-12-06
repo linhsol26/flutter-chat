@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:swipe_to/swipe_to.dart';
-import 'package:whatsapp_ui/core/presentation/utils/colors.dart';
+import 'package:whatsapp_ui/core/presentation/theme/colors.dart';
 import 'package:whatsapp_ui/core/presentation/utils/sizes.dart';
 import 'package:whatsapp_ui/core/shared/enums.dart';
 import 'package:whatsapp_ui/core/shared/extensions.dart';
@@ -35,79 +35,68 @@ class MyMessageCard extends StatelessWidget {
       child: Align(
         alignment: Alignment.centerRight,
         child: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxWidth: MediaQuery.of(context).size.width - 45,
-          ),
-          child: Card(
-            elevation: 1,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-            color: messageColor,
-            margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-            child: Stack(
-              children: [
-                Padding(
-                  padding: messageType.padding,
+          constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.65),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Card(
+                elevation: 1,
+                shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(15),
+                  bottomRight: Radius.circular(15),
+                  bottomLeft: Radius.circular(15),
+                )),
+                color: primaryColor,
+                margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    textDirection: TextDirection.rtl,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       if (isReplying) ...[
                         Text(
                           username,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          style: context.sub1.copyWith(fontSize: 14, fontWeight: FontWeight.bold),
                         ),
                         gapH4,
                         Container(
-                            constraints:
-                                BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.65),
-                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                            margin: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
+                            padding: const EdgeInsets.all(10),
                             decoration: const BoxDecoration(
-                              color: backgroundColor,
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(15),
-                                bottomRight: Radius.circular(15),
-                                bottomLeft: Radius.circular(15),
-                              ),
+                              color: greyColor,
+                              borderRadius: BorderRadius.all(Radius.circular(5)),
                             ),
-                            child: messageType.display(repliedText)),
-                        // Container(
-                        //     padding: const EdgeInsets.all(10),
-                        //     decoration: const BoxDecoration(
-                        //       color: backgroundColor,
-                        //       borderRadius: BorderRadius.all(Radius.circular(5)),
-                        //     ),
-                        //     child: messageType.display(repliedText)),
+                            child: messageType.displayReply(repliedText, context)),
                         gapH8,
                       ],
-                      messageType.display(message),
+                      messageType.display(message, context),
                     ],
                   ),
                 ),
-                Positioned(
-                  bottom: 4,
-                  right: 10,
-                  child: Row(
-                    children: [
-                      Text(
-                        date,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          color: Colors.white60,
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      Icon(
-                        isSeen ? Icons.done_all : Icons.done,
-                        size: 20,
-                        color: isSeen ? Colors.grey : Colors.white60,
-                      ),
-                    ],
-                  ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(date,
+                        style: context.sub1.copyWith(
+                          fontSize: 10,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        )),
+                    const SizedBox(width: 5),
+                    Icon(
+                      isSeen ? Icons.done_all : Icons.done,
+                      size: 20,
+                      color: isSeen ? primaryColor : primaryColor.withOpacity(0.8),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

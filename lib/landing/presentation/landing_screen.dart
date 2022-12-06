@@ -4,7 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:lottie/lottie.dart';
 import 'package:slide_action/slide_action.dart';
 import 'package:whatsapp_ui/auth/shared/providers.dart';
-import 'package:whatsapp_ui/core/presentation/utils/colors.dart';
+import 'package:whatsapp_ui/core/presentation/theme/colors.dart';
 import 'package:whatsapp_ui/core/presentation/utils/sizes.dart';
 import 'package:whatsapp_ui/routing/app_router.dart';
 
@@ -15,7 +15,7 @@ class LandingScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isSignIn = ref.read(authRepositoryProvider).currentUser != null;
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: backgroundLightColor,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -55,7 +55,7 @@ class LandingScreen extends HookConsumerWidget {
                       child: const Center(
                         child: Text(
                           "Discover our app",
-                          style: TextStyle(fontSize: 16, color: messageColor),
+                          style: TextStyle(fontSize: 16, color: primaryColor),
                         ),
                       ),
                     );
@@ -64,7 +64,7 @@ class LandingScreen extends HookConsumerWidget {
                     margin: const EdgeInsets.all(4),
                     decoration: const BoxDecoration(
                       shape: BoxShape.circle,
-                      color: messageColor,
+                      color: primaryColor,
                     ),
                     child: const Center(
                       child: Icon(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:whatsapp_ui/core/presentation/utils/colors.dart';
+import 'package:whatsapp_ui/core/presentation/theme/colors.dart';
 
 class LoadingWidget extends StatelessWidget {
   const LoadingWidget({
@@ -8,6 +8,6 @@ class LoadingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: LinearProgressIndicator(color: tabColor));
+    return const Center(child: LinearProgressIndicator(color: primaryColor));
   }
 }

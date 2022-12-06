@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:form_validator/form_validator.dart';
-import 'package:whatsapp_ui/core/presentation/utils/colors.dart';
+import 'package:whatsapp_ui/core/presentation/theme/colors.dart';
 
 class InputFormWidget extends HookWidget {
   const InputFormWidget({
@@ -41,13 +41,13 @@ class InputFormWidget extends HookWidget {
         hintStyle: const TextStyle(fontSize: 16, color: Colors.grey),
         errorStyle: const TextStyle(fontSize: 14, color: Colors.red),
         border: const OutlineInputBorder(
-          borderSide: BorderSide(color: messageColor),
+          borderSide: BorderSide(color: primaryColor),
         ),
         focusedBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: messageColor),
+          borderSide: BorderSide(color: primaryColor),
         ),
         enabledBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: messageColor),
+          borderSide: BorderSide(color: primaryColor),
         ),
       ),
       obscureText: inputType == InputType.password,

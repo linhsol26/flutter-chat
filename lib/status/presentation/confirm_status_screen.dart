@@ -5,7 +5,6 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:whatsapp_ui/core/domain/failure.dart';
-import 'package:whatsapp_ui/core/presentation/utils/colors.dart';
 import 'package:whatsapp_ui/core/shared/extensions.dart';
 import 'package:whatsapp_ui/routing/app_router.dart';
 import 'package:whatsapp_ui/status/shared/providers.dart';
@@ -43,7 +42,6 @@ class ConfirmStatusScreen extends HookConsumerWidget {
         onPressed: () {
           ref.read(statusNotifierProvider.notifier).addStatus(statusImage: image);
         },
-        backgroundColor: tabColor,
         child: const Icon(Icons.done, color: Colors.white),
       ),
     );

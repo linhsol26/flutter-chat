@@ -7,41 +7,11 @@ class AppTheme {
   AppTheme._();
 
   static final lightTheme = ThemeData(
-    // backgroundColor: whiteColor,
-    scaffoldBackgroundColor: blackColor,
-    appBarTheme: const AppBarTheme(backgroundColor: blackColor),
-    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-      backgroundColor: whiteColor,
-      selectedItemColor: primaryColor,
-      unselectedItemColor: textColorGrey,
-      showSelectedLabels: true,
-      showUnselectedLabels: true,
-      type: BottomNavigationBarType.fixed,
-      selectedIconTheme: IconThemeData(color: primaryColor),
-      unselectedIconTheme: IconThemeData(color: textColorGrey),
-      selectedLabelStyle: TextStyle(
-        fontFamily: "Caros",
-        fontSize: 16.0,
-        fontWeight: FontWeight.w500,
-      ),
-      unselectedLabelStyle: TextStyle(
-        fontFamily: "Caros",
-        fontSize: 16.0,
-        fontWeight: FontWeight.w500,
-      ),
-    ),
+    scaffoldBackgroundColor: whiteColor,
     primaryColor: primaryColor,
     primarySwatch: primaryColorMaterial,
     iconTheme: const IconThemeData(color: blackColor),
     brightness: Brightness.light,
-    buttonTheme: const ButtonThemeData(
-      disabledColor: Color(0xFFF3F3F6),
-      buttonColor: primaryColor,
-      textTheme: ButtonTextTheme.primary,
-    ),
-    inputDecorationTheme: const InputDecorationTheme(
-      border: UnderlineInputBorder(borderSide: BorderSide(color: greyColor)),
-    ),
     textTheme: const TextTheme(
       displayLarge: TextStyle(
         fontFamily: "Caros",
@@ -119,12 +89,12 @@ class AppTheme {
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       backgroundColor: blackColor,
       selectedItemColor: whiteColor,
-      unselectedItemColor: textColorGrey,
+      unselectedItemColor: textColor,
       showSelectedLabels: true,
       showUnselectedLabels: true,
       type: BottomNavigationBarType.fixed,
       selectedIconTheme: IconThemeData(color: whiteColor),
-      unselectedIconTheme: IconThemeData(color: textColorGrey),
+      unselectedIconTheme: IconThemeData(color: textColor),
       selectedLabelStyle: TextStyle(
         fontFamily: "Caros",
         fontSize: 16.0,
@@ -136,12 +106,12 @@ class AppTheme {
         fontWeight: FontWeight.w500,
       ),
     ),
-    iconTheme: const IconThemeData(color: whiteColor),
+    iconTheme: const IconThemeData(color: primaryColor),
     primaryColor: primaryColor,
     primarySwatch: primaryColorMaterial,
     brightness: Brightness.dark,
     inputDecorationTheme: const InputDecorationTheme(
-      hintStyle: TextStyle(color: textColorGrey),
+      hintStyle: TextStyle(color: textColor),
       border: UnderlineInputBorder(borderSide: BorderSide(color: greyColor)),
       enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: greyColor)),
       disabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: greyColor)),

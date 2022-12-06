@@ -4,7 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:whatsapp_ui/chat/presentation/widgets/message_reply_preview.dart';
 import 'package:whatsapp_ui/chat/shared/providers.dart';
-import 'package:whatsapp_ui/core/presentation/utils/colors.dart';
+import 'package:whatsapp_ui/core/presentation/theme/colors.dart';
 import 'package:whatsapp_ui/core/presentation/utils/files.dart';
 import 'package:whatsapp_ui/core/shared/enums.dart';
 
@@ -34,7 +34,7 @@ class ChatInputField extends HookConsumerWidget {
             Padding(
               padding: const EdgeInsets.fromLTRB(8, 0, 8, 2),
               child: CircleAvatar(
-                backgroundColor: messageColor,
+                backgroundColor: primaryColor,
                 child: IconButton(
                   onPressed: () {
                     showEmoji.value = !showEmoji.value;
@@ -55,7 +55,7 @@ class ChatInputField extends HookConsumerWidget {
                 controller: messageController,
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: mobileChatBoxColor,
+                  fillColor: whiteColor,
                   suffixIcon: SizedBox(
                     width: 100,
                     child: Row(

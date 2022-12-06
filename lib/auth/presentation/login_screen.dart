@@ -9,7 +9,7 @@ import 'package:whatsapp_ui/auth/presentation/widgets/show_up_animation.dart';
 import 'package:whatsapp_ui/auth/shared/providers.dart';
 import 'package:whatsapp_ui/core/domain/failure.dart';
 import 'package:whatsapp_ui/core/presentation/snackbar/snackbar.dart';
-import 'package:whatsapp_ui/core/presentation/utils/colors.dart';
+import 'package:whatsapp_ui/core/presentation/theme/colors.dart';
 import 'package:whatsapp_ui/core/presentation/utils/sizes.dart';
 import 'package:whatsapp_ui/core/shared/extensions.dart';
 import 'package:whatsapp_ui/routing/app_router.dart';
@@ -49,7 +49,7 @@ class LoginScreen extends HookConsumerWidget {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
-        backgroundColor: backgroundColor,
+        backgroundColor: backgroundLightColor,
         resizeToAvoidBottomInset: false,
         body: Form(
           key: formKey,
@@ -113,7 +113,7 @@ class LoginScreen extends HookConsumerWidget {
                       children: [
                         RoundedLoadingButton(
                           controller: btnCtrl,
-                          color: messageColor,
+                          color: primaryColor,
                           animateOnTap: false,
                           onPressed: () {
                             if (formKey.currentState!.validate()) {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:whatsapp_ui/core/presentation/utils/colors.dart';
+import 'package:whatsapp_ui/core/presentation/theme/colors.dart';
 import 'package:whatsapp_ui/core/presentation/widgets/error_widget.dart';
 import 'package:whatsapp_ui/core/presentation/widgets/loading_widget.dart';
 import 'package:whatsapp_ui/routing/app_router.dart';
@@ -44,7 +44,7 @@ class StatusScreen extends HookConsumerWidget {
                         ),
                       ),
                     ),
-                    const Divider(color: dividerColor, indent: 85),
+                    const Divider(color: brownColor, indent: 85),
                   ],
                 );
               });
