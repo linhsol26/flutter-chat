@@ -79,14 +79,18 @@ class ChatScreen extends HookConsumerWidget {
                       scrollController.animateTo(
                         0.0,
                         curve: Curves.easeOut,
-                        duration: const Duration(milliseconds: 500),
+                        duration: const Duration(microseconds: 50),
                       );
                     }
                   });
                 }),
           )
         ],
-        body: ChatList(receiverId: user.uid, scrollController: scrollController),
+        body: ChatList(
+          receiverId: user.uid,
+          scrollController: scrollController,
+          receiverName: user.name,
+        ),
       ),
     );
   }

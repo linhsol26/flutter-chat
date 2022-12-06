@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:whatsapp_ui/auth/domain/user_model.dart';
@@ -16,7 +17,6 @@ import 'package:whatsapp_ui/landing/presentation/landing_screen.dart';
 import 'package:whatsapp_ui/routing/go_router_refresh_stream.dart';
 import 'package:whatsapp_ui/status/domain/status_model.dart';
 import 'package:whatsapp_ui/status/presentation/confirm_status_screen.dart';
-import 'package:whatsapp_ui/status/presentation/status_screen.dart';
 import 'package:whatsapp_ui/status/presentation/widgets/status_view.dart';
 
 enum AppRoute {
@@ -71,7 +71,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: 'status',
             name: AppRoute.status.name,
-            builder: (context, state) => const StatusScreen(),
+            builder: (context, state) => const SizedBox.shrink(),
             routes: [
               GoRoute(
                 path: 'status-view',

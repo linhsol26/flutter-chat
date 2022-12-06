@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:multiple_result/multiple_result.dart';
 import 'package:uuid/uuid.dart';
 import 'package:whatsapp_ui/auth/domain/user_model.dart';
@@ -29,32 +28,17 @@ class StatusRepository {
 
       final imgUrl = await _authRepository.storeFileToFirebase(path, statusImage);
 
-      List<Contact> contacts = [];
-
-      if (await FlutterContacts.requestPermission()) {
-        contacts = await FlutterContacts.getContacts(withProperties: true);
-      }
-
       List<String> uidWhoCanSee = [];
 
-      for (int i = 0; i < contacts.length; i++) {
-        final userData = await _firestore
-            .collection(CollectionPath.users)
-            .where('phoneNumber', isEqualTo: contacts[i].phones[0].number.replaceAll(' ', ''))
-            .get();
-
-        if (userData.docs.isNotEmpty) {
-          final user = UserModel.fromJson(userData.docs[0].data());
-          uidWhoCanSee.add(user.uid);
-        }
+      final userData = await _firestore.collection(CollectionPath.users).get();
+      for (int i = 0; i < userData.docs.length; i++) {
+        final user = UserModel.fromJson(userData.docs[i].data());
+        uidWhoCanSee.add(user.uid);
       }
 
       List<String> statusImgUrls = [];
-      final statusSnapshot = await _firestore
-          .collection(CollectionPath.status)
-          .where('uid', isEqualTo: uid)
-          // .where('createdAt', isLessThan: DateTime.now().subtract(const Duration(hours: 24)))
-          .get();
+      final statusSnapshot =
+          await _firestore.collection(CollectionPath.status).where('uid', isEqualTo: uid).get();
 
       if (statusSnapshot.docs.isNotEmpty) {
         final status = StatusModel.fromJson(statusSnapshot.docs[0].data());
@@ -89,38 +73,21 @@ class StatusRepository {
     }
   }
 
-  Future<Result<Failure, List<StatusModel>>> getStatus() async {
+  Stream<List<StatusModel>> getStatus() {
     List<StatusModel> status = [];
 
-    try {
-      List<Contact> contacts = [];
-      if (await FlutterContacts.requestPermission()) {
-        contacts = await FlutterContacts.getContacts(withProperties: true);
-      }
-      for (int i = 0; i < contacts.length; i++) {
-        var statusesSnapshot = await _firestore
-            .collection('status')
-            .where(
-              'phoneNumber',
-              isEqualTo: contacts[i].phones[0].number.replaceAll(
-                    ' ',
-                    '',
-                  ),
-            )
-            .where('createdAt')
-            .get();
-        for (var tempData in statusesSnapshot.docs) {
-          StatusModel tempStatus = StatusModel.fromJson(tempData.data());
-          if (tempStatus.whoCanSee.contains(_auth.currentUser!.uid)) {
-            status.add(tempStatus);
-          }
+    return _firestore
+        .collection(CollectionPath.status)
+        .where('createdAt')
+        .snapshots()
+        .asyncMap((snapshot) {
+      for (var tempData in snapshot.docs) {
+        StatusModel tempStatus = StatusModel.fromJson(tempData.data());
+        if (tempStatus.whoCanSee.contains(_auth.currentUser!.uid)) {
+          status.add(tempStatus);
         }
       }
-      return Success(status);
-    } on SocketException {
-      return const Error(Failure.noConnection());
-    } catch (e) {
-      return Error(Failure(msg: e.toString()));
-    }
+      return status;
+    });
   }
 }

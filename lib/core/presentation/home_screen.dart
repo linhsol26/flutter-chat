@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:whatsapp_ui/auth/presentation/user_screen.dart';
 import 'package:whatsapp_ui/auth/shared/providers.dart';
 import 'package:whatsapp_ui/contacts/presentation/contact_user_wrapper.dart';
 import 'package:whatsapp_ui/core/presentation/theme/colors.dart';
@@ -94,7 +95,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
       body: [
         const ConversationList(),
         const ContactUserWrapper(),
-        const Center(child: Text('Calls')),
+        const UserScreen(),
       ][selectedIndex.value],
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
       floatingActionButton: selectedIndex.value == 0

@@ -30,14 +30,14 @@ class InputFormWidget extends HookWidget {
       // autovalidateMode: AutovalidateMode.onUserInteraction,
       autofocus: true,
       focusNode: node,
-      style: const TextStyle(fontSize: 16, color: Colors.white),
+      style: const TextStyle(fontSize: 16, color: blackColor),
       textAlign: TextAlign.left,
-      cursorColor: Colors.white,
+      cursorColor: primaryColor,
       decoration: InputDecoration(
         isDense: true,
         hintText: 'Type your ${label.toLowerCase()}...',
         labelText: label,
-        labelStyle: const TextStyle(fontSize: 14, color: Colors.white),
+        labelStyle: const TextStyle(fontSize: 14, color: primaryColor),
         hintStyle: const TextStyle(fontSize: 16, color: Colors.grey),
         errorStyle: const TextStyle(fontSize: 14, color: Colors.red),
         border: const OutlineInputBorder(

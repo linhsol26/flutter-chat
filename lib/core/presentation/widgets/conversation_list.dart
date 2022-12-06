@@ -9,6 +9,7 @@ import 'package:whatsapp_ui/auth/presentation/user_screen.dart';
 import 'package:whatsapp_ui/auth/shared/providers.dart';
 import 'package:whatsapp_ui/chat/domain/chat_contact.dart';
 import 'package:whatsapp_ui/chat/shared/providers.dart';
+import 'package:whatsapp_ui/core/presentation/theme/colors.dart';
 import 'package:whatsapp_ui/core/presentation/widgets/avatar_widget.dart';
 import 'package:whatsapp_ui/core/presentation/widgets/error_widget.dart';
 import 'package:whatsapp_ui/core/presentation/widgets/loading_widget.dart';
@@ -20,7 +21,6 @@ class ConversationList extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final streamContacts = ref.watch(chatRepositoryProvider).getChatContacts();
     final statusAsync = ref.watch(getStatusProvider);
     final me = ref.watch(currentUserProvider).maybeWhen(data: (data) => data, orElse: () => null);
 
@@ -30,8 +30,7 @@ class ConversationList extends HookConsumerWidget {
         mainAxisSize: MainAxisSize.max,
         children: [
           statusAsync.maybeWhen(
-            data: (result) {
-              final stories = result.getSuccess() ?? [];
+            data: (stories) {
               return SizedBox(
                 height: 100,
                 child: AdvStory(
@@ -48,8 +47,12 @@ class ConversationList extends HookConsumerWidget {
                         return Story(
                           contentCount: stories[index - 1].photoUrl.length,
                           contentBuilder: (contentIndex) => ImageContent(
-                            header: const Text('Header'),
-                            footer: const Text('Footer'),
+                            cacheKey: stories[index - 1].statusId,
+                            header: Text(
+                              stories[index - 1].username,
+                              style: context.h1.copyWith(color: textColor),
+                            ),
+                            duration: const Duration(seconds: 3),
                             url: stories[index - 1].photoUrl[contentIndex],
                             errorBuilder: () => const CustomErrorWidget(),
                           ),
@@ -72,9 +75,9 @@ class ConversationList extends HookConsumerWidget {
           ),
           Expanded(
             child: AnimatedStreamList<ChatContact>(
-              streamList: streamContacts,
+              streamList: ref.read(chatRepositoryProvider).getChatContacts(),
               shrinkWrap: true,
-              scrollPhysics: const BouncingScrollPhysics(),
+              duration: const Duration(milliseconds: 500),
               itemBuilder: (chatContact, index, _, animation) {
                 return InkWell(
                   onTap: () {
@@ -88,7 +91,13 @@ class ConversationList extends HookConsumerWidget {
                       ),
                     );
                   },
-                  child: _ConversationTile(chatContact: chatContact),
+                  child: SizeTransition(
+                    sizeFactor: animation,
+                    child: FadeTransition(
+                      opacity: animation,
+                      child: _ConversationTile(chatContact: chatContact),
+                    ),
+                  ),
                 );
               },
               itemRemovedBuilder:

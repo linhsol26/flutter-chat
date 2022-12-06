@@ -13,33 +13,42 @@ class MessageReplyPreview extends ConsumerWidget {
     final messageReply = ref.watch(messageReplyProvider);
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-      decoration: const BoxDecoration(
-        color: backgroundLightColor,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(12),
-          topRight: Radius.circular(12),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                  child: Text(
-                messageReply?.isMe ?? false ? ' Replying to yourself' : 'Replying to Other',
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              )),
-              IconButton(
-                  onPressed: () {
-                    ref.read(messageReplyProvider.notifier).state = null;
-                  },
-                  icon: const Icon(Icons.close, size: 16))
-            ],
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        children: <Widget>[
+          const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Icon(Icons.reply_rounded, color: primaryColor, size: 30),
           ),
-          gapH8,
-          messageReply?.messageType.display(messageReply.message) ?? const SizedBox.shrink(),
+          const SizedBox(
+            width: 8.0,
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  messageReply?.isMe ?? false ? 'Replying to yourself' : 'Replying to Other',
+                  style: context.sub1.copyWith(fontWeight: FontWeight.w500),
+                ),
+                gapH4,
+                messageReply?.messageType.display(messageReply.message, context) ??
+                    const SizedBox.shrink(),
+              ],
+            ),
+          ),
+          GestureDetector(
+            onTap: () {
+              ref.read(messageReplyProvider.notifier).state = null;
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Icon(
+                Icons.close,
+                color: Colors.black.withOpacity(0.6),
+              ),
+            ),
+          ),
         ],
       ),
     );

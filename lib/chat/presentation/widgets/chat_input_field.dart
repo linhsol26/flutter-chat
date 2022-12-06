@@ -122,10 +122,9 @@ class ChatInputField extends HookConsumerWidget {
                               messageReply,
                             );
 
+                        callback.call();
                         messageController.clear();
                         ref.read(messageReplyProvider.notifier).state = null;
-
-                        callback.call();
                       }
                     },
                     icon: Icon(

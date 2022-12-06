@@ -48,7 +48,7 @@ class UserScreen extends HookConsumerWidget with DismissKeyboard {
     return GestureDetector(
       onTap: () => dismiss(),
       child: Scaffold(
-        backgroundColor: backgroundLightColor,
+        // backgroundColor: backgroundLightColor,
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -63,11 +63,11 @@ class UserScreen extends HookConsumerWidget with DismissKeyboard {
                         image.value == null
                             ? const CircleAvatar(
                                 backgroundImage: NetworkImage(defaultAvatar),
-                                radius: 64,
+                                radius: 58,
                               )
                             : CircleAvatar(
                                 backgroundImage: FileImage(image.value!),
-                                radius: 64,
+                                radius: 58,
                               ),
                         Positioned(
                           bottom: -10,

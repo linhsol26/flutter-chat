@@ -1,5 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
-import 'package:swipe_to/swipe_to.dart';
+import 'package:swipeable_tile/swipeable_tile.dart';
 import 'package:whatsapp_ui/core/presentation/theme/colors.dart';
 import 'package:whatsapp_ui/core/presentation/utils/sizes.dart';
 import 'package:whatsapp_ui/core/shared/enums.dart';
@@ -30,8 +32,39 @@ class MyMessageCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isReplying = repliedText.isNotEmpty;
-    return SwipeTo(
-      onLeftSwipe: onLeftSwipe,
+    return SwipeableTile.swipeToTrigger(
+      isElevated: false,
+      behavior: HitTestBehavior.deferToChild,
+      key: UniqueKey(),
+      color: Colors.white,
+      onSwiped: (_) => onLeftSwipe(),
+      backgroundBuilder: (_, SwipeDirection direction, AnimationController progress) {
+        return AnimatedBuilder(
+          animation: progress,
+          builder: (_, __) {
+            return Container(
+              alignment: Alignment.centerRight,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 16.0),
+                child: Transform.scale(
+                  scale: Tween<double>(begin: 0.0, end: 1.2)
+                      .animate(
+                        CurvedAnimation(
+                          parent: progress,
+                          curve: const Interval(0.5, 1.0, curve: Curves.bounceInOut),
+                        ),
+                      )
+                      .value,
+                  child: Icon(
+                    Icons.reply,
+                    color: primaryColor.withOpacity(0.7),
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
       child: Align(
         alignment: Alignment.centerRight,
         child: ConstrainedBox(
@@ -57,10 +90,6 @@ class MyMessageCard extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       if (isReplying) ...[
-                        Text(
-                          username,
-                          style: context.sub1.copyWith(fontSize: 14, fontWeight: FontWeight.bold),
-                        ),
                         gapH4,
                         Container(
                             padding: const EdgeInsets.all(10),
@@ -68,7 +97,29 @@ class MyMessageCard extends StatelessWidget {
                               color: greyColor,
                               borderRadius: BorderRadius.all(Radius.circular(5)),
                             ),
-                            child: messageType.displayReply(repliedText, context)),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Transform.rotate(
+                                      angle: pi,
+                                      child: const Icon(Icons.reply, size: 12),
+                                    ),
+                                    Text(
+                                      username,
+                                      style: context.sub1.copyWith(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                gapH4,
+                                messageType.displayReply(repliedText, context),
+                              ],
+                            )),
                         gapH8,
                       ],
                       messageType.display(message, context),

@@ -68,7 +68,7 @@ extension MessageTypeEx on MessageType {
   Widget displayReply(String msg, [BuildContext? context]) {
     switch (this) {
       case MessageType.text:
-        return Text(msg, style: context!.p2.copyWith(color: brownColor, fontSize: 16));
+        return Text(msg, style: context!.p2.copyWith(color: brownColor, fontSize: 14));
       case MessageType.video:
         return VideoPlayerItem(videoUrl: msg);
       default:

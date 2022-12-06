@@ -10,24 +10,29 @@ import 'package:whatsapp_ui/chat/shared/providers.dart';
 import 'package:whatsapp_ui/chat/presentation/widgets/sender_message_card.dart';
 
 class ChatList extends HookConsumerWidget {
-  const ChatList({Key? key, required this.receiverId, required this.scrollController})
-      : super(key: key);
+  const ChatList({
+    Key? key,
+    required this.receiverId,
+    required this.scrollController,
+    this.receiverName,
+  }) : super(key: key);
 
   final String receiverId;
+  final String? receiverName;
   final ScrollController scrollController;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final messages = ref.read(chatRepositoryProvider).getChatMessages(receiverId);
     return AnimatedStreamList<Message>(
+      streamList: ref.read(chatRepositoryProvider).getChatMessages(receiverId),
       shrinkWrap: true,
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(microseconds: 50),
       scrollController: scrollController,
       scrollPhysics: const BouncingScrollPhysics(),
       reverse: true,
-      streamList: messages,
       itemBuilder: (Message msg, context, index, animation) {
-        final isMe = msg.senderId == ref.read(authRepositoryProvider).currentUser?.uid;
+        final me = ref.read(authRepositoryProvider).currentUser;
+        final isMe = msg.senderId == me?.uid;
         final notMe = msg.receiverId == ref.read(authRepositoryProvider).currentUser?.uid;
         final timeSent = DateFormat.Hm().format(msg.timeSent);
 
@@ -47,7 +52,7 @@ class ChatList extends HookConsumerWidget {
               messageType: msg.type,
               repliedText: msg.repliedMessage,
               repliedMessageType: msg.repliedMessageType,
-              username: msg.repliedTo,
+              username: msg.repliedTo != receiverName ? 'You' : msg.repliedTo,
               onLeftSwipe: () {
                 ref.read(messageReplyProvider.notifier).state = MessageReply(
                   message: msg.text,
@@ -66,7 +71,7 @@ class ChatList extends HookConsumerWidget {
             message: msg.text,
             date: timeSent,
             messageType: msg.type,
-            username: msg.repliedTo,
+            username: msg.repliedTo == receiverName ? 'You' : msg.repliedTo,
             repliedText: msg.repliedMessage,
             repliedMessageType: msg.repliedMessageType,
             onRightSwipe: () {

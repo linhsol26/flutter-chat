@@ -17,6 +17,6 @@ final statusNotifierProvider = StateNotifierProvider<StatusNotifier, AsyncValue<
   return StatusNotifier(ref.watch(statusRepositoryProvider));
 });
 
-final getStatusProvider = FutureProvider.autoDispose((ref) async {
-  return await ref.watch(statusRepositoryProvider).getStatus();
+final getStatusProvider = StreamProvider.autoDispose((ref) {
+  return ref.watch(statusRepositoryProvider).getStatus();
 });
