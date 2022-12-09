@@ -11,6 +11,7 @@ _$_MessageReply _$$_MessageReplyFromJson(Map<String, dynamic> json) =>
       message: json['message'] as String,
       isMe: json['isMe'] as bool,
       messageType: $enumDecode(_$MessageTypeEnumMap, json['messageType']),
+      username: json['username'] as String,
     );
 
 Map<String, dynamic> _$$_MessageReplyToJson(_$_MessageReply instance) =>
@@ -18,6 +19,7 @@ Map<String, dynamic> _$$_MessageReplyToJson(_$_MessageReply instance) =>
       'message': instance.message,
       'isMe': instance.isMe,
       'messageType': _$MessageTypeEnumMap[instance.messageType]!,
+      'username': instance.username,
     };
 
 const _$MessageTypeEnumMap = {

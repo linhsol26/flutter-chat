@@ -12,8 +12,8 @@ _$_UserModel _$$_UserModelFromJson(Map<String, dynamic> json) => _$_UserModel(
       profilePic: json['profilePic'] as String,
       isOnline: json['isOnline'] as bool? ?? true,
       phoneNumber: json['phoneNumber'] as String,
-      groupId: (json['groupId'] as List<dynamic>?)
-              ?.map((e) => e as String)
+      groups: (json['groups'] as List<dynamic>?)
+              ?.map((e) => e as Map<String, dynamic>)
               .toList() ??
           const [],
     );
@@ -25,5 +25,5 @@ Map<String, dynamic> _$$_UserModelToJson(_$_UserModel instance) =>
       'profilePic': instance.profilePic,
       'isOnline': instance.isOnline,
       'phoneNumber': instance.phoneNumber,
-      'groupId': instance.groupId,
+      'groups': instance.groups,
     };

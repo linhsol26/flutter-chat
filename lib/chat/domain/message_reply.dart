@@ -11,6 +11,7 @@ class MessageReply with _$MessageReply {
     required String message,
     required bool isMe,
     required MessageType messageType,
+    required String username,
   }) = _MessageReply;
 
   factory MessageReply.fromJson(Map<String, dynamic> json) => _$MessageReplyFromJson(json);

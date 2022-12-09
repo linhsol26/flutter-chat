@@ -39,6 +39,7 @@ class ConfirmStatusScreen extends HookConsumerWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: const ValueKey('btn-story'),
         onPressed: () {
           ref.read(statusNotifierProvider.notifier).addStatus(statusImage: image);
         },

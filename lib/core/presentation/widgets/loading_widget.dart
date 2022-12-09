@@ -8,6 +8,9 @@ class LoadingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: LinearProgressIndicator(color: primaryColor));
+    return const Align(
+      alignment: Alignment.topCenter,
+      child: LinearProgressIndicator(color: primaryColor),
+    );
   }
 }

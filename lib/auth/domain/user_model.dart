@@ -12,7 +12,7 @@ class UserModel with _$UserModel {
     required String profilePic,
     @Default(true) bool isOnline,
     required String phoneNumber,
-    @Default([]) List<String> groupId,
+    @Default([]) List<Map<String, dynamic>> groups,
   }) = _UserModel;
 
   factory UserModel.fromJson(Map<String, dynamic> json) => _$UserModelFromJson(json);

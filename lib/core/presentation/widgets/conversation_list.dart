@@ -1,6 +1,7 @@
 import 'package:advstory/advstory.dart';
 import 'package:animated_stream_list_nullsafety/animated_stream_list.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -23,6 +24,8 @@ class ConversationList extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final statusAsync = ref.watch(getStatusProvider);
     final me = ref.watch(currentUserProvider).maybeWhen(data: (data) => data, orElse: () => null);
+
+    useAutomaticKeepAlive(wantKeepAlive: true);
 
     return Padding(
       padding: const EdgeInsets.only(top: 10.0),
@@ -77,10 +80,14 @@ class ConversationList extends HookConsumerWidget {
             child: AnimatedStreamList<ChatContact>(
               streamList: ref.read(chatRepositoryProvider).getChatContacts(),
               shrinkWrap: true,
-              duration: const Duration(milliseconds: 500),
+              duration: const Duration(milliseconds: 200),
               itemBuilder: (chatContact, index, _, animation) {
                 return InkWell(
                   onTap: () {
+                    ref.read(chatNotifierProvider.notifier).setJoinedChat(
+                          receiverId: chatContact.contactId,
+                        );
+
                     context.push(
                       '/home/direct-chat',
                       extra: UserModel(
@@ -102,7 +109,13 @@ class ConversationList extends HookConsumerWidget {
               },
               itemRemovedBuilder:
                   (ChatContact item, int index, BuildContext context, Animation<double> animation) {
-                return null;
+                return SizeTransition(
+                  sizeFactor: animation,
+                  child: FadeTransition(
+                    opacity: animation,
+                    child: _ConversationTile(chatContact: item),
+                  ),
+                );
               },
             ),
           ),
@@ -133,12 +146,19 @@ class _ConversationTile extends StatelessWidget {
         leading: AvatarWidget(
           imgUrl: chatContact.profilePic,
         ),
-        trailing: Text(DateFormat.Hm().format(chatContact.timeSent),
-            style: context.sub1.copyWith(
-              fontSize: 12,
-              color: Colors.black,
-              fontWeight: FontWeight.w500,
-            )),
+        trailing: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Text(DateFormat.Hm().format(chatContact.timeSent),
+                style: context.sub1.copyWith(
+                  fontSize: 12,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w500,
+                )),
+            if (chatContact.lastJoined!.isBefore(chatContact.timeSent))
+              const Icon(Icons.circle_rounded, color: Colors.red, size: 10),
+          ],
+        ),
       ),
     );
   }

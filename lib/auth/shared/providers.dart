@@ -24,6 +24,14 @@ final currentUserProvider = FutureProvider.autoDispose<UserModel?>((ref) async {
   return await ref.watch(authRepositoryProvider).currentUserData;
 });
 
+final currentUserStreamProvider = StreamProvider.autoDispose<UserModel?>((ref) {
+  return ref.watch(authRepositoryProvider).currentUserDataStream;
+});
+
 final getUserByIdProvider = StreamProvider.autoDispose.family<UserModel, String>((ref, id) {
   return ref.watch(authRepositoryProvider).getUserById(id);
+});
+
+final userStateProvider = StreamProvider.autoDispose<bool>((ref) {
+  return ref.watch(authRepositoryProvider).userState();
 });

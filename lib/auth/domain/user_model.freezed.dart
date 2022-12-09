@@ -25,7 +25,7 @@ mixin _$UserModel {
   String get profilePic => throw _privateConstructorUsedError;
   bool get isOnline => throw _privateConstructorUsedError;
   String get phoneNumber => throw _privateConstructorUsedError;
-  List<String> get groupId => throw _privateConstructorUsedError;
+  List<Map<String, dynamic>> get groups => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -44,7 +44,7 @@ abstract class $UserModelCopyWith<$Res> {
       String profilePic,
       bool isOnline,
       String phoneNumber,
-      List<String> groupId});
+      List<Map<String, dynamic>> groups});
 }
 
 /// @nodoc
@@ -65,7 +65,7 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
     Object? profilePic = null,
     Object? isOnline = null,
     Object? phoneNumber = null,
-    Object? groupId = null,
+    Object? groups = null,
   }) {
     return _then(_value.copyWith(
       name: null == name
@@ -88,10 +88,10 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
           ? _value.phoneNumber
           : phoneNumber // ignore: cast_nullable_to_non_nullable
               as String,
-      groupId: null == groupId
-          ? _value.groupId
-          : groupId // ignore: cast_nullable_to_non_nullable
-              as List<String>,
+      groups: null == groups
+          ? _value.groups
+          : groups // ignore: cast_nullable_to_non_nullable
+              as List<Map<String, dynamic>>,
     ) as $Val);
   }
 }
@@ -109,7 +109,7 @@ abstract class _$$_UserModelCopyWith<$Res> implements $UserModelCopyWith<$Res> {
       String profilePic,
       bool isOnline,
       String phoneNumber,
-      List<String> groupId});
+      List<Map<String, dynamic>> groups});
 }
 
 /// @nodoc
@@ -128,7 +128,7 @@ class __$$_UserModelCopyWithImpl<$Res>
     Object? profilePic = null,
     Object? isOnline = null,
     Object? phoneNumber = null,
-    Object? groupId = null,
+    Object? groups = null,
   }) {
     return _then(_$_UserModel(
       name: null == name
@@ -151,10 +151,10 @@ class __$$_UserModelCopyWithImpl<$Res>
           ? _value.phoneNumber
           : phoneNumber // ignore: cast_nullable_to_non_nullable
               as String,
-      groupId: null == groupId
-          ? _value._groupId
-          : groupId // ignore: cast_nullable_to_non_nullable
-              as List<String>,
+      groups: null == groups
+          ? _value._groups
+          : groups // ignore: cast_nullable_to_non_nullable
+              as List<Map<String, dynamic>>,
     ));
   }
 }
@@ -168,8 +168,8 @@ class _$_UserModel extends _UserModel {
       required this.profilePic,
       this.isOnline = true,
       required this.phoneNumber,
-      final List<String> groupId = const []})
-      : _groupId = groupId,
+      final List<Map<String, dynamic>> groups = const []})
+      : _groups = groups,
         super._();
 
   factory _$_UserModel.fromJson(Map<String, dynamic> json) =>
@@ -186,18 +186,18 @@ class _$_UserModel extends _UserModel {
   final bool isOnline;
   @override
   final String phoneNumber;
-  final List<String> _groupId;
+  final List<Map<String, dynamic>> _groups;
   @override
   @JsonKey()
-  List<String> get groupId {
-    if (_groupId is EqualUnmodifiableListView) return _groupId;
+  List<Map<String, dynamic>> get groups {
+    if (_groups is EqualUnmodifiableListView) return _groups;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_groupId);
+    return EqualUnmodifiableListView(_groups);
   }
 
   @override
   String toString() {
-    return 'UserModel(name: $name, uid: $uid, profilePic: $profilePic, isOnline: $isOnline, phoneNumber: $phoneNumber, groupId: $groupId)';
+    return 'UserModel(name: $name, uid: $uid, profilePic: $profilePic, isOnline: $isOnline, phoneNumber: $phoneNumber, groups: $groups)';
   }
 
   @override
@@ -213,13 +213,13 @@ class _$_UserModel extends _UserModel {
                 other.isOnline == isOnline) &&
             (identical(other.phoneNumber, phoneNumber) ||
                 other.phoneNumber == phoneNumber) &&
-            const DeepCollectionEquality().equals(other._groupId, _groupId));
+            const DeepCollectionEquality().equals(other._groups, _groups));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, name, uid, profilePic, isOnline,
-      phoneNumber, const DeepCollectionEquality().hash(_groupId));
+      phoneNumber, const DeepCollectionEquality().hash(_groups));
 
   @JsonKey(ignore: true)
   @override
@@ -242,7 +242,7 @@ abstract class _UserModel extends UserModel {
       required final String profilePic,
       final bool isOnline,
       required final String phoneNumber,
-      final List<String> groupId}) = _$_UserModel;
+      final List<Map<String, dynamic>> groups}) = _$_UserModel;
   const _UserModel._() : super._();
 
   factory _UserModel.fromJson(Map<String, dynamic> json) =
@@ -259,7 +259,7 @@ abstract class _UserModel extends UserModel {
   @override
   String get phoneNumber;
   @override
-  List<String> get groupId;
+  List<Map<String, dynamic>> get groups;
   @override
   @JsonKey(ignore: true)
   _$$_UserModelCopyWith<_$_UserModel> get copyWith =>

@@ -25,6 +25,7 @@ mixin _$ChatContact {
   String get contactId => throw _privateConstructorUsedError;
   DateTime get timeSent => throw _privateConstructorUsedError;
   String get lastMessage => throw _privateConstructorUsedError;
+  DateTime? get lastJoined => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -43,7 +44,8 @@ abstract class $ChatContactCopyWith<$Res> {
       String profilePic,
       String contactId,
       DateTime timeSent,
-      String lastMessage});
+      String lastMessage,
+      DateTime? lastJoined});
 }
 
 /// @nodoc
@@ -64,6 +66,7 @@ class _$ChatContactCopyWithImpl<$Res, $Val extends ChatContact>
     Object? contactId = null,
     Object? timeSent = null,
     Object? lastMessage = null,
+    Object? lastJoined = freezed,
   }) {
     return _then(_value.copyWith(
       name: null == name
@@ -86,6 +89,10 @@ class _$ChatContactCopyWithImpl<$Res, $Val extends ChatContact>
           ? _value.lastMessage
           : lastMessage // ignore: cast_nullable_to_non_nullable
               as String,
+      lastJoined: freezed == lastJoined
+          ? _value.lastJoined
+          : lastJoined // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
     ) as $Val);
   }
 }
@@ -103,7 +110,8 @@ abstract class _$$_ChatContactCopyWith<$Res>
       String profilePic,
       String contactId,
       DateTime timeSent,
-      String lastMessage});
+      String lastMessage,
+      DateTime? lastJoined});
 }
 
 /// @nodoc
@@ -122,6 +130,7 @@ class __$$_ChatContactCopyWithImpl<$Res>
     Object? contactId = null,
     Object? timeSent = null,
     Object? lastMessage = null,
+    Object? lastJoined = freezed,
   }) {
     return _then(_$_ChatContact(
       name: null == name
@@ -144,6 +153,10 @@ class __$$_ChatContactCopyWithImpl<$Res>
           ? _value.lastMessage
           : lastMessage // ignore: cast_nullable_to_non_nullable
               as String,
+      lastJoined: freezed == lastJoined
+          ? _value.lastJoined
+          : lastJoined // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
     ));
   }
 }
@@ -156,7 +169,8 @@ class _$_ChatContact extends _ChatContact {
       required this.profilePic,
       required this.contactId,
       required this.timeSent,
-      required this.lastMessage})
+      required this.lastMessage,
+      this.lastJoined})
       : super._();
 
   factory _$_ChatContact.fromJson(Map<String, dynamic> json) =>
@@ -172,10 +186,12 @@ class _$_ChatContact extends _ChatContact {
   final DateTime timeSent;
   @override
   final String lastMessage;
+  @override
+  final DateTime? lastJoined;
 
   @override
   String toString() {
-    return 'ChatContact(name: $name, profilePic: $profilePic, contactId: $contactId, timeSent: $timeSent, lastMessage: $lastMessage)';
+    return 'ChatContact(name: $name, profilePic: $profilePic, contactId: $contactId, timeSent: $timeSent, lastMessage: $lastMessage, lastJoined: $lastJoined)';
   }
 
   @override
@@ -191,13 +207,15 @@ class _$_ChatContact extends _ChatContact {
             (identical(other.timeSent, timeSent) ||
                 other.timeSent == timeSent) &&
             (identical(other.lastMessage, lastMessage) ||
-                other.lastMessage == lastMessage));
+                other.lastMessage == lastMessage) &&
+            (identical(other.lastJoined, lastJoined) ||
+                other.lastJoined == lastJoined));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, name, profilePic, contactId, timeSent, lastMessage);
+  int get hashCode => Object.hash(runtimeType, name, profilePic, contactId,
+      timeSent, lastMessage, lastJoined);
 
   @JsonKey(ignore: true)
   @override
@@ -219,7 +237,8 @@ abstract class _ChatContact extends ChatContact {
       required final String profilePic,
       required final String contactId,
       required final DateTime timeSent,
-      required final String lastMessage}) = _$_ChatContact;
+      required final String lastMessage,
+      final DateTime? lastJoined}) = _$_ChatContact;
   const _ChatContact._() : super._();
 
   factory _ChatContact.fromJson(Map<String, dynamic> json) =
@@ -235,6 +254,8 @@ abstract class _ChatContact extends ChatContact {
   DateTime get timeSent;
   @override
   String get lastMessage;
+  @override
+  DateTime? get lastJoined;
   @override
   @JsonKey(ignore: true)
   _$$_ChatContactCopyWith<_$_ChatContact> get copyWith =>

@@ -13,6 +13,9 @@ _$_ChatContact _$$_ChatContactFromJson(Map<String, dynamic> json) =>
       contactId: json['contactId'] as String,
       timeSent: DateTime.parse(json['timeSent'] as String),
       lastMessage: json['lastMessage'] as String,
+      lastJoined: json['lastJoined'] == null
+          ? null
+          : DateTime.parse(json['lastJoined'] as String),
     );
 
 Map<String, dynamic> _$$_ChatContactToJson(_$_ChatContact instance) =>
@@ -22,4 +25,5 @@ Map<String, dynamic> _$$_ChatContactToJson(_$_ChatContact instance) =>
       'contactId': instance.contactId,
       'timeSent': instance.timeSent.toIso8601String(),
       'lastMessage': instance.lastMessage,
+      'lastJoined': instance.lastJoined?.toIso8601String(),
     };

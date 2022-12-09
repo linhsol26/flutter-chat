@@ -5,6 +5,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:whatsapp_ui/auth/presentation/user_screen.dart';
+import 'package:whatsapp_ui/auth/shared/providers.dart';
 import 'package:whatsapp_ui/contacts/shared/providers.dart';
 import 'package:whatsapp_ui/core/presentation/theme/colors.dart';
 import 'package:whatsapp_ui/core/presentation/utils/sizes.dart';
@@ -26,10 +27,13 @@ class UsersListScreen extends HookConsumerWidget {
           final users = async.getSuccess() ?? [];
           return AnimationLimiter(
             child: GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
               itemCount: users.length,
               itemBuilder: (_, index) {
                 final user = users[index];
+
                 return AnimationConfiguration.staggeredGrid(
                   position: index,
                   columnCount: 3,
@@ -37,15 +41,25 @@ class UsersListScreen extends HookConsumerWidget {
                     child: FadeInAnimation(
                       child: GestureDetector(
                         onTap: () async {
+                          final isOnline = ref.read(userStateProvider).maybeWhen(
+                                data: (isOnline) => isOnline,
+                                orElse: () => false,
+                              );
                           showModalBottomSheet(
                               context: context,
+                              elevation: 1,
+                              shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(15),
+                                topRight: Radius.circular(15),
+                              )),
                               builder: (context) {
                                 return SafeArea(
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
-                                      gapH12,
+                                      gapH32,
                                       CircleAvatar(
                                         radius: 80,
                                         backgroundImage: Image.network(user.profilePic).image,
@@ -68,7 +82,7 @@ class UsersListScreen extends HookConsumerWidget {
                                       ),
                                       gapH12,
                                       Text(
-                                        user.isOnline
+                                        isOnline
                                             ? UserStatus.online.name.toUpperCase()
                                             : UserStatus.offline.name.toUpperCase(),
                                         style: context.sub3.copyWith(color: blackColor),
@@ -76,6 +90,7 @@ class UsersListScreen extends HookConsumerWidget {
                                       gapH12,
                                       ElevatedButton(
                                         onPressed: () {
+                                          Navigator.pop(context);
                                           context.go('/home/direct-chat', extra: user);
                                         },
                                         child: Text(

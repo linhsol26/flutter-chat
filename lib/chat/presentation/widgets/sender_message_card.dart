@@ -1,13 +1,14 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:swipeable_tile/swipeable_tile.dart';
 import 'package:whatsapp_ui/core/presentation/theme/colors.dart';
 import 'package:whatsapp_ui/core/presentation/utils/sizes.dart';
 import 'package:whatsapp_ui/core/shared/enums.dart';
 import 'package:whatsapp_ui/core/shared/extensions.dart';
 
-class SenderMessageCard extends StatelessWidget {
+class SenderMessageCard extends HookConsumerWidget {
   const SenderMessageCard({
     Key? key,
     required this.message,
@@ -27,7 +28,7 @@ class SenderMessageCard extends StatelessWidget {
   final MessageType repliedMessageType;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isReplying = repliedText.isNotEmpty;
     return SwipeableTile.swipeToTrigger(
       isElevated: false,
@@ -124,7 +125,7 @@ class SenderMessageCard extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(right: 16.0),
+                padding: const EdgeInsets.only(right: 16.0, bottom: 4.0),
                 child: Text(date,
                     style: context.sub1.copyWith(
                       fontSize: 10,

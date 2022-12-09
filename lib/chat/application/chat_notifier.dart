@@ -12,13 +12,15 @@ class ChatNotifier extends StateNotifier<AsyncValue<void>> {
   final ChatRepository _repo;
   final AuthRepository _auth;
 
-  Future<void> sendTextMessage(String text, String receiverId, [MessageReply? mesasgeReply]) async {
+  Future<void> sendTextMessage(String text, String receiverId, bool isGroup,
+      [MessageReply? mesasgeReply]) async {
     state = const AsyncLoading();
     final senderUser = await _auth.currentUserData;
     final result = await _repo.sendTextMsg(
       message: text,
       receiverUserId: receiverId,
       senderUser: senderUser!,
+      isGroup: isGroup,
       messageReply: mesasgeReply,
     );
 
@@ -30,7 +32,7 @@ class ChatNotifier extends StateNotifier<AsyncValue<void>> {
         (success) => const AsyncData(null));
   }
 
-  Future<void> sendFileMessage(File file, String receiverId, MessageType messageType,
+  Future<void> sendFileMessage(File file, String receiverId, MessageType messageType, bool isGroup,
       [MessageReply? mesasgeReply]) async {
     state = const AsyncLoading();
     final sender = await _auth.currentUserData;
@@ -39,6 +41,7 @@ class ChatNotifier extends StateNotifier<AsyncValue<void>> {
       receiverUid: receiverId,
       sender: sender!,
       messageType: messageType,
+      isGroup: isGroup,
       messageReply: mesasgeReply,
     );
 
@@ -50,7 +53,7 @@ class ChatNotifier extends StateNotifier<AsyncValue<void>> {
         (success) => const AsyncData(null));
   }
 
-  Future<void> sendGifMessage(String gifUrl, String receiverId,
+  Future<void> sendGifMessage(String gifUrl, String receiverId, bool isGroup,
       [MessageReply? mesasgeReply]) async {
     state = const AsyncLoading();
     final senderUser = await _auth.currentUserData;
@@ -61,6 +64,7 @@ class ChatNotifier extends StateNotifier<AsyncValue<void>> {
       message: newGifUrl,
       receiverUserId: receiverId,
       senderUser: senderUser!,
+      isGroup: isGroup,
       messageReply: mesasgeReply,
     );
 
@@ -77,4 +81,9 @@ class ChatNotifier extends StateNotifier<AsyncValue<void>> {
     required String messageId,
   }) async =>
       await _repo.setSeen(receiverId: receiverId, messageId: messageId);
+
+  Future<void> setJoinedChat({
+    required String receiverId,
+  }) async =>
+      await _repo.setJoinedChat(receiverId: receiverId);
 }

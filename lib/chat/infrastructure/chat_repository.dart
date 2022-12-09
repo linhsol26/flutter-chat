@@ -6,6 +6,7 @@ import 'package:multiple_result/multiple_result.dart';
 import 'package:uuid/uuid.dart';
 import 'package:whatsapp_ui/auth/domain/user_model.dart';
 import 'package:whatsapp_ui/auth/infrastructure/auth_repository.dart';
+import 'package:whatsapp_ui/auth/presentation/user_screen.dart';
 import 'package:whatsapp_ui/chat/domain/chat_contact.dart';
 import 'package:whatsapp_ui/chat/domain/message.dart';
 import 'package:whatsapp_ui/chat/domain/message_reply.dart';
@@ -13,6 +14,7 @@ import 'package:whatsapp_ui/core/domain/failure.dart';
 import 'package:whatsapp_ui/core/infrastructure/collection_path.dart';
 import 'package:whatsapp_ui/core/shared/enums.dart';
 import 'package:whatsapp_ui/core/shared/extensions.dart';
+import 'package:whatsapp_ui/group/domain/group_model.dart';
 
 class ChatRepository {
   final FirebaseFirestore _firestore;
@@ -25,26 +27,33 @@ class ChatRepository {
     required String message,
     required String receiverUserId,
     required UserModel senderUser,
+    required bool isGroup,
     required MessageReply? messageReply,
   }) async {
     try {
       final timeSent = DateTime.now();
-      final receiverUser = await _firestore
-          .collection(CollectionPath.users)
-          .doc(receiverUserId)
-          .get()
-          .then((info) => UserModel.fromJson(info.data()!));
+      UserModel? receiverUser;
+
+      if (!isGroup) {
+        receiverUser = await _firestore
+            .collection(CollectionPath.users)
+            .doc(receiverUserId)
+            .get()
+            .then((info) => UserModel.fromJson(info.data()!));
+      }
 
       await _saveDataToContactSubCollection(
         senderUser: senderUser,
         receiverUser: receiverUser,
         text: message,
         timeSent: timeSent,
+        isGroup: isGroup,
+        receiverUserId: receiverUserId,
       );
 
       await _saveMessageToMessageSubCollection(
         receiverUserId: receiverUserId,
-        receiverUsername: receiverUser.name,
+        receiverUsername: receiverUser?.name ?? '',
         text: message,
         timeSent: timeSent,
         messageType: MessageType.text,
@@ -52,6 +61,7 @@ class ChatRepository {
         messageId: const Uuid().v1(),
         messageReply: messageReply,
         senderUsername: senderUser.name,
+        isGroup: isGroup,
       );
       return const Success(true);
     } on SocketException {
@@ -63,39 +73,59 @@ class ChatRepository {
 
   Future<void> _saveDataToContactSubCollection({
     required UserModel senderUser,
-    required UserModel receiverUser,
+    required UserModel? receiverUser,
     required String text,
     required DateTime timeSent,
+    required bool isGroup,
+    required String receiverUserId,
   }) async {
-    final receiverChatContact = ChatContact(
-      name: senderUser.name,
-      profilePic: senderUser.profilePic,
-      contactId: senderUser.uid,
-      timeSent: timeSent,
-      lastMessage: text,
-    );
+    if (isGroup) {
+      await _firestore.collection(CollectionPath.groups).doc(receiverUserId).update({
+        'senderId': senderUser.uid,
+        'lastMessage': text,
+        'timeSent': timeSent.toString(),
+      });
+    } else {
+      final lastJoined = await _firestore
+          .collection(CollectionPath.users)
+          .doc(receiverUserId)
+          .collection(CollectionPath.chats)
+          .doc(_auth.currentUser?.uid)
+          .get()
+          .then((value) => ChatContact.fromJson(value.data()!).lastJoined);
 
-    await _firestore
-        .collection(CollectionPath.users)
-        .doc(receiverUser.uid)
-        .collection(CollectionPath.chats)
-        .doc(_auth.currentUser?.uid)
-        .set(receiverChatContact.toJson());
+      final receiverChatContact = ChatContact(
+        name: senderUser.name,
+        profilePic: senderUser.profilePic,
+        contactId: senderUser.uid,
+        timeSent: timeSent,
+        lastMessage: text,
+        lastJoined: lastJoined,
+      );
 
-    final senderChatContact = ChatContact(
-      name: receiverUser.name,
-      profilePic: receiverUser.profilePic,
-      contactId: receiverUser.uid,
-      timeSent: timeSent,
-      lastMessage: text,
-    );
+      await _firestore
+          .collection(CollectionPath.users)
+          .doc(receiverUserId)
+          .collection(CollectionPath.chats)
+          .doc(_auth.currentUser?.uid)
+          .set(receiverChatContact.toJson());
 
-    await _firestore
-        .collection(CollectionPath.users)
-        .doc(_auth.currentUser?.uid)
-        .collection(CollectionPath.chats)
-        .doc(receiverUser.uid)
-        .set(senderChatContact.toJson());
+      final senderChatContact = ChatContact(
+        name: receiverUser?.name ?? '',
+        profilePic: receiverUser?.profilePic ?? defaultAvatar,
+        contactId: receiverUserId,
+        timeSent: timeSent,
+        lastMessage: text,
+        lastJoined: timeSent,
+      );
+
+      await _firestore
+          .collection(CollectionPath.users)
+          .doc(_auth.currentUser?.uid)
+          .collection(CollectionPath.chats)
+          .doc(receiverUser?.uid)
+          .set(senderChatContact.toJson());
+    }
   }
 
   Future<void> _saveMessageToMessageSubCollection({
@@ -108,6 +138,7 @@ class ChatRepository {
     required DateTime timeSent,
     required MessageReply? messageReply,
     required String senderUsername,
+    required bool isGroup,
   }) async {
     final senderId = _auth.currentUser!.uid;
     final message = Message(
@@ -127,25 +158,35 @@ class ChatRepository {
       repliedMessageType: messageReply?.messageType ?? MessageType.text,
     );
 
-    /// Save to [sender]
-    await _firestore
-        .collection(CollectionPath.users)
-        .doc(senderId)
-        .collection(CollectionPath.chats)
-        .doc(receiverUserId)
-        .collection(CollectionPath.messages)
-        .doc(messageId)
-        .set(message.toJson());
+    if (isGroup) {
+      // groups -> group id -> chat -> message
+      await _firestore
+          .collection(CollectionPath.groups)
+          .doc(receiverUserId)
+          .collection(CollectionPath.chats)
+          .doc(messageId)
+          .set(message.toJson());
+    } else {
+      /// Save to [sender]
+      await _firestore
+          .collection(CollectionPath.users)
+          .doc(senderId)
+          .collection(CollectionPath.chats)
+          .doc(receiverUserId)
+          .collection(CollectionPath.messages)
+          .doc(messageId)
+          .set(message.toJson());
 
-    /// Save to [receiver]
-    await _firestore
-        .collection(CollectionPath.users)
-        .doc(receiverUserId)
-        .collection(CollectionPath.chats)
-        .doc(senderId)
-        .collection(CollectionPath.messages)
-        .doc(messageId)
-        .set(message.toJson());
+      /// Save to [receiver]
+      await _firestore
+          .collection(CollectionPath.users)
+          .doc(receiverUserId)
+          .collection(CollectionPath.chats)
+          .doc(senderId)
+          .collection(CollectionPath.messages)
+          .doc(messageId)
+          .set(message.toJson());
+    }
   }
 
   Stream<List<ChatContact>> getChatContacts() {
@@ -153,6 +194,7 @@ class ChatRepository {
         .collection(CollectionPath.users)
         .doc(_auth.currentUser!.uid)
         .collection(CollectionPath.chats)
+        .orderBy('timeSent', descending: true)
         .snapshots()
         .asyncMap((snapshot) async {
       List<ChatContact> chatContacts = [];
@@ -165,14 +207,31 @@ class ChatRepository {
         final user = UserModel.fromJson(userData.data()!);
 
         chatContacts.add(ChatContact(
-            name: user.name,
-            profilePic: user.profilePic,
-            contactId: chatContact.contactId,
-            timeSent: chatContact.timeSent,
-            lastMessage: chatContact.lastMessage));
+          name: user.name,
+          profilePic: user.profilePic,
+          contactId: chatContact.contactId,
+          timeSent: chatContact.timeSent,
+          lastMessage: chatContact.lastMessage,
+          lastJoined: chatContact.lastJoined,
+        ));
       }
 
       return chatContacts;
+    });
+  }
+
+  Stream<List<GroupModel>> getChatGroups() {
+    return _firestore
+        .collection(CollectionPath.groups)
+        .where('memberIds', arrayContains: _auth.currentUser!.uid)
+        .orderBy('timeSent', descending: true)
+        .snapshots()
+        .map((snapshot) {
+      List<GroupModel> groups = [];
+      for (var group in snapshot.docs) {
+        groups.add(GroupModel.fromJson(group.data()));
+      }
+      return groups;
     });
   }
 
@@ -185,7 +244,25 @@ class ChatRepository {
         .collection(CollectionPath.messages)
         .orderBy('timeSent')
         .snapshots()
-        .map((snapshot) {
+        .asyncMap((snapshot) {
+      List<Message> messages = [];
+
+      for (var msg in snapshot.docs) {
+        messages.add(Message.fromJson(msg.data()));
+      }
+
+      return messages.reversed.toList();
+    });
+  }
+
+  Stream<List<Message>> getGroupMessages(String groupId) {
+    return _firestore
+        .collection(CollectionPath.groups)
+        .doc(groupId)
+        .collection(CollectionPath.chats)
+        .orderBy('timeSent')
+        .snapshots()
+        .asyncMap((snapshot) {
       List<Message> messages = [];
 
       for (var msg in snapshot.docs) {
@@ -201,6 +278,7 @@ class ChatRepository {
     required String receiverUid,
     required UserModel sender,
     required MessageType messageType,
+    required bool isGroup,
     required MessageReply? messageReply,
   }) async {
     try {
@@ -210,17 +288,22 @@ class ChatRepository {
 
       final imgUrl = await _authRepository.storeFileToFirebase(ref, file);
 
-      final receiver = await _firestore
-          .collection(CollectionPath.users)
-          .doc(receiverUid)
-          .get()
-          .then((data) => UserModel.fromJson(data.data()!));
+      UserModel? receiver;
+      if (!isGroup) {
+        receiver = await _firestore
+            .collection(CollectionPath.users)
+            .doc(receiverUid)
+            .get()
+            .then((data) => UserModel.fromJson(data.data()!));
+      }
 
       await _saveDataToContactSubCollection(
         senderUser: sender,
         receiverUser: receiver,
         text: messageType.convert,
         timeSent: timeSent,
+        isGroup: isGroup,
+        receiverUserId: receiverUid,
       );
 
       await _saveMessageToMessageSubCollection(
@@ -228,11 +311,12 @@ class ChatRepository {
         text: imgUrl,
         messageId: messageId,
         username: sender.name,
-        receiverUsername: receiver.name,
+        receiverUsername: receiver?.name ?? '',
         messageType: messageType,
         timeSent: timeSent,
         messageReply: messageReply,
         senderUsername: sender.name,
+        isGroup: isGroup,
       );
 
       return const Success(null);
@@ -240,46 +324,6 @@ class ChatRepository {
       return const Error(Failure.noConnection());
     } on FirebaseException catch (e) {
       return Error(Failure(msg: e.message));
-    }
-  }
-
-  Future<Result<Failure, bool>> sendGifMsg({
-    required String gifUrl,
-    required String receiverUserId,
-    required UserModel senderUser,
-    required MessageReply? messageReply,
-  }) async {
-    try {
-      final timeSent = DateTime.now();
-      final receiverUser = await _firestore
-          .collection(CollectionPath.users)
-          .doc(receiverUserId)
-          .get()
-          .then((info) => UserModel.fromJson(info.data()!));
-
-      await _saveDataToContactSubCollection(
-        senderUser: senderUser,
-        receiverUser: receiverUser,
-        text: 'GIF',
-        timeSent: timeSent,
-      );
-
-      await _saveMessageToMessageSubCollection(
-        receiverUserId: receiverUserId,
-        receiverUsername: receiverUser.name,
-        text: gifUrl,
-        timeSent: timeSent,
-        messageType: MessageType.gif,
-        username: senderUser.name,
-        messageId: const Uuid().v1(),
-        messageReply: messageReply,
-        senderUsername: senderUser.name,
-      );
-      return const Success(true);
-    } on SocketException {
-      return const Error(Failure.noConnection());
-    } catch (e) {
-      return Error(Failure(msg: e.toString()));
     }
   }
 
@@ -309,6 +353,27 @@ class ChatRepository {
           .collection(CollectionPath.messages)
           .doc(messageId)
           .update({'isSeen': true});
+
+      return const Success(null);
+    } on SocketException {
+      return const Error(Failure.noConnection());
+    } catch (e) {
+      return Error(Failure(msg: e.toString()));
+    }
+  }
+
+  Future<Result<Failure, void>> setJoinedChat({
+    required String receiverId,
+  }) async {
+    try {
+      final userId = _auth.currentUser!.uid;
+
+      await _firestore
+          .collection(CollectionPath.users)
+          .doc(userId)
+          .collection(CollectionPath.chats)
+          .doc(receiverId)
+          .update({'lastJoined': DateTime.now().toString()});
 
       return const Success(null);
     } on SocketException {

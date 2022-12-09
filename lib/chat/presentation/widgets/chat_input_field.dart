@@ -9,10 +9,15 @@ import 'package:whatsapp_ui/core/presentation/utils/files.dart';
 import 'package:whatsapp_ui/core/shared/enums.dart';
 
 class ChatInputField extends HookConsumerWidget {
-  const ChatInputField({Key? key, required this.receiverId, required this.callback})
-      : super(key: key);
+  const ChatInputField({
+    Key? key,
+    required this.receiverId,
+    required this.callback,
+    this.isGroup = false,
+  }) : super(key: key);
 
   final String receiverId;
+  final bool isGroup;
   final VoidCallback callback;
 
   @override
@@ -69,10 +74,13 @@ class ChatInputField extends HookConsumerWidget {
                                     image,
                                     receiverId,
                                     MessageType.image,
+                                    isGroup,
                                     messageReply,
                                   );
 
                               ref.read(messageReplyProvider.notifier).state = null;
+
+                              callback.call();
                             }
                           },
                           icon: const Icon(Icons.camera_alt, color: Colors.grey),
@@ -85,10 +93,13 @@ class ChatInputField extends HookConsumerWidget {
                                     video,
                                     receiverId,
                                     MessageType.image,
+                                    isGroup,
                                     messageReply,
                                   );
 
                               ref.read(messageReplyProvider.notifier).state = null;
+
+                              callback.call();
                             }
                           },
                           icon: const Icon(Icons.attach_file, color: Colors.grey),
@@ -112,13 +123,14 @@ class ChatInputField extends HookConsumerWidget {
               padding: const EdgeInsets.fromLTRB(8, 0, 8, 2),
               child: CircleAvatar(
                 radius: 25,
-                backgroundColor: const Color(0xFF128C73),
+                backgroundColor: primaryColor,
                 child: IconButton(
                     onPressed: () async {
                       if (showSend) {
                         ref.read(chatNotifierProvider.notifier).sendTextMessage(
                               messageController.text.trim(),
                               receiverId,
+                              isGroup,
                               messageReply,
                             );
 

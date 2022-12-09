@@ -13,6 +13,10 @@ import 'package:whatsapp_ui/chat/presentation/chat_screen.dart';
 import 'package:whatsapp_ui/contacts/presentation/users_list_screen.dart';
 import 'package:whatsapp_ui/core/presentation/home_screen.dart';
 import 'package:whatsapp_ui/core/presentation/not_found_screen.dart';
+import 'package:whatsapp_ui/group/domain/group_model.dart';
+import 'package:whatsapp_ui/group/presentation/create_group_screen.dart';
+import 'package:whatsapp_ui/group/presentation/edit_group_screen.dart';
+import 'package:whatsapp_ui/group/presentation/group_screen.dart';
 import 'package:whatsapp_ui/landing/presentation/landing_screen.dart';
 import 'package:whatsapp_ui/routing/go_router_refresh_stream.dart';
 import 'package:whatsapp_ui/status/domain/status_model.dart';
@@ -26,11 +30,14 @@ enum AppRoute {
   user,
   contacts,
   dicrectChat,
+  groupChat,
   users,
   contactUserWrapper,
   status,
   confirmStatus,
   statusView,
+  editGroup,
+  createGroup,
 }
 
 final goRouterProvider = Provider<GoRouter>((ref) {
@@ -118,6 +125,27 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 builder: (context, state) => ChatScreen(
                   user: state.extra as UserModel,
                 ),
+              ),
+              GoRoute(
+                path: 'group-chat',
+                name: AppRoute.groupChat.name,
+                builder: (context, state) => GroupScreen(
+                  group: state.extra as GroupModel,
+                ),
+                routes: [
+                  GoRoute(
+                    path: 'edit',
+                    name: AppRoute.editGroup.name,
+                    builder: (context, state) => EditGroupScreen(
+                      group: state.extra as GroupModel,
+                    ),
+                  ),
+                ],
+              ),
+              GoRoute(
+                path: 'create-group',
+                name: AppRoute.createGroup.name,
+                builder: (context, state) => const CreateGroupScreen(),
               ),
             ],
           ),

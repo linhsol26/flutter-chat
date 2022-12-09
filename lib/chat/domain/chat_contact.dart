@@ -12,6 +12,7 @@ class ChatContact with _$ChatContact {
     required String contactId,
     required DateTime timeSent,
     required String lastMessage,
+    DateTime? lastJoined,
   }) = _ChatContact;
 
   factory ChatContact.fromJson(Map<String, dynamic> json) => _$ChatContactFromJson(json);

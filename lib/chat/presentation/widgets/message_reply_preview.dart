@@ -28,7 +28,9 @@ class MessageReplyPreview extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  messageReply?.isMe ?? false ? 'Replying to yourself' : 'Replying to Other',
+                  messageReply?.isMe ?? false
+                      ? 'Replying to yourself'
+                      : 'Replying to ${messageReply?.username}',
                   style: context.sub1.copyWith(fontWeight: FontWeight.w500),
                 ),
                 gapH4,

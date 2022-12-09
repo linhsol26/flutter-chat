@@ -18,6 +18,12 @@ class AuthRepository {
 
   Stream<User?> authStateChanges() => _auth.authStateChanges();
 
+  Stream<bool> userState() => _firestore
+      .collection(CollectionPath.users)
+      .doc(_auth.currentUser!.uid)
+      .snapshots()
+      .map((snapshot) => UserModel.fromJson(snapshot.data()!).isOnline);
+
   User? get currentUser => _auth.currentUser;
 
   Future<UserModel?> get currentUserData async {
@@ -25,6 +31,12 @@ class AuthRepository {
         await _firestore.collection(CollectionPath.users).doc(currentUser?.uid ?? '').get();
 
     return user.data() != null ? UserModel.fromJson(user.data()!) : null;
+  }
+
+  Stream<UserModel?> get currentUserDataStream {
+    return _firestore.collection(CollectionPath.users).doc(currentUser?.uid ?? '').snapshots().map(
+          (user) => user.data() != null ? UserModel.fromJson(user.data()!) : null,
+        );
   }
 
   Future<Result<Failure, void>> signInWithEmailPassword(String email, String password) async {
@@ -61,7 +73,7 @@ class AuthRepository {
         uid: uid!,
         profilePic: imgPath ?? defaultAvatar,
         phoneNumber: phoneNumber,
-        groupId: [],
+        groups: [],
       );
 
       await _firestore.collection(CollectionPath.users).doc(uid).set(user.toJson());
