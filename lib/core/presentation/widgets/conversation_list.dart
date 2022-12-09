@@ -34,33 +34,27 @@ class ConversationList extends HookConsumerWidget {
         children: [
           statusAsync.maybeWhen(
             data: (stories) {
+              if (stories.isEmpty) {
+                return const SizedBox.shrink();
+              }
               return SizedBox(
                 height: 100,
                 child: AdvStory(
-                    storyCount: stories.length + 1,
+                    storyCount: stories.length,
                     storyBuilder: (index) {
-                      if (index == 0) {
-                        return Story(
-                          contentCount: 0,
-                          contentBuilder: (contentIndex) => SimpleCustomContent(
-                            builder: (_) => const CustomErrorWidget(),
+                      return Story(
+                        contentCount: stories[index].photoUrl.length,
+                        contentBuilder: (contentIndex) => ImageContent(
+                          cacheKey: stories[index].statusId,
+                          header: Text(
+                            stories[index].username,
+                            style: context.h1.copyWith(color: textColor),
                           ),
-                        );
-                      } else {
-                        return Story(
-                          contentCount: stories[index - 1].photoUrl.length,
-                          contentBuilder: (contentIndex) => ImageContent(
-                            cacheKey: stories[index - 1].statusId,
-                            header: Text(
-                              stories[index - 1].username,
-                              style: context.h1.copyWith(color: textColor),
-                            ),
-                            duration: const Duration(seconds: 3),
-                            url: stories[index - 1].photoUrl[contentIndex],
-                            errorBuilder: () => const CustomErrorWidget(),
-                          ),
-                        );
-                      }
+                          duration: const Duration(seconds: 3),
+                          url: stories[index].photoUrl[contentIndex],
+                          errorBuilder: () => const CustomErrorWidget(),
+                        ),
+                      );
                     },
                     trayBuilder: (index) => AdvStoryTray(
                           size: const Size(60, 60),

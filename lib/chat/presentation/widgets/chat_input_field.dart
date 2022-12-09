@@ -1,4 +1,3 @@
-import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -22,46 +21,26 @@ class ChatInputField extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final showEmoji = useValueNotifier(false);
     final focusNode = useFocusNode();
     final messageController = useTextEditingController();
-
-    final showSend =
-        useListenableSelector(messageController, () => messageController.text.isNotEmpty);
 
     final messageReply = ref.watch(messageReplyProvider);
 
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         messageReply != null ? const MessageReplyPreview() : const SizedBox.shrink(),
         Row(
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8, 0, 8, 2),
-              child: CircleAvatar(
-                backgroundColor: primaryColor,
-                child: IconButton(
-                  onPressed: () {
-                    showEmoji.value = !showEmoji.value;
-
-                    if (showEmoji.value) {
-                      focusNode.unfocus();
-                    } else {
-                      focusNode.requestFocus();
-                    }
-                  },
-                  icon: const Icon(Icons.emoji_emotions, color: Colors.white),
-                ),
-              ),
-            ),
             Expanded(
               child: TextFormField(
                 focusNode: focusNode,
                 controller: messageController,
                 decoration: InputDecoration(
+                  isCollapsed: true,
                   filled: true,
                   fillColor: whiteColor,
-                  suffixIcon: SizedBox(
+                  prefixIcon: SizedBox(
                     width: 100,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -115,7 +94,7 @@ class ChatInputField extends HookConsumerWidget {
                       style: BorderStyle.none,
                     ),
                   ),
-                  contentPadding: const EdgeInsets.all(10),
+                  contentPadding: const EdgeInsets.all(12),
                 ),
               ),
             ),
@@ -126,41 +105,22 @@ class ChatInputField extends HookConsumerWidget {
                 backgroundColor: primaryColor,
                 child: IconButton(
                     onPressed: () async {
-                      if (showSend) {
-                        ref.read(chatNotifierProvider.notifier).sendTextMessage(
-                              messageController.text.trim(),
-                              receiverId,
-                              isGroup,
-                              messageReply,
-                            );
+                      ref.read(chatNotifierProvider.notifier).sendTextMessage(
+                            messageController.text.trim(),
+                            receiverId,
+                            isGroup,
+                            messageReply,
+                          );
 
-                        callback.call();
-                        messageController.clear();
-                        ref.read(messageReplyProvider.notifier).state = null;
-                      }
+                      callback.call();
+                      messageController.clear();
+                      ref.read(messageReplyProvider.notifier).state = null;
                     },
-                    icon: Icon(
-                      showSend ? Icons.send : Icons.mic,
-                      color: Colors.white,
-                    )),
+                    icon: const Icon(Icons.send_rounded, color: Colors.white)),
               ),
             ),
           ],
         ),
-        ValueListenableBuilder<bool>(
-            valueListenable: showEmoji,
-            builder: (context, isShow, _) {
-              return isShow
-                  ? SizedBox(
-                      height: 310,
-                      child: EmojiPicker(
-                        onEmojiSelected: (category, emoji) {
-                          messageController.text = messageController.text + emoji.emoji;
-                        },
-                      ),
-                    )
-                  : const SizedBox.shrink();
-            }),
       ],
     );
   }

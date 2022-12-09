@@ -49,17 +49,15 @@ class AvatarWidget extends StatelessWidget {
           ),
           if (type == AvatarType.plus)
             const Positioned(
-              bottom: 2.5,
               right: 0,
               child: Icon(
                 CupertinoIcons.plus_circle_fill,
-                color: Colors.white,
+                color: Colors.grey,
                 size: 18.0,
               ),
             ),
           if (isActive)
             const Positioned(
-              bottom: 2.5,
               right: 0,
               child: CircleAvatar(
                 backgroundColor: Colors.green,

@@ -62,11 +62,8 @@ class LoginScreen extends HookConsumerWidget {
                 children: [
                   Expanded(
                     flex: 2,
-                    child: Hero(
-                      tag: const ValueKey('logo'),
-                      child: Lottie.network(
-                          'https://assets6.lottiefiles.com/packages/lf20_ZsoSL7RsIe.json'),
-                    ),
+                    child: Lottie.network(
+                        'https://assets6.lottiefiles.com/packages/lf20_ZsoSL7RsIe.json'),
                   ),
                   Expanded(
                       flex: 2,

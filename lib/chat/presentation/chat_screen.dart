@@ -23,6 +23,7 @@ class ChatScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final scrollController = useScrollController();
+    final showEmoji = useValueNotifier(false);
 
     final foundUser = ref.watch(getUserByIdProvider(user.uid));
 

@@ -22,11 +22,8 @@ class LandingScreen extends HookConsumerWidget {
           child: Column(
             children: [
               Expanded(
-                child: Hero(
-                  tag: const ValueKey('logo'),
-                  child: Lottie.network(
-                      'https://assets6.lottiefiles.com/packages/lf20_ZsoSL7RsIe.json'),
-                ),
+                child:
+                    Lottie.network('https://assets6.lottiefiles.com/packages/lf20_ZsoSL7RsIe.json'),
               ),
               const Text.rich(
                 TextSpan(
@@ -73,7 +70,7 @@ class LandingScreen extends HookConsumerWidget {
                       ),
                     ),
                   ),
-                  action: () => context.goNamed(AppRoute.login.name),
+                  action: () => context.replaceNamed(AppRoute.login.name),
                 ),
               gapH32,
             ],

@@ -147,4 +147,65 @@ class GroupRepository {
       return Error(Failure(msg: e.toString()));
     }
   }
+
+  Future<Result<Failure, void>> updateGroupName({
+    required String name,
+    required String groupId,
+  }) async {
+    try {
+      await _firestore.collection(CollectionPath.groups).doc(groupId).update({
+        'name': name,
+      });
+
+      return const Success(null);
+    } on SocketException {
+      return const Error(Failure.noConnection());
+    } catch (e) {
+      return Error(Failure(msg: e.toString()));
+    }
+  }
+
+  Stream<GroupModel> getGroupById({
+    required String groupId,
+  }) {
+    return _firestore
+        .collection(CollectionPath.groups)
+        .doc(groupId)
+        .snapshots()
+        .map((event) => GroupModel.fromJson(event.data()!));
+  }
+
+  Future<Result<Failure, void>> addMembers({
+    required String groupId,
+    required List<String> currentMemberIds,
+    required List<UserModel> selectedUsers,
+  }) async {
+    try {
+      final memberIds = [...currentMemberIds, ...selectedUsers.map((e) => e.uid).toList()];
+
+      await _firestore.collection(CollectionPath.groups).doc(groupId).update({
+        'memberIds': memberIds,
+      });
+
+      for (var id in memberIds) {
+        final groups = await _firestore
+            .collection(CollectionPath.users)
+            .doc(id)
+            .get()
+            .then((userInfo) => UserModel.fromJson(userInfo.data()!).groups);
+        await _firestore.collection(CollectionPath.users).doc(id).update({
+          'groups': [
+            {'id': groupId, 'lastJoined': DateTime.now().toString()},
+            ...groups
+          ]
+        });
+      }
+
+      return const Success(null);
+    } on FirebaseException catch (e) {
+      return Error(Failure(msg: e.message));
+    } on SocketException {
+      return const Error(Failure.noConnection());
+    }
+  }
 }

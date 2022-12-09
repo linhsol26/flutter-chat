@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:whatsapp_ui/auth/presentation/user_screen.dart';
 import 'package:whatsapp_ui/contacts/shared/providers.dart';
 import 'package:whatsapp_ui/core/presentation/snackbar/snackbar.dart';
 import 'package:whatsapp_ui/core/presentation/theme/colors.dart';
 import 'package:whatsapp_ui/core/presentation/utils/sizes.dart';
+import 'package:whatsapp_ui/core/presentation/widgets/avatar_widget.dart';
 import 'package:whatsapp_ui/core/presentation/widgets/error_widget.dart';
 import 'package:whatsapp_ui/core/presentation/widgets/loading_widget.dart';
 import 'package:whatsapp_ui/core/shared/extensions.dart';
@@ -54,16 +54,13 @@ class ContactsScreen extends HookConsumerWidget {
                           shape: const RoundedRectangleBorder(),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              CircleAvatar(
-                                backgroundImage: contact.photo != null
-                                    ? MemoryImage(contact.photo!)
-                                    : Image.network(defaultAvatar,
-                                        loadingBuilder: (_, __, ___) =>
-                                            const CircularProgressIndicator()).image,
-                                radius: 30,
-                              ),
+                              contact.photo != null
+                                  ? CircleAvatar(
+                                      backgroundImage: MemoryImage(contact.photo!),
+                                      radius: 28,
+                                    )
+                                  : const AvatarWidget(),
                               gapH12,
                               Text(
                                 contact.displayName,

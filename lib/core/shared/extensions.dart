@@ -24,7 +24,7 @@ extension UIThemeEx on BuildContext {
 extension ResultHandler<T> on Result<Failure, T> {
   T? success(BuildContext context) {
     if (isSuccess()) {
-      return getSuccess()!;
+      return getSuccess();
     } else {
       getError()!.show(context);
     }

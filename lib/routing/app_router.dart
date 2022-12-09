@@ -73,7 +73,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: 'user',
             name: AppRoute.user.name,
-            builder: (context, state) => const UserScreen(),
+            builder: (context, state) => UserScreen(
+                type: state.extra != null ? state.extra as UserScreenType : UserScreenType.create),
           ),
           GoRoute(
             path: 'status',

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:whatsapp_ui/contacts/presentation/contacts_screen.dart';
 import 'package:whatsapp_ui/contacts/presentation/users_list_screen.dart';
-import 'package:whatsapp_ui/core/presentation/utils/sizes.dart';
 
 class ContactUserWrapper extends HookConsumerWidget {
   const ContactUserWrapper({super.key});
@@ -11,11 +10,15 @@ class ContactUserWrapper extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Column(
+      child: ListView(
+        shrinkWrap: true,
+        physics: const ScrollPhysics(),
         children: const [
           Expanded(child: UsersListScreen()),
-          Text('From yours contacts'),
-          gapH16,
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 16),
+            child: Text('From yours contacts'),
+          ),
           Expanded(child: ContactsScreen()),
         ],
       ),

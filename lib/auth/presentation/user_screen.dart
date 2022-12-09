@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
@@ -19,23 +20,34 @@ import 'package:whatsapp_ui/routing/app_router.dart';
 const defaultAvatar =
     'https://png.pngitem.com/pimgs/s/649-6490124_katie-notopoulos-katienotopoulos-i-write-about-tech-round.png';
 
+enum UserScreenType { edit, create }
+
 class UserScreen extends HookConsumerWidget with DismissKeyboard {
-  const UserScreen({super.key});
+  const UserScreen({super.key, this.type = UserScreenType.create});
+
+  final UserScreenType type;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final image = useState<File?>(null);
     final btnCtrl = useMemoized(() => RoundedLoadingButtonController());
     final formKey = useMemoized(() => GlobalKey<FormState>());
-    final nameCtrl = useTextEditingController();
-    final phoneCtrl = useTextEditingController();
 
+    final user =
+        ref.watch(currentUserStreamProvider).maybeWhen(data: (user) => user, orElse: () => null);
+
+    final nameCtrl = useTextEditingController(
+        text: type == UserScreenType.edit && user != null ? user.name : null);
+    final phoneCtrl = useTextEditingController(
+        text: type == UserScreenType.edit && user != null ? user.phoneNumber : null);
     ref.listen<AsyncValue>(authNotifierProvider, (_, state) {
       state.maybeWhen(
-        data: (_) {
+        data: (_) async {
           btnCtrl.success();
-          showSuccess(context);
-          context.pushNamed(AppRoute.home.name);
+          if (type != UserScreenType.edit) {
+            showSuccess(context);
+            context.pushNamed(AppRoute.home.name);
+          }
         },
         error: (error, stackTrace) {
           (error as Failure).show(context);
@@ -48,7 +60,19 @@ class UserScreen extends HookConsumerWidget with DismissKeyboard {
     return GestureDetector(
       onTap: () => dismiss(),
       child: Scaffold(
-        // backgroundColor: backgroundLightColor,
+        appBar: type == UserScreenType.edit
+            ? AppBar(
+                backgroundColor: whiteColor,
+                automaticallyImplyLeading: false,
+                titleSpacing: 0,
+                elevation: 0.2,
+                title: Text('Edit profile', style: context.sub3.copyWith(fontSize: 24)),
+                leading: IconButton(
+                  onPressed: () => context.pop(),
+                  icon: const Icon(Icons.arrow_back_outlined),
+                ),
+              )
+            : null,
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -60,15 +84,21 @@ class UserScreen extends HookConsumerWidget with DismissKeyboard {
                   children: [
                     Stack(
                       children: [
-                        image.value == null
-                            ? const CircleAvatar(
-                                backgroundImage: NetworkImage(defaultAvatar),
-                                radius: 58,
-                              )
-                            : CircleAvatar(
-                                backgroundImage: FileImage(image.value!),
-                                radius: 58,
-                              ),
+                        if (type == UserScreenType.edit && user != null)
+                          CircleAvatar(
+                            backgroundImage: NetworkImage(user.profilePic),
+                            radius: 58,
+                          )
+                        else
+                          image.value == null
+                              ? const CircleAvatar(
+                                  backgroundImage: NetworkImage(defaultAvatar),
+                                  radius: 58,
+                                )
+                              : CircleAvatar(
+                                  backgroundImage: FileImage(image.value!),
+                                  radius: 58,
+                                ),
                         Positioned(
                           bottom: -10,
                           left: 80,
@@ -76,7 +106,9 @@ class UserScreen extends HookConsumerWidget with DismissKeyboard {
                             onPressed: () async {
                               image.value = await pickImageFromGallery(context);
                             },
-                            icon: const Icon(Icons.add_a_photo),
+                            icon: Icon(type == UserScreenType.edit
+                                ? CupertinoIcons.camera_rotate
+                                : Icons.add_a_photo),
                           ),
                         ),
                       ],
@@ -100,6 +132,7 @@ class UserScreen extends HookConsumerWidget with DismissKeyboard {
                       animateOnTap: false,
                       onPressed: () {
                         if (formKey.currentState!.validate()) {
+                          dismiss();
                           btnCtrl.start();
                           ref.read(authNotifierProvider.notifier).saveUserInf(
                                 image.value,

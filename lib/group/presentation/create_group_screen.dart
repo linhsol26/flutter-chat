@@ -8,6 +8,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:whatsapp_ui/auth/domain/user_model.dart';
 import 'package:whatsapp_ui/auth/presentation/widgets/input_form_widget.dart';
 import 'package:whatsapp_ui/contacts/shared/providers.dart';
+import 'package:whatsapp_ui/core/presentation/snackbar/snackbar.dart';
 import 'package:whatsapp_ui/core/presentation/theme/colors.dart';
 import 'package:whatsapp_ui/core/presentation/utils/sizes.dart';
 import 'package:whatsapp_ui/core/presentation/widgets/avatar_widget.dart';
@@ -32,9 +33,11 @@ class CreateGroupScreen extends HookConsumerWidget with DismissKeyboard {
           data: (_) {
             EasyLoading.dismiss();
             context.goNamed(AppRoute.home.name);
+            showSuccess(context);
           },
           error: (error, _) {
             EasyLoading.dismiss();
+            showError(context);
           });
     });
 
@@ -45,7 +48,7 @@ class CreateGroupScreen extends HookConsumerWidget with DismissKeyboard {
           automaticallyImplyLeading: false,
           title: Text('Create group', style: context.sub3.copyWith(fontSize: 24)),
           leading: IconButton(
-            onPressed: () => context.goNamed(AppRoute.home.name),
+            onPressed: () => context.pop(),
             icon: const Icon(Icons.close_rounded),
           ),
         ),

@@ -22,6 +22,8 @@ class GroupScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final scrollController = useScrollController();
 
+    final groupInfoAsync = ref.watch(getGroupByIdProvider(group.groupId));
+
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
@@ -32,24 +34,47 @@ class GroupScreen extends HookConsumerWidget {
           titleSpacing: 0,
           elevation: 0.2,
           leading: IconButton(
-            onPressed: () => context.pop(),
+            onPressed: () async {
+              await ref
+                  .read(groupNotifierProvider.notifier)
+                  .setJoinedGroupChat(groupId: group.groupId);
+              context.pop();
+            },
             icon: const Icon(Icons.arrow_back_outlined, color: primaryColor),
           ),
-          title: ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: group.groupPic != null
-                ? AvatarWidget(imgUrl: group.groupPic)
-                : const CircleAvatar(radius: 30, child: Icon(Icons.group)),
-            textColor: Colors.white,
-            title: Text(
-              group.name,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: context.p1,
+          title: groupInfoAsync.maybeWhen(
+            data: (data) => ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: data.groupPic != null
+                  ? AvatarWidget(imgUrl: data.groupPic)
+                  : const CircleAvatar(radius: 30, child: Icon(Icons.group)),
+              textColor: Colors.white,
+              title: Text(
+                data.name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: context.p1,
+              ),
+              onTap: () {
+                context.pushNamed(AppRoute.editGroup.name, extra: group);
+              },
             ),
-            onTap: () {
-              context.pushNamed(AppRoute.editGroup.name, extra: group);
-            },
+            orElse: () => ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: group.groupPic != null
+                  ? AvatarWidget(imgUrl: group.groupPic)
+                  : const CircleAvatar(radius: 30, child: Icon(Icons.group)),
+              textColor: Colors.white,
+              title: Text(
+                group.name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: context.p1,
+              ),
+              onTap: () {
+                context.pushNamed(AppRoute.editGroup.name, extra: group);
+              },
+            ),
           ),
           actions: [
             IconButton(

@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:whatsapp_ui/auth/domain/user_model.dart';
 import 'package:whatsapp_ui/auth/shared/providers.dart';
 import 'package:whatsapp_ui/group/application/group_notifier.dart';
+import 'package:whatsapp_ui/group/domain/group_model.dart';
 import 'package:whatsapp_ui/group/infrastructure/group_repository.dart';
 
 final groupRepositoryProvider = Provider<GroupRepository>((ref) {
@@ -22,4 +23,8 @@ final getListMembersProvider =
     FutureProvider.family.autoDispose<List<UserModel>, List<String>>((ref, memberIds) async {
   final result = await ref.watch(groupRepositoryProvider).getListMembers(memberIds: memberIds);
   return result.when((error) => [], (success) => success);
+});
+
+final getGroupByIdProvider = StreamProvider.family.autoDispose<GroupModel, String>((ref, groupId) {
+  return ref.watch(groupRepositoryProvider).getGroupById(groupId: groupId);
 });
