@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:whatsapp_ui/auth/presentation/user_screen.dart';
 import 'package:whatsapp_ui/auth/shared/providers.dart';
+import 'package:whatsapp_ui/chat/shared/providers.dart';
 import 'package:whatsapp_ui/contacts/shared/providers.dart';
 import 'package:whatsapp_ui/core/presentation/theme/colors.dart';
 import 'package:whatsapp_ui/core/presentation/utils/sizes.dart';
@@ -89,7 +90,12 @@ class UsersListScreen extends HookConsumerWidget {
                                       ),
                                       gapH12,
                                       ElevatedButton(
-                                        onPressed: () {
+                                        onPressed: () async {
+                                          await ref
+                                              .read(chatNotifierProvider.notifier)
+                                              .setJoinedChat(
+                                                receiverId: user.uid,
+                                              );
                                           Navigator.pop(context);
                                           context.go('/home/direct-chat', extra: user);
                                         },
@@ -104,19 +110,25 @@ class UsersListScreen extends HookConsumerWidget {
                               });
                         },
                         child: Card(
-                          elevation: 1,
-                          surfaceTintColor: backgroundLightColor,
-                          shadowColor: accentColor,
+                          color: Theme.of(context).cardColor,
                           shape: const RoundedRectangleBorder(),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              AvatarWidget(imgUrl: user.profilePic),
-                              Text(
-                                user.name,
-                                style: context.sub3.copyWith(color: blackColor),
-                              ),
-                            ],
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                AvatarWidget(imgUrl: user.profilePic),
+                                gapH12,
+                                Text(
+                                  user.name,
+                                  maxLines: 2,
+                                  softWrap: true,
+                                  textAlign: TextAlign.center,
+                                  style: context.sub3,
+                                ),
+                                gapH2,
+                              ],
+                            ),
                           ),
                         ),
                       ),

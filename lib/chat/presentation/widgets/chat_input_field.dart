@@ -6,6 +6,7 @@ import 'package:whatsapp_ui/chat/shared/providers.dart';
 import 'package:whatsapp_ui/core/presentation/theme/colors.dart';
 import 'package:whatsapp_ui/core/presentation/utils/files.dart';
 import 'package:whatsapp_ui/core/shared/enums.dart';
+import 'package:whatsapp_ui/core/shared/extensions.dart';
 
 class ChatInputField extends HookConsumerWidget {
   const ChatInputField({
@@ -36,6 +37,9 @@ class ChatInputField extends HookConsumerWidget {
               child: TextFormField(
                 focusNode: focusNode,
                 controller: messageController,
+                style: context.p5.copyWith(fontSize: 16),
+                textAlign: TextAlign.left,
+                cursorColor: primaryColor,
                 decoration: InputDecoration(
                   isCollapsed: true,
                   filled: true,
@@ -87,14 +91,15 @@ class ChatInputField extends HookConsumerWidget {
                     ),
                   ),
                   hintText: 'Type a message!',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                    borderSide: const BorderSide(
-                      width: 0,
-                      style: BorderStyle.none,
-                    ),
-                  ),
-                  contentPadding: const EdgeInsets.all(12),
+                  hintStyle: Theme.of(context)
+                      .inputDecorationTheme
+                      .hintStyle!
+                      .copyWith(color: blackColor.withOpacity(0.5)),
+                  labelStyle: Theme.of(context).inputDecorationTheme.labelStyle,
+                  border: Theme.of(context).inputDecorationTheme.border,
+                  focusedBorder: Theme.of(context).inputDecorationTheme.focusedBorder,
+                  enabledBorder: Theme.of(context).inputDecorationTheme.focusedBorder,
+                  contentPadding: const EdgeInsets.all(14),
                 ),
               ),
             ),

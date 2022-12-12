@@ -16,6 +16,7 @@ extension UIThemeEx on BuildContext {
   TextStyle get p2 => Theme.of(this).textTheme.bodyMedium!;
   TextStyle get p3 => Theme.of(this).textTheme.bodySmall!;
   TextStyle get p4 => Theme.of(this).textTheme.titleSmall!;
+  TextStyle get p5 => Theme.of(this).textTheme.titleMedium!;
   TextStyle get sub1 => Theme.of(this).textTheme.labelSmall!;
   TextStyle get sub2 => Theme.of(this).textTheme.labelMedium!;
   TextStyle get sub3 => Theme.of(this).textTheme.labelLarge!;
@@ -54,10 +55,13 @@ extension MessageTypeEx on MessageType {
     }
   }
 
-  Widget display(String msg, [BuildContext? context]) {
+  Widget display(String msg, [BuildContext? context, bool darkTheme = false]) {
     switch (this) {
       case MessageType.text:
-        return Text(msg, style: context!.p2.copyWith(color: blackColor, fontSize: 16));
+        return Text(msg,
+            style: darkTheme
+                ? context!.p5.copyWith(fontSize: 16, color: whiteColor)
+                : context!.p5.copyWith(fontSize: 16));
       case MessageType.video:
         return VideoPlayerItem(videoUrl: msg);
       default:
@@ -73,15 +77,6 @@ extension MessageTypeEx on MessageType {
         return VideoPlayerItem(videoUrl: msg);
       default:
         return CachedNetworkImage(imageUrl: msg);
-    }
-  }
-
-  EdgeInsets get padding {
-    switch (this) {
-      case MessageType.text:
-        return const EdgeInsets.only(left: 10, right: 30, top: 5, bottom: 20);
-      default:
-        return const EdgeInsets.only(left: 5, right: 5, top: 5, bottom: 25);
     }
   }
 }

@@ -30,7 +30,7 @@ class GroupList extends HookConsumerWidget {
       scrollController: scrollController,
       scrollPhysics: const BouncingScrollPhysics(),
       reverse: true,
-      itemBuilder: (Message msg, context, index, animation) {
+      itemBuilder: (Message msg, index, context, animation) {
         final me = ref.read(authRepositoryProvider).currentUser;
         final isMe = msg.senderId == me?.uid;
         final notMe = msg.receiverId == me?.uid;
@@ -62,6 +62,7 @@ class GroupList extends HookConsumerWidget {
                 );
               },
               isSeen: msg.isSeen,
+              onHover: () {},
             ),
           );
         }

@@ -8,7 +8,6 @@ import 'package:whatsapp_ui/auth/presentation/widgets/input_form_widget.dart';
 import 'package:whatsapp_ui/auth/presentation/widgets/show_up_animation.dart';
 import 'package:whatsapp_ui/auth/shared/providers.dart';
 import 'package:whatsapp_ui/core/domain/failure.dart';
-import 'package:whatsapp_ui/core/presentation/snackbar/snackbar.dart';
 import 'package:whatsapp_ui/core/presentation/theme/colors.dart';
 import 'package:whatsapp_ui/core/presentation/utils/sizes.dart';
 import 'package:whatsapp_ui/core/shared/extensions.dart';
@@ -35,7 +34,6 @@ class LoginScreen extends HookConsumerWidget {
       state.maybeWhen(
         data: (_) {
           btnCtrl.success();
-          showSuccess(context);
           context.goNamed(isSignUp ? AppRoute.user.name : AppRoute.home.name);
         },
         error: (error, stackTrace) {
@@ -49,7 +47,6 @@ class LoginScreen extends HookConsumerWidget {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
-        backgroundColor: backgroundLightColor,
         resizeToAvoidBottomInset: false,
         body: Form(
           key: formKey,
@@ -133,9 +130,9 @@ class LoginScreen extends HookConsumerWidget {
                               type.value = FormType.signin;
                               animationCtrl.reverse();
                             },
-                            child: const Text(
+                            child: Text(
                               'Back to login',
-                              style: TextStyle(color: Colors.white),
+                              style: context.sub3,
                             ),
                           )
                         else
@@ -144,9 +141,9 @@ class LoginScreen extends HookConsumerWidget {
                               type.value = FormType.signup;
                               animationCtrl.forward();
                             },
-                            child: const Text(
+                            child: Text(
                               'Don\'t have account?',
-                              style: TextStyle(color: Colors.white),
+                              style: context.sub3,
                             ),
                           ),
                         gapH32,

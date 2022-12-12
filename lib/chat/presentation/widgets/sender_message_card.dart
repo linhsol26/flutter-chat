@@ -18,6 +18,7 @@ class SenderMessageCard extends HookConsumerWidget {
     required this.repliedText,
     required this.username,
     required this.repliedMessageType,
+    required this.onHover,
   }) : super(key: key);
   final String message;
   final String date;
@@ -26,6 +27,7 @@ class SenderMessageCard extends HookConsumerWidget {
   final String repliedText;
   final String username;
   final MessageType repliedMessageType;
+  final VoidCallback onHover;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -34,7 +36,7 @@ class SenderMessageCard extends HookConsumerWidget {
       isElevated: false,
       behavior: HitTestBehavior.deferToChild,
       key: UniqueKey(),
-      color: Colors.white,
+      color: Theme.of(context).scaffoldBackgroundColor,
       direction: SwipeDirection.startToEnd,
       onSwiped: (_) => onRightSwipe(),
       backgroundBuilder: (_, SwipeDirection direction, AnimationController progress) {
@@ -43,6 +45,7 @@ class SenderMessageCard extends HookConsumerWidget {
           builder: (_, __) {
             return Container(
               alignment: Alignment.centerLeft,
+              color: Theme.of(context).scaffoldBackgroundColor,
               child: Padding(
                 padding: const EdgeInsets.only(left: 16.0),
                 child: Transform.scale(
@@ -64,76 +67,82 @@ class SenderMessageCard extends HookConsumerWidget {
           },
         );
       },
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.65),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Card(
-                elevation: 1,
-                shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(15),
-                  bottomRight: Radius.circular(15),
-                  bottomLeft: Radius.circular(15),
-                )),
-                color: greyColor,
-                margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (isReplying) ...[
-                        gapH4,
-                        Container(
-                            padding: const EdgeInsets.all(10),
-                            decoration: const BoxDecoration(
-                              color: subColor,
-                              borderRadius: BorderRadius.all(Radius.circular(5)),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Transform.rotate(
-                                      angle: pi,
-                                      child: const Icon(Icons.reply, size: 12),
-                                    ),
-                                    Text(
-                                      username,
-                                      style: context.sub1.copyWith(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold,
+      child: GestureDetector(
+        onLongPress: () => onHover.call(),
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.65),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Card(
+                  elevation: 1,
+                  shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(15),
+                    bottomRight: Radius.circular(15),
+                    bottomLeft: Radius.circular(15),
+                  )),
+                  color: greyColor,
+                  margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (isReplying) ...[
+                          gapH4,
+                          Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: const BoxDecoration(
+                                color: subColor,
+                                borderRadius: BorderRadius.all(Radius.circular(5)),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Transform.rotate(
+                                        angle: pi,
+                                        child: const Icon(
+                                          Icons.reply,
+                                          size: 12,
+                                          color: blackColor,
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                gapH4,
-                                messageType.displayReply(repliedText, context),
-                              ],
-                            )),
-                        gapH8,
+                                      Text(
+                                        username,
+                                        style: context.sub1.copyWith(
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold,
+                                            color: blackColor),
+                                      ),
+                                    ],
+                                  ),
+                                  gapH4,
+                                  messageType.displayReply(repliedText, context),
+                                ],
+                              )),
+                          gapH8,
+                        ],
+                        messageType.display(message, context),
                       ],
-                      messageType.display(message, context),
-                    ],
+                    ),
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 16.0, bottom: 4.0),
-                child: Text(date,
-                    style: context.sub1.copyWith(
-                      fontSize: 10,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                    )),
-              )
-            ],
+                Padding(
+                  padding: const EdgeInsets.only(right: 16.0, bottom: 4.0),
+                  child: Text(date,
+                      style: context.sub1.copyWith(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      )),
+                )
+              ],
+            ),
           ),
         ),
       ),

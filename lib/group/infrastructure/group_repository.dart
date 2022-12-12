@@ -193,12 +193,17 @@ class GroupRepository {
             .doc(id)
             .get()
             .then((userInfo) => UserModel.fromJson(userInfo.data()!).groups);
-        await _firestore.collection(CollectionPath.users).doc(id).update({
-          'groups': [
-            {'id': groupId, 'lastJoined': DateTime.now().toString()},
-            ...groups
-          ]
-        });
+
+        final alreadyExisted = groups.any((element) => element['id'] == groupId);
+
+        if (!alreadyExisted) {
+          await _firestore.collection(CollectionPath.users).doc(id).update({
+            'groups': [
+              {'id': groupId, 'lastJoined': null},
+              ...groups
+            ]
+          });
+        }
       }
 
       return const Success(null);

@@ -86,13 +86,20 @@ class ChatRepository {
         'timeSent': timeSent.toString(),
       });
     } else {
-      final lastJoined = await _firestore
+      DateTime? lastJoined;
+      await _firestore
           .collection(CollectionPath.users)
           .doc(receiverUserId)
           .collection(CollectionPath.chats)
           .doc(_auth.currentUser?.uid)
           .get()
-          .then((value) => ChatContact.fromJson(value.data()!).lastJoined);
+          .then((value) {
+        if (value.data() != null) {
+          lastJoined = ChatContact.fromJson(value.data()!).lastJoined;
+        } else {
+          lastJoined = null;
+        }
+      });
 
       final receiverChatContact = ChatContact(
         name: senderUser.name,
@@ -354,6 +361,8 @@ class ChatRepository {
           .doc(messageId)
           .update({'isSeen': true});
 
+      setJoinedChat(receiverId: receiverId);
+
       return const Success(null);
     } on SocketException {
       return const Error(Failure.noConnection());
@@ -381,5 +390,134 @@ class ChatRepository {
     } catch (e) {
       return Error(Failure(msg: e.toString()));
     }
+  }
+
+  Future<void> deleteChat({
+    required String receiverUserId,
+  }) async {
+    await _firestore
+        .collection(CollectionPath.users)
+        .doc(receiverUserId)
+        .collection(CollectionPath.chats)
+        .doc(_auth.currentUser?.uid)
+        .collection(CollectionPath.messages)
+        .get()
+        .then((value) {
+      for (var element in value.docs) {
+        _firestore
+            .collection(CollectionPath.users)
+            .doc(receiverUserId)
+            .collection(CollectionPath.chats)
+            .doc(_auth.currentUser?.uid)
+            .collection(CollectionPath.messages)
+            .doc(element.id)
+            .delete();
+      }
+    });
+
+    await _firestore
+        .collection(CollectionPath.users)
+        .doc(receiverUserId)
+        .collection(CollectionPath.chats)
+        .doc(_auth.currentUser?.uid)
+        .delete();
+
+    await _firestore
+        .collection(CollectionPath.users)
+        .doc(_auth.currentUser?.uid)
+        .collection(CollectionPath.chats)
+        .doc(receiverUserId)
+        .collection(CollectionPath.messages)
+        .get()
+        .then((value) {
+      for (var element in value.docs) {
+        _firestore
+            .collection(CollectionPath.users)
+            .doc(_auth.currentUser?.uid)
+            .collection(CollectionPath.chats)
+            .doc(receiverUserId)
+            .collection(CollectionPath.messages)
+            .doc(element.id)
+            .delete();
+      }
+    });
+
+    await _firestore
+        .collection(CollectionPath.users)
+        .doc(_auth.currentUser?.uid)
+        .collection(CollectionPath.chats)
+        .doc(receiverUserId)
+        .delete();
+  }
+
+  /// Delete in both
+  Future<void> deleteMessage({
+    required String receiverUserId,
+    required String messageId,
+  }) async {
+    await _firestore
+        .collection(CollectionPath.users)
+        .doc(receiverUserId)
+        .collection(CollectionPath.chats)
+        .doc(_auth.currentUser?.uid)
+        .collection(CollectionPath.messages)
+        .doc(messageId)
+        .delete();
+
+    await _firestore
+        .collection(CollectionPath.users)
+        .doc(_auth.currentUser?.uid)
+        .collection(CollectionPath.chats)
+        .doc(receiverUserId)
+        .collection(CollectionPath.messages)
+        .doc(messageId)
+        .delete();
+  }
+
+  /// Delete only in yours
+  Future<void> deleteMessageOnMySite({
+    required String receiverUserId,
+    required String messageId,
+  }) async {
+    await _firestore
+        .collection(CollectionPath.users)
+        .doc(_auth.currentUser?.uid)
+        .collection(CollectionPath.chats)
+        .doc(receiverUserId)
+        .collection(CollectionPath.messages)
+        .doc(messageId)
+        .delete();
+  }
+
+  Stream<List<ChatContact>> search(String query) {
+    return _firestore
+        .collection(CollectionPath.users)
+        .doc(_auth.currentUser?.uid)
+        .collection(CollectionPath.chats)
+        .where('name', isGreaterThanOrEqualTo: query)
+        .snapshots()
+        .asyncMap((snapshot) async {
+      List<ChatContact> contacts = [];
+      for (var contact in snapshot.docs) {
+        final chatContact = ChatContact.fromJson(contact.data());
+        final userData =
+            await _firestore.collection(CollectionPath.users).doc(chatContact.contactId).get();
+
+        final user = UserModel.fromJson(userData.data()!);
+
+        contacts.add(
+          ChatContact(
+            name: user.name,
+            profilePic: user.profilePic,
+            contactId: chatContact.contactId,
+            timeSent: chatContact.timeSent,
+            lastMessage: chatContact.lastMessage,
+            lastJoined: chatContact.lastJoined,
+          ),
+        );
+      }
+
+      return contacts;
+    });
   }
 }

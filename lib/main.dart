@@ -24,7 +24,9 @@ class MyApp extends ConsumerWidget {
       routerConfig: goRouter,
       restorationScopeId: 'app',
       onGenerateTitle: (BuildContext context) => 'Chat',
+      themeMode: ref.watch(themeModeProvider),
       theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
       builder: EasyLoading.init(),
     );
   }

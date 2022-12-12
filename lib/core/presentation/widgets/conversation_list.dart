@@ -1,12 +1,12 @@
 import 'package:advstory/advstory.dart';
 import 'package:animated_stream_list_nullsafety/animated_stream_list.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:whatsapp_ui/auth/domain/user_model.dart';
-import 'package:whatsapp_ui/auth/presentation/user_screen.dart';
 import 'package:whatsapp_ui/auth/shared/providers.dart';
 import 'package:whatsapp_ui/chat/domain/chat_contact.dart';
 import 'package:whatsapp_ui/chat/shared/providers.dart';
@@ -14,6 +14,7 @@ import 'package:whatsapp_ui/core/presentation/theme/colors.dart';
 import 'package:whatsapp_ui/core/presentation/widgets/avatar_widget.dart';
 import 'package:whatsapp_ui/core/presentation/widgets/error_widget.dart';
 import 'package:whatsapp_ui/core/presentation/widgets/loading_widget.dart';
+import 'package:whatsapp_ui/core/presentation/widgets/slide_menu.dart';
 import 'package:whatsapp_ui/core/shared/extensions.dart';
 import 'package:whatsapp_ui/status/shared/providers.dart';
 
@@ -23,7 +24,8 @@ class ConversationList extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final statusAsync = ref.watch(getStatusProvider);
-    final me = ref.watch(currentUserProvider).maybeWhen(data: (data) => data, orElse: () => null);
+    final myName =
+        ref.read(currentUserStreamProvider.select((data) => data.whenData((value) => value?.name)));
 
     useAutomaticKeepAlive(wantKeepAlive: true);
 
@@ -48,7 +50,7 @@ class ConversationList extends HookConsumerWidget {
                           cacheKey: stories[index].statusId,
                           header: Text(
                             stories[index].username,
-                            style: context.h1.copyWith(color: textColor),
+                            style: context.h1,
                           ),
                           duration: const Duration(seconds: 3),
                           url: stories[index].photoUrl[contentIndex],
@@ -59,12 +61,12 @@ class ConversationList extends HookConsumerWidget {
                     trayBuilder: (index) => AdvStoryTray(
                           size: const Size(60, 60),
                           username: Text(
-                            index == 0 ? 'My Story' : stories[index - 1].username,
-                            style: context.sub2.copyWith(color: Colors.black),
+                            myName.value != null && myName.value == stories[index].username
+                                ? 'My story'
+                                : stories[index].username,
+                            style: context.sub2,
                           ),
-                          url: index == 0
-                              ? me?.profilePic ?? defaultAvatar
-                              : stories[index - 1].profilePic,
+                          url: stories[index].profilePic,
                         )),
               );
             },
@@ -96,7 +98,16 @@ class ConversationList extends HookConsumerWidget {
                     sizeFactor: animation,
                     child: FadeTransition(
                       opacity: animation,
-                      child: _ConversationTile(chatContact: chatContact),
+                      child: _ConversationTile(
+                        chatContact: chatContact,
+                        onDeleted: () async {
+                          EasyLoading.show(dismissOnTap: false);
+                          await ref
+                              .read(chatRepositoryProvider)
+                              .deleteChat(receiverUserId: chatContact.contactId);
+                          EasyLoading.dismiss();
+                        },
+                      ),
                     ),
                   ),
                 );
@@ -107,7 +118,10 @@ class ConversationList extends HookConsumerWidget {
                   sizeFactor: animation,
                   child: FadeTransition(
                     opacity: animation,
-                    child: _ConversationTile(chatContact: item),
+                    child: _ConversationTile(
+                      chatContact: item,
+                      onDeleted: () {},
+                    ),
                   ),
                 );
               },
@@ -119,39 +133,60 @@ class ConversationList extends HookConsumerWidget {
   }
 }
 
-class _ConversationTile extends StatelessWidget {
-  const _ConversationTile({Key? key, required this.chatContact}) : super(key: key);
+class _ConversationTile extends HookWidget {
+  const _ConversationTile({Key? key, required this.chatContact, required this.onDeleted})
+      : super(key: key);
 
   final ChatContact chatContact;
+  final VoidCallback onDeleted;
 
   @override
   Widget build(BuildContext context) {
+    final controller = useAnimationController(duration: const Duration(milliseconds: 300));
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
-      child: ListTile(
-        title: Text(chatContact.name, style: context.p2.copyWith(fontSize: 18)),
-        subtitle: Padding(
-          padding: const EdgeInsets.only(top: 6.0),
-          child: Text(
-            chatContact.lastMessage,
-            style: context.sub2.copyWith(fontSize: 16),
+      child: SlideMenu(
+        controller: controller,
+        menuItems: [
+          CircleAvatar(
+            backgroundColor: redColor,
+            child: IconButton(
+              onPressed: () {
+                controller.animateBack(.0);
+                onDeleted.call();
+              },
+              icon: const Icon(
+                Icons.delete_outline_outlined,
+                color: whiteColor,
+              ),
+            ),
           ),
-        ),
-        leading: AvatarWidget(
-          imgUrl: chatContact.profilePic,
-        ),
-        trailing: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Text(DateFormat.Hm().format(chatContact.timeSent),
-                style: context.sub1.copyWith(
-                  fontSize: 12,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w500,
-                )),
-            if (chatContact.lastJoined!.isBefore(chatContact.timeSent))
-              const Icon(Icons.circle_rounded, color: Colors.red, size: 10),
-          ],
+        ],
+        child: ListTile(
+          title: Text(chatContact.name, style: context.p2.copyWith(fontSize: 18)),
+          subtitle: Padding(
+            padding: const EdgeInsets.only(top: 6.0),
+            child: Text(
+              chatContact.lastMessage,
+              style: context.sub2.copyWith(fontSize: 16),
+            ),
+          ),
+          leading: AvatarWidget(
+            imgUrl: chatContact.profilePic,
+          ),
+          trailing: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Text(DateFormat.Hm().format(chatContact.timeSent),
+                  style: context.sub1.copyWith(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  )),
+              if (chatContact.lastJoined == null ||
+                  chatContact.lastJoined!.isBefore(chatContact.timeSent))
+                const Icon(Icons.circle_rounded, color: Colors.red, size: 10),
+            ],
+          ),
         ),
       ),
     );

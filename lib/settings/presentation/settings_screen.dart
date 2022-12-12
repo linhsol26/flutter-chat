@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:whatsapp_ui/auth/presentation/user_screen.dart';
 import 'package:whatsapp_ui/auth/shared/providers.dart';
+import 'package:whatsapp_ui/core/presentation/theme/app_theme.dart';
 import 'package:whatsapp_ui/core/presentation/theme/colors.dart';
 import 'package:whatsapp_ui/core/presentation/widgets/avatar_widget.dart';
 import 'package:whatsapp_ui/core/presentation/widgets/error_widget.dart';
@@ -17,6 +18,7 @@ class SettingsScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final userAsync = ref.watch(currentUserStreamProvider);
+    final theme = ref.watch(themeModeProvider);
 
     return userAsync.when(
       data: (user) {
@@ -38,18 +40,19 @@ class SettingsScreen extends HookConsumerWidget {
                 },
               ),
               SwitchListTile(
-                title: Text('Theme', maxLines: 1, style: context.sub1.copyWith(fontSize: 18)),
-                value: false,
-                onChanged: (value) {},
+                title: Text('Dark theme', maxLines: 1, style: context.sub1.copyWith(fontSize: 18)),
+                value: theme == ThemeMode.dark,
+                onChanged: (value) {
+                  ref.read(themeModeProvider.notifier).state =
+                      value ? ThemeMode.dark : ThemeMode.light;
+                },
               ),
               ListTile(
                 leading: Text('Sign out', style: context.sub1.copyWith(fontSize: 18)),
-                trailing: IconButton(
-                  icon: const Icon(Icons.logout_rounded),
-                  onPressed: () {
-                    FirebaseAuth.instance.signOut();
-                  },
-                ),
+                trailing: const Icon(Icons.logout_rounded),
+                onTap: () {
+                  FirebaseAuth.instance.signOut();
+                },
               ),
             ],
           );

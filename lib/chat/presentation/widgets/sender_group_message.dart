@@ -42,7 +42,7 @@ class SenderGroupMessageCard extends HookConsumerWidget {
       isElevated: false,
       behavior: HitTestBehavior.deferToChild,
       key: UniqueKey(),
-      color: Colors.white,
+      color: Theme.of(context).scaffoldBackgroundColor,
       direction: SwipeDirection.startToEnd,
       onSwiped: (_) => onRightSwipe(),
       backgroundBuilder: (_, SwipeDirection direction, AnimationController progress) {
@@ -90,7 +90,6 @@ class SenderGroupMessageCard extends HookConsumerWidget {
                         style: context.sub1.copyWith(
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black,
                         ),
                       ),
                     ),
@@ -157,7 +156,6 @@ class SenderGroupMessageCard extends HookConsumerWidget {
                     child: Text(date,
                         style: context.sub1.copyWith(
                           fontSize: 10,
-                          color: Colors.black,
                           fontWeight: FontWeight.bold,
                         )),
                   )

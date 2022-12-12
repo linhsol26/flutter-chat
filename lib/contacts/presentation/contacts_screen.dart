@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:whatsapp_ui/contacts/shared/providers.dart';
 import 'package:whatsapp_ui/core/presentation/snackbar/snackbar.dart';
-import 'package:whatsapp_ui/core/presentation/theme/colors.dart';
 import 'package:whatsapp_ui/core/presentation/utils/sizes.dart';
 import 'package:whatsapp_ui/core/presentation/widgets/avatar_widget.dart';
 import 'package:whatsapp_ui/core/presentation/widgets/error_widget.dart';
@@ -48,25 +47,30 @@ class ContactsScreen extends HookConsumerWidget {
                           }
                         },
                         child: Card(
-                          elevation: 1,
-                          surfaceTintColor: backgroundLightColor,
-                          shadowColor: accentColor,
+                          color: Theme.of(context).cardColor,
                           shape: const RoundedRectangleBorder(),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              contact.photo != null
-                                  ? CircleAvatar(
-                                      backgroundImage: MemoryImage(contact.photo!),
-                                      radius: 28,
-                                    )
-                                  : const AvatarWidget(),
-                              gapH12,
-                              Text(
-                                contact.displayName,
-                                style: context.sub3.copyWith(color: blackColor),
-                              ),
-                            ],
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                contact.photo != null
+                                    ? CircleAvatar(
+                                        backgroundImage: MemoryImage(contact.photo!),
+                                        radius: 28,
+                                      )
+                                    : const AvatarWidget(),
+                                gapH12,
+                                Text(
+                                  contact.displayName,
+                                  maxLines: 1,
+                                  softWrap: true,
+                                  textAlign: TextAlign.center,
+                                  style: context.sub3,
+                                ),
+                                gapH2,
+                              ],
+                            ),
                           ),
                         ),
                       ),

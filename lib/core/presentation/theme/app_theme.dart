@@ -1,17 +1,54 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:whatsapp_ui/core/presentation/theme/colors.dart';
 
-enum ThemeType { dark, light }
+final themeModeProvider = StateProvider<ThemeMode>((ref) {
+  var brightness = SchedulerBinding.instance.window.platformBrightness;
+  bool isDarkMode = brightness == Brightness.dark;
+  return isDarkMode ? ThemeMode.dark : ThemeMode.light;
+});
 
 class AppTheme {
   AppTheme._();
 
   static final lightTheme = ThemeData(
-    scaffoldBackgroundColor: whiteColor,
+    // scaffoldBackgroundColor: whiteColor,
     primaryColor: primaryColor,
     primarySwatch: primaryColorMaterial,
     iconTheme: const IconThemeData(color: blackColor),
     brightness: Brightness.light,
+    inputDecorationTheme: const InputDecorationTheme(
+      hintStyle: TextStyle(fontSize: 16, color: blackColor),
+      labelStyle: TextStyle(fontSize: 14, color: blackColor),
+      floatingLabelStyle: TextStyle(fontSize: 14, color: primaryColor),
+      border: OutlineInputBorder(
+        borderSide: BorderSide(color: whiteColor),
+        borderRadius: BorderRadius.all(Radius.circular(30.0)),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: whiteColor),
+        borderRadius: BorderRadius.all(Radius.circular(30.0)),
+      ),
+      disabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: whiteColor),
+        borderRadius: BorderRadius.all(Radius.circular(30.0)),
+      ),
+    ),
+    cardColor: whiteColor,
+    appBarTheme: const AppBarTheme(
+      backgroundColor: backgroundLightColor,
+      elevation: 0,
+    ),
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      selectedItemColor: primaryColor,
+    ),
+    floatingActionButtonTheme: const FloatingActionButtonThemeData(backgroundColor: primaryColor),
+    buttonTheme: const ButtonThemeData(
+      disabledColor: Color(0xFFF3F3F6),
+      buttonColor: primaryColor,
+      textTheme: ButtonTextTheme.primary,
+    ),
     textTheme: const TextTheme(
       displayLarge: TextStyle(
         fontFamily: "Caros",
@@ -60,6 +97,12 @@ class AppTheme {
         color: blackColor,
         fontSize: 12.0,
         fontWeight: FontWeight.w200,
+      ),
+      titleMedium: TextStyle(
+        fontFamily: "Caros",
+        color: blackColor,
+        fontSize: 14.0,
+        fontWeight: FontWeight.w500,
       ),
       labelSmall: TextStyle(
         fontFamily: "Circular Std",
@@ -83,43 +126,41 @@ class AppTheme {
   );
 
   static final darkTheme = ThemeData(
-    // backgroundColor: primaryColor,
-    scaffoldBackgroundColor: primaryColor,
-    appBarTheme: const AppBarTheme(backgroundColor: primaryColor),
-    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-      backgroundColor: blackColor,
-      selectedItemColor: whiteColor,
-      unselectedItemColor: textColor,
-      showSelectedLabels: true,
-      showUnselectedLabels: true,
-      type: BottomNavigationBarType.fixed,
-      selectedIconTheme: IconThemeData(color: whiteColor),
-      unselectedIconTheme: IconThemeData(color: textColor),
-      selectedLabelStyle: TextStyle(
-        fontFamily: "Caros",
-        fontSize: 16.0,
-        fontWeight: FontWeight.w500,
-      ),
-      unselectedLabelStyle: TextStyle(
-        fontFamily: "Caros",
-        fontSize: 16.0,
-        fontWeight: FontWeight.w500,
-      ),
+    scaffoldBackgroundColor: blackColor,
+    appBarTheme: const AppBarTheme(
+      backgroundColor: backgroundDarkColor,
+      elevation: 0,
     ),
     iconTheme: const IconThemeData(color: primaryColor),
     primaryColor: primaryColor,
     primarySwatch: primaryColorMaterial,
     brightness: Brightness.dark,
+    cardColor: blackSubColor,
     inputDecorationTheme: const InputDecorationTheme(
-      hintStyle: TextStyle(color: textColor),
-      border: UnderlineInputBorder(borderSide: BorderSide(color: greyColor)),
-      enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: greyColor)),
-      disabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: greyColor)),
+      hintStyle: TextStyle(fontSize: 16, color: textColor),
+      labelStyle: TextStyle(fontSize: 14, color: whiteColor),
+      floatingLabelStyle: TextStyle(fontSize: 14, color: primaryColor),
+      border: OutlineInputBorder(
+        borderSide: BorderSide(color: greyColor),
+        borderRadius: BorderRadius.all(Radius.circular(30.0)),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: greyColor),
+        borderRadius: BorderRadius.all(Radius.circular(30.0)),
+      ),
+      disabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: greyColor),
+        borderRadius: BorderRadius.all(Radius.circular(30.0)),
+      ),
     ),
     buttonTheme: const ButtonThemeData(
       disabledColor: Color(0xFFF3F3F6),
       buttonColor: primaryColor,
       textTheme: ButtonTextTheme.primary,
+    ),
+    floatingActionButtonTheme: const FloatingActionButtonThemeData(backgroundColor: primaryColor),
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      selectedItemColor: primaryColor,
     ),
     textTheme: const TextTheme(
       displayLarge: TextStyle(
@@ -169,6 +210,12 @@ class AppTheme {
         color: whiteColor,
         fontSize: 12.0,
         fontWeight: FontWeight.w200,
+      ),
+      titleMedium: TextStyle(
+        fontFamily: "Caros",
+        color: blackColor,
+        fontSize: 14.0,
+        fontWeight: FontWeight.w500,
       ),
       labelSmall: TextStyle(
         fontFamily: "Circular Std",

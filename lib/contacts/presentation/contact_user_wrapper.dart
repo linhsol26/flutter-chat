@@ -14,12 +14,12 @@ class ContactUserWrapper extends HookConsumerWidget {
         shrinkWrap: true,
         physics: const ScrollPhysics(),
         children: const [
-          Expanded(child: UsersListScreen()),
+          UsersListScreen(),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 16),
             child: Text('From yours contacts'),
           ),
-          Expanded(child: ContactsScreen()),
+          ContactsScreen(),
         ],
       ),
     );

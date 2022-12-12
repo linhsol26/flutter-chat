@@ -62,7 +62,7 @@ class UserScreen extends HookConsumerWidget with DismissKeyboard {
       child: Scaffold(
         appBar: type == UserScreenType.edit
             ? AppBar(
-                backgroundColor: whiteColor,
+                backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
                 automaticallyImplyLeading: false,
                 titleSpacing: 0,
                 elevation: 0.2,
@@ -141,7 +141,7 @@ class UserScreen extends HookConsumerWidget with DismissKeyboard {
                               );
                         }
                       },
-                      child: const Text('Save'),
+                      child: Text('Save', style: context.sub3),
                     ),
                   ],
                 ),

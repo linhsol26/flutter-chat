@@ -12,6 +12,7 @@ import 'package:whatsapp_ui/contacts/presentation/contact_user_wrapper.dart';
 import 'package:whatsapp_ui/core/presentation/theme/colors.dart';
 import 'package:whatsapp_ui/core/presentation/utils/files.dart';
 import 'package:whatsapp_ui/core/presentation/widgets/conversation_list.dart';
+import 'package:whatsapp_ui/core/presentation/widgets/custom_search_delegate.dart';
 import 'package:whatsapp_ui/core/shared/extensions.dart';
 import 'package:whatsapp_ui/group/presentation/group_conversation_list.dart';
 import 'package:whatsapp_ui/routing/app_router.dart';
@@ -81,14 +82,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
         appBar: AppBar(
           automaticallyImplyLeading: false,
           elevation: 0,
-          backgroundColor: whiteColor,
+          backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
           centerTitle: false,
           title: GestureDetector(
             onTap: () => drawerCtrl.toggle!(),
             child: Text(listTitle[selectedIndex.value],
                 style: context.sub1.copyWith(
                   fontSize: 18,
-                  color: primaryColor,
                   fontWeight: FontWeight.w500,
                   fontStyle: FontStyle.italic,
                 )),
@@ -96,7 +96,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
           actions: [
             IconButton(
               icon: const Icon(Icons.search, color: primaryColor),
-              onPressed: () {},
+              onPressed: () {
+                showSearch(
+                  context: context,
+                  delegate: CustomSearchDelegate(ref),
+                );
+              },
             ),
           ],
         ),
@@ -109,10 +114,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
         floatingActionButtonLocation: ExpandableFab.location,
         floatingActionButton: selectedIndex.value == 0 || selectedIndex.value == 1
             ? ExpandableFab(
-                closeButtonStyle: const ExpandableFabCloseButtonStyle(
+                closeButtonStyle: ExpandableFabCloseButtonStyle(
                     child: Icon(
                   Icons.close,
-                  color: whiteColor,
+                  color: Theme.of(context).floatingActionButtonTheme.backgroundColor,
                 )),
                 distance: 80,
                 child: const Icon(Icons.add, color: Colors.white),
@@ -141,6 +146,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
                     backgroundColor: primaryColor,
                     child: const Icon(Icons.group_add_rounded, color: Colors.white),
                   ),
+                  FloatingActionButton(
+                    heroTag: const ValueKey('btn-new-chat'),
+                    onPressed: () => selectedIndex.value = 2,
+                    backgroundColor: primaryColor,
+                    child: const Icon(Icons.add_comment_rounded, color: Colors.white),
+                  ),
                 ],
               )
             : null,
@@ -148,7 +159,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
           animationCurve: Curves.linear,
           selectedIndex: selectedIndex.value,
           iconSize: 30,
-          backgroundColor: whiteColor,
+          backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
           shadows: const [BoxShadow(color: primaryColor, blurRadius: 3)],
           items: [
             FlashyTabBarItem(
@@ -156,11 +167,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
                 CupertinoIcons.chat_bubble_2,
                 color: primaryColor,
               ),
+              activeColor: Theme.of(context).bottomNavigationBarTheme.selectedItemColor!,
               title: Text(
                 'Chats',
                 style: context.sub1.copyWith(
                   fontSize: 14,
-                  color: primaryColor,
                   fontWeight: FontWeight.w400,
                 ),
               ),
@@ -170,11 +181,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
                 CupertinoIcons.group,
                 color: primaryColor,
               ),
+              activeColor: Theme.of(context).bottomNavigationBarTheme.selectedItemColor!,
               title: Text(
                 'Groups',
                 style: context.sub1.copyWith(
                   fontSize: 14,
-                  color: primaryColor,
                   fontWeight: FontWeight.w400,
                 ),
               ),
@@ -184,6 +195,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
                 CupertinoIcons.person_badge_plus,
                 color: primaryColor,
               ),
+              activeColor: Theme.of(context).bottomNavigationBarTheme.selectedItemColor!,
               title: Text(
                 'Contacts',
                 style: context.sub1.copyWith(
@@ -193,20 +205,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
                 ),
               ),
             ),
-            // FlashyTabBarItem(
-            //   icon: const Icon(
-            //     CupertinoIcons.settings,
-            //     color: primaryColor,
-            //   ),
-            //   title: Text(
-            //     'Settings',
-            //     style: context.sub1.copyWith(
-            //       fontSize: 14,
-            //       color: primaryColor,
-            //       fontWeight: FontWeight.w400,
-            //     ),
-            //   ),
-            // ),
           ],
           onItemSelected: (i) => selectedIndex.value = i,
         ),

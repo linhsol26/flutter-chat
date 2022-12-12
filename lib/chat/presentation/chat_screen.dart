@@ -8,6 +8,7 @@ import 'package:whatsapp_ui/auth/domain/user_model.dart';
 import 'package:whatsapp_ui/auth/shared/providers.dart';
 import 'package:whatsapp_ui/chat/presentation/widgets/chat_list.dart';
 import 'package:whatsapp_ui/chat/presentation/widgets/chat_input_field.dart';
+import 'package:whatsapp_ui/chat/shared/providers.dart';
 import 'package:whatsapp_ui/core/presentation/theme/colors.dart';
 import 'package:whatsapp_ui/core/presentation/widgets/avatar_widget.dart';
 import 'package:whatsapp_ui/core/presentation/widgets/error_widget.dart';
@@ -23,7 +24,6 @@ class ChatScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final scrollController = useScrollController();
-    final showEmoji = useValueNotifier(false);
 
     final foundUser = ref.watch(getUserByIdProvider(user.uid));
 
@@ -32,13 +32,13 @@ class ChatScreen extends HookConsumerWidget {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          backgroundColor: whiteColor,
+          backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
           automaticallyImplyLeading: false,
           titleSpacing: 0,
           elevation: 0.2,
           leading: IconButton(
             onPressed: () => context.goNamed(AppRoute.home.name),
-            icon: const Icon(Icons.arrow_back_outlined, color: primaryColor),
+            icon: const Icon(Icons.arrow_back_outlined),
           ),
           title: foundUser.when(
             data: (user) => ListTile(
@@ -84,6 +84,8 @@ class ChatScreen extends HookConsumerWidget {
                       );
                     }
                   });
+
+                  ref.read(chatRepositoryProvider).setJoinedChat(receiverId: user.uid);
                 }),
           )
         ],

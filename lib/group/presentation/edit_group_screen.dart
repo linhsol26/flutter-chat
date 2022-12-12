@@ -40,7 +40,7 @@ class EditGroupScreen extends HookConsumerWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        backgroundColor: whiteColor,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         automaticallyImplyLeading: false,
         titleSpacing: 0,
         elevation: 0.2,
@@ -111,6 +111,7 @@ class EditGroupScreen extends HookConsumerWidget {
 
               if (result.isSuccess()) {
                 final users = result.getSuccess() ?? [];
+
                 List<UserModel> availableUsers = [...users];
 
                 for (var id in group.memberIds) {
@@ -120,62 +121,71 @@ class EditGroupScreen extends HookConsumerWidget {
                     }
                   }
                 }
-
-                showModalBottomSheet(
-                    context: context,
-                    shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(15),
-                      topRight: Radius.circular(15),
-                    )),
-                    builder: (context) {
-                      availableUsers = availableUsers.toSet().toList();
-                      return AnimationLimiter(
-                        child: ListView.separated(
-                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-                          itemCount: availableUsers.length,
-                          separatorBuilder: (_, index) => gapH8,
-                          itemBuilder: (BuildContext context, int index) {
-                            final user = availableUsers[index];
-                            return ListView(
-                              shrinkWrap: true,
-                              children: [
-                                _ListMembersAvailable(
-                                  index: index,
-                                  user: user,
-                                  availableUsers: availableUsers,
+                if (availableUsers.isEmpty) {
+                  EasyLoading.showInfo('There is no any user.');
+                } else {
+                  showModalBottomSheet(
+                      context: context,
+                      shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(15),
+                        topRight: Radius.circular(15),
+                      )),
+                      // isScrollControlled: true,
+                      builder: (context) {
+                        availableUsers = availableUsers.toSet().toList();
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: AnimationLimiter(
+                                child: ListView.separated(
+                                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                                  itemCount: availableUsers.length,
+                                  separatorBuilder: (_, index) => gapH8,
+                                  itemBuilder: (BuildContext context, int index) {
+                                    final user = availableUsers[index];
+                                    return _ListMembersAvailable(
+                                      index: index,
+                                      user: user,
+                                      availableUsers: availableUsers,
+                                    );
+                                  },
                                 ),
-                                if (index == availableUsers.length - 1)
-                                  RoundedLoadingButton(
-                                    controller: btnCtrl,
-                                    color: primaryColor,
-                                    onPressed: () async {
-                                      final response =
-                                          await ref.read(groupRepositoryProvider).addMembers(
-                                                groupId: group.groupId,
-                                                currentMemberIds: group.memberIds,
-                                                selectedUsers: availableUsers,
-                                              );
+                              ),
+                            ),
+                            Expanded(
+                              child: RoundedLoadingButton(
+                                controller: btnCtrl,
+                                color: primaryColor,
+                                onPressed: () async {
+                                  availableUsers;
+                                  final response =
+                                      await ref.read(groupRepositoryProvider).addMembers(
+                                            groupId: group.groupId,
+                                            currentMemberIds: group.memberIds,
+                                            selectedUsers: availableUsers,
+                                          );
 
-                                      if (response.isSuccess()) {
-                                        await showSuccess(context);
-                                        Navigator.pop(context);
-                                      } else {
-                                        btnCtrl.error();
-                                        btnCtrl.reset();
-                                      }
-                                    },
-                                    child: Text(
-                                      'Add',
-                                      style: context.p1.copyWith(color: whiteColor),
-                                    ),
-                                  ),
-                              ],
-                            );
-                          },
-                        ),
-                      );
-                    });
+                                  if (response.isSuccess()) {
+                                    await showSuccess(context);
+                                    Navigator.pop(context);
+                                  } else {
+                                    btnCtrl.error();
+                                    btnCtrl.reset();
+                                  }
+                                },
+                                child: Text(
+                                  'Add',
+                                  style: context.p1.copyWith(color: whiteColor),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      });
+                }
               } else {
                 showError(context);
               }
@@ -242,7 +252,7 @@ class EditGroupScreen extends HookConsumerWidget {
                                         height: 50,
                                         child: AvatarWidget(imgUrl: member.profilePic),
                                       ),
-                                      title: Text(member.name),
+                                      title: Text(member.name, style: context.p1),
                                     ),
                                   ),
                                 ),
@@ -292,6 +302,7 @@ class _ListMembersAvailableState extends State<_ListMembersAvailable> {
               title:
                   Text(widget.user.name, style: context.p1.copyWith(fontWeight: FontWeight.w300)),
               value: widget.availableUsers.contains(widget.user),
+              checkboxShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
               onChanged: (value) {
                 if (value != null && value) {
                   widget.availableUsers.add(widget.user);

@@ -1,5 +1,6 @@
 import 'package:animated_stream_list_nullsafety/animated_stream_list.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:whatsapp_ui/auth/shared/providers.dart';
@@ -8,6 +9,7 @@ import 'package:whatsapp_ui/chat/domain/message_reply.dart';
 import 'package:whatsapp_ui/chat/presentation/widgets/my_message_card.dart';
 import 'package:whatsapp_ui/chat/shared/providers.dart';
 import 'package:whatsapp_ui/chat/presentation/widgets/sender_message_card.dart';
+import 'package:whatsapp_ui/core/shared/extensions.dart';
 
 class ChatList extends HookConsumerWidget {
   const ChatList({
@@ -30,7 +32,7 @@ class ChatList extends HookConsumerWidget {
       scrollController: scrollController,
       scrollPhysics: const BouncingScrollPhysics(),
       reverse: true,
-      itemBuilder: (Message msg, context, index, animation) {
+      itemBuilder: (Message msg, index, context, animation) {
         final me = ref.read(authRepositoryProvider).currentUser;
         final isMe = msg.senderId == me?.uid;
         final notMe = msg.receiverId == ref.read(authRepositoryProvider).currentUser?.uid;
@@ -62,6 +64,58 @@ class ChatList extends HookConsumerWidget {
                 );
               },
               isSeen: msg.isSeen,
+              onHover: () {
+                showModalBottomSheet(
+                    context: context,
+                    builder: (context) {
+                      return SafeArea(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  ref.read(messageReplyProvider.notifier).state = MessageReply(
+                                    message: msg.text,
+                                    isMe: isMe,
+                                    messageType: msg.type,
+                                    username: 'You',
+                                  );
+                                },
+                                child: Text(
+                                  'Reply',
+                                  style: context.sub3.copyWith(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () async {
+                                  Navigator.pop(context);
+                                  await ref.read(chatRepositoryProvider).deleteMessage(
+                                      receiverUserId: receiverId, messageId: msg.messageId);
+                                },
+                                child: Text(
+                                  'Unsend',
+                                  style: context.sub3.copyWith(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () async {
+                                  await Clipboard.setData(ClipboardData(text: msg.text));
+                                  Navigator.pop(context);
+                                },
+                                child: Text(
+                                  'Copy',
+                                  style: context.sub3.copyWith(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    });
+              },
             ),
           );
         }
@@ -80,8 +134,61 @@ class ChatList extends HookConsumerWidget {
                 message: msg.text,
                 isMe: isMe,
                 messageType: msg.type,
-                username: msg.repliedTo == receiverName ? 'You' : msg.repliedTo,
+                username: msg.repliedTo == receiverName ? 'You' : receiverName ?? '',
               );
+            },
+            onHover: () {
+              showModalBottomSheet(
+                  context: context,
+                  builder: (context) {
+                    return SafeArea(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                ref.read(messageReplyProvider.notifier).state = MessageReply(
+                                  message: msg.text,
+                                  isMe: isMe,
+                                  messageType: msg.type,
+                                  username:
+                                      msg.repliedTo == receiverName ? 'You' : receiverName ?? '',
+                                );
+                              },
+                              child: Text(
+                                'Reply',
+                                style: context.sub3.copyWith(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                await ref.read(chatRepositoryProvider).deleteMessageOnMySite(
+                                    receiverUserId: receiverId, messageId: msg.messageId);
+                                Navigator.pop(context);
+                              },
+                              child: Text(
+                                'Unsend',
+                                style: context.sub3.copyWith(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                await Clipboard.setData(ClipboardData(text: msg.text));
+                                Navigator.pop(context);
+                              },
+                              child: Text(
+                                'Copy',
+                                style: context.sub3.copyWith(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  });
             },
           ),
         );

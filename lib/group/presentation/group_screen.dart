@@ -29,7 +29,7 @@ class GroupScreen extends HookConsumerWidget {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          backgroundColor: whiteColor,
+          backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
           automaticallyImplyLeading: false,
           titleSpacing: 0,
           elevation: 0.2,

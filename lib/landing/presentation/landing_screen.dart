@@ -15,7 +15,6 @@ class LandingScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isSignIn = ref.read(authRepositoryProvider).currentUser != null;
     return Scaffold(
-      backgroundColor: backgroundLightColor,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -36,41 +35,44 @@ class LandingScreen extends HookConsumerWidget {
               const Divider(color: Colors.grey),
               gapH32,
               if (!isSignIn)
-                SlideAction(
-                  trackBuilder: (context, currentState) {
-                    return Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(36),
-                        color: Colors.white30,
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.white,
-                            blurRadius: 5,
+                SizedBox(
+                  height: 64,
+                  child: SlideAction(
+                    trackBuilder: (context, currentState) {
+                      return Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(36),
+                          color: Colors.white30,
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.white,
+                              blurRadius: 5,
+                            ),
+                          ],
+                        ),
+                        child: const Center(
+                          child: Text(
+                            "Discover our app",
+                            style: TextStyle(fontSize: 16, color: primaryColor),
                           ),
-                        ],
+                        ),
+                      );
+                    },
+                    thumbBuilder: (context, currentState) => Container(
+                      margin: const EdgeInsets.all(4),
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: primaryColor,
                       ),
                       child: const Center(
-                        child: Text(
-                          "Discover our app",
-                          style: TextStyle(fontSize: 16, color: primaryColor),
+                        child: Icon(
+                          Icons.chevron_right,
+                          color: Colors.white,
                         ),
                       ),
-                    );
-                  },
-                  thumbBuilder: (context, currentState) => Container(
-                    margin: const EdgeInsets.all(4),
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: primaryColor,
                     ),
-                    child: const Center(
-                      child: Icon(
-                        Icons.chevron_right,
-                        color: Colors.white,
-                      ),
-                    ),
+                    action: () => context.replaceNamed(AppRoute.login.name),
                   ),
-                  action: () => context.replaceNamed(AppRoute.login.name),
                 ),
               gapH32,
             ],
