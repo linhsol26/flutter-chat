@@ -36,8 +36,11 @@ class LoginScreen extends HookConsumerWidget {
       state.maybeWhen(
         data: (_) {
           btnCtrl.success();
-          if (_! is bool) {
+          if (_ is! bool) {
             context.goNamed(isSignUp ? AppRoute.user.name : AppRoute.home.name);
+          } else {
+            type.value = FormType.signin;
+            passwordInputCtrl.forward();
           }
         },
         error: (error, stackTrace) {
@@ -73,7 +76,7 @@ class LoginScreen extends HookConsumerWidget {
                   ),
                   Expanded(
                       flex: 2,
-                      child: Column(
+                      child: ListView(
                         children: [
                           gapH32,
                           if (isForgot) ...[
@@ -142,9 +145,13 @@ class LoginScreen extends HookConsumerWidget {
                                 final email = emailCtrl.text.trim();
                                 final password = pwdCtrl.text;
 
-                                isSignUp
-                                    ? notifier.signUp(email, password)
-                                    : notifier.signIn(email, password);
+                                if (isSignUp) {
+                                  notifier.signUp(email, password);
+                                } else if (isForgot) {
+                                  notifier.sendReset(email);
+                                } else {
+                                  notifier.signIn(email, password);
+                                }
                               }
                               validType.value = AutovalidateMode.onUserInteraction;
                             },
@@ -203,7 +210,6 @@ class LoginScreen extends HookConsumerWidget {
                                       onPressed: () {
                                         passwordInputCtrl.reverse();
                                         type.value = FormType.forgot;
-                                        // context.pushNamed(AppRoute.forgotPassword.name);
                                       },
                                       child: Text(
                                         'Forgot your password?',

@@ -28,7 +28,7 @@ class ChatList extends HookConsumerWidget {
     return AnimatedStreamList<Message>(
       streamList: ref.read(chatRepositoryProvider).getChatMessages(receiverId),
       shrinkWrap: true,
-      duration: const Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 100),
       scrollController: scrollController,
       scrollPhysics: const BouncingScrollPhysics(),
       reverse: true,

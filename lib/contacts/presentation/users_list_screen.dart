@@ -121,7 +121,7 @@ class UsersListScreen extends HookConsumerWidget {
                                 gapH12,
                                 Text(
                                   user.name,
-                                  maxLines: 2,
+                                  maxLines: 1,
                                   softWrap: true,
                                   textAlign: TextAlign.center,
                                   style: context.sub3,

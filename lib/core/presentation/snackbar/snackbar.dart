@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 
 showSuccess(BuildContext context, [String msg = 'Successful!!!']) {
-  var snackBar = SnackBar(
-    elevation: 0,
-    behavior: SnackBarBehavior.floating,
-    backgroundColor: Colors.transparent,
-    content: AwesomeSnackbarContent(
-      title: 'Congratulations!',
-      message: msg,
-      contentType: ContentType.success,
-    ),
-  );
+  // var snackBar = SnackBar(
+  //   elevation: 0,
+  //   behavior: SnackBarBehavior.floating,
+  //   backgroundColor: Colors.transparent,
+  //   content: AwesomeSnackbarContent(
+  //     title: 'Congratulations!',
+  //     message: msg,
+  //     contentType: ContentType.success,
+  //   ),
+  // );
 
-  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  // ScaffoldMessenger.of(context).showSnackBar(snackBar);
 }
 
 showError(BuildContext context, [String msg = 'Something went wrong.']) {

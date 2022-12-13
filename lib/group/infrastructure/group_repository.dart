@@ -233,4 +233,53 @@ class GroupRepository {
     }
     return groups;
   }
+
+  Future<void> deleteGroupMessage({
+    required String groupId,
+    required String messageId,
+  }) async {
+    await _firestore
+        .collection(CollectionPath.groups)
+        .doc(groupId)
+        .collection(CollectionPath.chats)
+        .doc(messageId)
+        .delete();
+  }
+
+  Future<void> deleteGroupChat({
+    required String groupId,
+    required List<String> memberIds,
+  }) async {
+    await _firestore
+        .collection(CollectionPath.groups)
+        .doc(groupId)
+        .collection(CollectionPath.chats)
+        .get()
+        .then((value) {
+      for (var element in value.docs) {
+        _firestore
+            .collection(CollectionPath.groups)
+            .doc(groupId)
+            .collection(CollectionPath.chats)
+            .doc(element.id)
+            .delete();
+      }
+    });
+
+    await _firestore.collection(CollectionPath.groups).doc(groupId).delete();
+
+    for (var id in memberIds) {
+      var groups = [];
+      final snapshotUser = await _firestore.collection(CollectionPath.users).doc(id).get();
+
+      groups = UserModel.fromJson(snapshotUser.data()!)
+          .groups
+          .where((element) => element['id'] != groupId)
+          .toList();
+
+      await _firestore.collection(CollectionPath.users).doc(id).update({
+        'groups': [...groups]
+      });
+    }
+  }
 }

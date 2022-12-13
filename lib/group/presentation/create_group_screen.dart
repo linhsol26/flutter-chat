@@ -33,7 +33,7 @@ class CreateGroupScreen extends HookConsumerWidget with DismissKeyboard {
           data: (_) {
             EasyLoading.dismiss();
             context.goNamed(AppRoute.home.name);
-            showSuccess(context);
+            EasyLoading.showSuccess('Successful!!!');
           },
           error: (error, _) {
             EasyLoading.dismiss();
