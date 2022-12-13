@@ -19,6 +19,7 @@ import 'package:whatsapp_ui/group/presentation/edit_group_screen.dart';
 import 'package:whatsapp_ui/group/presentation/group_screen.dart';
 import 'package:whatsapp_ui/landing/presentation/landing_screen.dart';
 import 'package:whatsapp_ui/routing/go_router_refresh_stream.dart';
+import 'package:whatsapp_ui/settings/presentation/settings_screen.dart';
 import 'package:whatsapp_ui/status/domain/status_model.dart';
 import 'package:whatsapp_ui/status/presentation/confirm_status_screen.dart';
 import 'package:whatsapp_ui/status/presentation/widgets/status_view.dart';
@@ -52,7 +53,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           return '/home';
         }
       } else {
-        if (state.location == '/home') {
+        if (state.location == '/home' || state.location == '/settings') {
           return '/login';
         }
       }
@@ -89,6 +90,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 ),
               ),
             ],
+          ),
+          GoRoute(
+            path: 'settings',
+            builder: (context, state) => const SettingsScreen(),
           ),
           GoRoute(
             path: 'home',

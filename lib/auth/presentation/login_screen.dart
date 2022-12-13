@@ -13,7 +13,7 @@ import 'package:whatsapp_ui/core/presentation/utils/sizes.dart';
 import 'package:whatsapp_ui/core/shared/extensions.dart';
 import 'package:whatsapp_ui/routing/app_router.dart';
 
-enum FormType { signup, signin }
+enum FormType { signup, signin, forgot }
 
 class LoginScreen extends HookConsumerWidget {
   const LoginScreen({super.key});
@@ -26,6 +26,7 @@ class LoginScreen extends HookConsumerWidget {
     final btnCtrl = useMemoized(() => RoundedLoadingButtonController());
     final type = useValueNotifier(FormType.signin);
     final isSignUp = useValueListenable(type) == FormType.signup;
+    final isForgot = useValueListenable(type) == FormType.forgot;
     final validType = useValueNotifier(AutovalidateMode.disabled);
     final isOnUserInteract = useValueListenable(validType);
     final confirmInputCtrl = useAnimationController(duration: const Duration(milliseconds: 500));
@@ -35,7 +36,9 @@ class LoginScreen extends HookConsumerWidget {
       state.maybeWhen(
         data: (_) {
           btnCtrl.success();
-          context.goNamed(isSignUp ? AppRoute.user.name : AppRoute.home.name);
+          if (_! is bool) {
+            context.goNamed(isSignUp ? AppRoute.user.name : AppRoute.home.name);
+          }
         },
         error: (error, stackTrace) {
           (error as Failure).show(context);
@@ -46,7 +49,7 @@ class LoginScreen extends HookConsumerWidget {
     });
 
     useEffect(() {
-      passwordInputCtrl.forward();
+      if (!isForgot) passwordInputCtrl.forward();
       return null;
     });
 
@@ -73,6 +76,13 @@ class LoginScreen extends HookConsumerWidget {
                       child: Column(
                         children: [
                           gapH32,
+                          if (isForgot) ...[
+                            Text(
+                              'Type your registered email to receive reset password email.',
+                              style: context.p1,
+                            ),
+                            gapH16,
+                          ],
                           InputFormWidget(
                             controller: emailCtrl,
                             label: 'Email',
@@ -93,25 +103,26 @@ class LoginScreen extends HookConsumerWidget {
                             ),
                           ),
                           gapH16,
-                          ShowUpAnimation(
-                            animationController: confirmInputCtrl,
-                            animationDuration: const Duration(milliseconds: 200),
-                            delayStart: const Duration(milliseconds: 200),
-                            curve: Curves.linear,
-                            direction: Direction.horizontal,
-                            offset: 0.5,
-                            child: InputFormWidget(
-                              controller: nameCtrl,
-                              label: 'Confirm Password',
-                              inputType: InputType.password,
-                              validator: (v) {
-                                if (v != null && v != pwdCtrl.text && isSignUp) {
-                                  return 'Password must match.';
-                                }
-                                return null;
-                              },
+                          if (!isForgot)
+                            ShowUpAnimation(
+                              animationController: confirmInputCtrl,
+                              animationDuration: const Duration(milliseconds: 200),
+                              delayStart: const Duration(milliseconds: 200),
+                              curve: Curves.linear,
+                              direction: Direction.horizontal,
+                              offset: 0.5,
+                              child: InputFormWidget(
+                                controller: nameCtrl,
+                                label: 'Confirm Password',
+                                inputType: InputType.password,
+                                validator: (v) {
+                                  if (v != null && v != pwdCtrl.text && isSignUp) {
+                                    return 'Password must match.';
+                                  }
+                                  return null;
+                                },
+                              ),
                             ),
-                          ),
                         ],
                       )),
                   Expanded(
@@ -119,41 +130,43 @@ class LoginScreen extends HookConsumerWidget {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        if (isSignUp) gapH32,
+                        if (isSignUp || isForgot) gapH32,
                         RoundedLoadingButton(
-                          controller: btnCtrl,
-                          color: primaryColor,
-                          animateOnTap: false,
-                          onPressed: () {
-                            if (formKey.currentState!.validate()) {
-                              btnCtrl.start();
-                              final notifier = ref.read(authNotifierProvider.notifier);
-                              final email = emailCtrl.text.trim();
-                              final password = pwdCtrl.text;
+                            controller: btnCtrl,
+                            color: primaryColor,
+                            animateOnTap: false,
+                            onPressed: () {
+                              if (formKey.currentState!.validate()) {
+                                btnCtrl.start();
+                                final notifier = ref.read(authNotifierProvider.notifier);
+                                final email = emailCtrl.text.trim();
+                                final password = pwdCtrl.text;
 
+                                isSignUp
+                                    ? notifier.signUp(email, password)
+                                    : notifier.signIn(email, password);
+                              }
+                              validType.value = AutovalidateMode.onUserInteraction;
+                            },
+                            child: Text(
                               isSignUp
-                                  ? notifier.signUp(email, password)
-                                  : notifier.signIn(email, password);
-                            }
-                            validType.value = AutovalidateMode.onUserInteraction;
-                          },
-                          child: isSignUp
-                              ? Text(
-                                  'Sign Up',
-                                  style: context.sub3,
-                                )
-                              : Text(
-                                  'Login',
-                                  style: context.sub3,
-                                ),
-                        ),
+                                  ? 'Sign Up'
+                                  : isForgot
+                                      ? 'Send'
+                                      : 'Login',
+                              style: context.sub3,
+                            )),
                         if (isSignUp) gapH32,
                         Flexible(
-                          child: isSignUp
+                          child: isSignUp || isForgot
                               ? TextButton(
                                   onPressed: () {
                                     type.value = FormType.signin;
-                                    confirmInputCtrl.reverse();
+                                    if (isSignUp) {
+                                      confirmInputCtrl.reverse();
+                                    } else if (isForgot) {
+                                      passwordInputCtrl.forward();
+                                    }
                                   },
                                   child: Text(
                                     'Back to login',
@@ -187,7 +200,11 @@ class LoginScreen extends HookConsumerWidget {
                                       ],
                                     ),
                                     TextButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        passwordInputCtrl.reverse();
+                                        type.value = FormType.forgot;
+                                        // context.pushNamed(AppRoute.forgotPassword.name);
+                                      },
                                       child: Text(
                                         'Forgot your password?',
                                         style: context.sub3,
