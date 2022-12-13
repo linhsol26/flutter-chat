@@ -8,6 +8,7 @@ import 'package:whatsapp_ui/auth/domain/user_model.dart';
 import 'package:whatsapp_ui/auth/presentation/user_screen.dart';
 import 'package:whatsapp_ui/core/domain/failure.dart';
 import 'package:whatsapp_ui/core/infrastructure/collection_path.dart';
+import 'package:whatsapp_ui/core/shared/extensions.dart';
 
 class AuthRepository {
   final FirebaseAuth _auth;
@@ -107,6 +108,17 @@ class AuthRepository {
     }
   }
 
+  Future<Result<Failure, bool>> sendPasswordResetEmail(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+      return const Success(true);
+    } on FirebaseException catch (e) {
+      return Error(Failure(msg: e.message));
+    } on SocketException {
+      return const Error(Failure.noConnection());
+    }
+  }
+
   Future<void> signOut() async => await _auth.signOut();
 
   Future<String> storeFileToFirebase(String ref, File file) async {
@@ -128,5 +140,23 @@ class AuthRepository {
     await _firestore.collection(CollectionPath.users).doc(_auth.currentUser!.uid).update({
       'isOnline': isOnline,
     });
+  }
+
+  Future<List<UserModel>> search(String query) async {
+    List<UserModel> founds = [];
+
+    final userDocs = await _firestore
+        .collection(CollectionPath.users)
+        .where('uid', isNotEqualTo: _auth.currentUser?.uid)
+        .get();
+
+    for (var doc in userDocs.docs) {
+      final user = UserModel.fromJson(doc.data());
+      if (user.name.compare(query)) {
+        founds.add(user);
+      }
+    }
+
+    return founds;
   }
 }

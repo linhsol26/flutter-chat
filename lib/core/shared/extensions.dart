@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:multiple_result/multiple_result.dart';
+import 'package:string_similarity/string_similarity.dart';
 import 'package:whatsapp_ui/chat/presentation/widgets/video_player_item.dart';
 import 'package:whatsapp_ui/core/domain/failure.dart';
 import 'package:whatsapp_ui/core/presentation/snackbar/snackbar.dart';
@@ -79,4 +80,8 @@ extension MessageTypeEx on MessageType {
         return CachedNetworkImage(imageUrl: msg);
     }
   }
+}
+
+extension Compare on String {
+  bool compare(String query) => toLowerCase().similarityTo(query.toLowerCase()) > 0.0;
 }

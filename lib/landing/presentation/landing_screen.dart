@@ -6,6 +6,7 @@ import 'package:slide_action/slide_action.dart';
 import 'package:whatsapp_ui/auth/shared/providers.dart';
 import 'package:whatsapp_ui/core/presentation/theme/colors.dart';
 import 'package:whatsapp_ui/core/presentation/utils/sizes.dart';
+import 'package:whatsapp_ui/core/shared/extensions.dart';
 import 'package:whatsapp_ui/routing/app_router.dart';
 
 class LandingScreen extends HookConsumerWidget {
@@ -24,11 +25,11 @@ class LandingScreen extends HookConsumerWidget {
                 child:
                     Lottie.network('https://assets6.lottiefiles.com/packages/lf20_ZsoSL7RsIe.json'),
               ),
-              const Text.rich(
+              Text.rich(
                 TextSpan(
                   text:
                       'Our chat app is the perfect way to stay connected with friends and family.',
-                  style: TextStyle(color: textColor),
+                  style: context.p2,
                 ),
               ),
               gapH32,
@@ -42,7 +43,7 @@ class LandingScreen extends HookConsumerWidget {
                       return Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(36),
-                          color: Colors.white30,
+                          color: Theme.of(context).appBarTheme.backgroundColor,
                           boxShadow: const [
                             BoxShadow(
                               color: Colors.white,
@@ -50,10 +51,10 @@ class LandingScreen extends HookConsumerWidget {
                             ),
                           ],
                         ),
-                        child: const Center(
+                        child: Center(
                           child: Text(
                             "Discover our app",
-                            style: TextStyle(fontSize: 16, color: primaryColor),
+                            style: context.sub3.copyWith(fontSize: 16),
                           ),
                         ),
                       );

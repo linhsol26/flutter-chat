@@ -13,7 +13,7 @@ class AppTheme {
   AppTheme._();
 
   static final lightTheme = ThemeData(
-    // scaffoldBackgroundColor: whiteColor,
+    scaffoldBackgroundColor: whiteColor,
     primaryColor: primaryColor,
     primarySwatch: primaryColorMaterial,
     iconTheme: const IconThemeData(color: blackColor),
@@ -23,15 +23,15 @@ class AppTheme {
       labelStyle: TextStyle(fontSize: 14, color: blackColor),
       floatingLabelStyle: TextStyle(fontSize: 14, color: primaryColor),
       border: OutlineInputBorder(
-        borderSide: BorderSide(color: whiteColor),
+        borderSide: BorderSide(color: primaryColor),
         borderRadius: BorderRadius.all(Radius.circular(30.0)),
       ),
       enabledBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: whiteColor),
+        borderSide: BorderSide(color: primaryColor),
         borderRadius: BorderRadius.all(Radius.circular(30.0)),
       ),
       disabledBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: whiteColor),
+        borderSide: BorderSide(color: primaryColor),
         borderRadius: BorderRadius.all(Radius.circular(30.0)),
       ),
     ),

@@ -26,6 +26,15 @@ class AuthNotifier extends StateNotifier<AsyncValue> {
     );
   }
 
+  Future<void> sendReset(String email) async {
+    state = const AsyncLoading();
+    final result = await _authRepository.sendPasswordResetEmail(email);
+    state = result.when(
+      (error) => AsyncError(error, StackTrace.fromString(error.toString())),
+      (success) => AsyncData(success),
+    );
+  }
+
   Future<void> signOut() async => await _authRepository.signOut();
 
   Future<void> saveUserInf(File? image, String name, String phoneNumber) async {

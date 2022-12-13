@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,6 +8,7 @@ import 'package:multiple_result/multiple_result.dart';
 import 'package:whatsapp_ui/auth/domain/user_model.dart';
 import 'package:whatsapp_ui/core/domain/failure.dart';
 import 'package:whatsapp_ui/core/infrastructure/collection_path.dart';
+import 'package:whatsapp_ui/core/shared/extensions.dart';
 
 class ContactsRepository {
   final FirebaseFirestore _firestore;
@@ -77,5 +79,23 @@ class ContactsRepository {
     } catch (e) {
       return Error(Failure(msg: e.toString()));
     }
+  }
+
+  Future<List<Contact>> search(String query) async {
+    List<Contact> founds = [];
+    final result = await getContacts();
+
+    return result.when(
+      (error) => founds,
+      (contacts) {
+        for (var element in contacts) {
+          log('${element.displayName}: ${element.displayName.compare(query)}');
+          if (element.displayName.compare(query)) {
+            founds.add(element);
+          }
+        }
+        return founds;
+      },
+    );
   }
 }

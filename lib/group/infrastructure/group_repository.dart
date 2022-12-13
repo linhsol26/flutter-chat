@@ -8,6 +8,7 @@ import 'package:whatsapp_ui/auth/domain/user_model.dart';
 import 'package:whatsapp_ui/auth/infrastructure/auth_repository.dart';
 import 'package:whatsapp_ui/core/domain/failure.dart';
 import 'package:whatsapp_ui/core/infrastructure/collection_path.dart';
+import 'package:whatsapp_ui/core/shared/extensions.dart';
 import 'package:whatsapp_ui/group/domain/group_model.dart';
 
 class GroupRepository {
@@ -212,5 +213,24 @@ class GroupRepository {
     } on SocketException {
       return const Error(Failure.noConnection());
     }
+  }
+
+  Future<List<GroupModel>> search(String query) async {
+    final user = await _authRepository.currentUserData;
+
+    List<GroupModel> groups = [];
+    if (user != null) {
+      for (var e in user.groups) {
+        final group = await _firestore
+            .collection(CollectionPath.groups)
+            .doc(e['id'])
+            .get()
+            .then((value) => GroupModel.fromJson(value.data()!));
+        if (group.name.compare(query)) {
+          groups.add(group);
+        }
+      }
+    }
+    return groups;
   }
 }

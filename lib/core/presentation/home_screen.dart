@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,16 +9,24 @@ import 'package:flutter_zoom_drawer/config.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:whatsapp_ui/auth/domain/user_model.dart';
 import 'package:whatsapp_ui/auth/shared/providers.dart';
+import 'package:whatsapp_ui/chat/domain/chat_contact.dart';
+import 'package:whatsapp_ui/chat/shared/providers.dart';
 import 'package:whatsapp_ui/contacts/presentation/contact_user_wrapper.dart';
 import 'package:whatsapp_ui/core/presentation/theme/colors.dart';
 import 'package:whatsapp_ui/core/presentation/utils/files.dart';
 import 'package:whatsapp_ui/core/presentation/widgets/conversation_list.dart';
-import 'package:whatsapp_ui/core/presentation/widgets/custom_search_delegate.dart';
+import 'package:whatsapp_ui/core/presentation/widgets/search/custom_search_group_delegate.dart';
 import 'package:whatsapp_ui/core/shared/extensions.dart';
+import 'package:whatsapp_ui/group/domain/group_model.dart';
 import 'package:whatsapp_ui/group/presentation/group_conversation_list.dart';
+import 'package:whatsapp_ui/group/shared/providers.dart';
 import 'package:whatsapp_ui/routing/app_router.dart';
 import 'package:whatsapp_ui/settings/presentation/settings_screen.dart';
+
+import 'widgets/search/custom_search_chat_delegate.dart';
+import 'widgets/search/custom_search_user_delegate.dart';
 
 class HomeScreen extends StatefulHookConsumerWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -96,11 +106,42 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
           actions: [
             IconButton(
               icon: const Icon(Icons.search, color: primaryColor),
-              onPressed: () {
-                showSearch(
+              onPressed: () async {
+                final res = await showSearch(
                   context: context,
-                  delegate: CustomSearchDelegate(ref),
+                  delegate: [
+                    CustomSearchChatDelegate(ref),
+                    CustomSearchGroupDelegate(ref),
+                    CustomSearchUserDelegate(ref)
+                  ][selectedIndex.value],
                 );
+
+                if (res is ChatContact) {
+                  await ref.read(chatNotifierProvider.notifier).setJoinedChat(
+                        receiverId: res.contactId,
+                      );
+
+                  context.push(
+                    '/home/direct-chat',
+                    extra: UserModel(
+                      name: res.name,
+                      uid: res.contactId,
+                      profilePic: res.profilePic,
+                      phoneNumber: '',
+                    ),
+                  );
+                } else if (res is GroupModel) {
+                  await ref
+                      .read(groupNotifierProvider.notifier)
+                      .setJoinedGroupChat(groupId: res.groupId);
+                  context.push('/home/group-chat', extra: res);
+                } else if (res is UserModel) {
+                  await ref.read(chatNotifierProvider.notifier).setJoinedChat(
+                        receiverId: res.uid,
+                      );
+
+                  context.push('/home/direct-chat', extra: res);
+                }
               },
             ),
           ],

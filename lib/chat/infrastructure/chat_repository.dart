@@ -489,17 +489,16 @@ class ChatRepository {
         .delete();
   }
 
-  Stream<List<ChatContact>> search(String query) {
-    return _firestore
+  Future<List<ChatContact>> search(String query) async {
+    final snapshot = await _firestore
         .collection(CollectionPath.users)
         .doc(_auth.currentUser?.uid)
         .collection(CollectionPath.chats)
-        .where('name', isGreaterThanOrEqualTo: query)
-        .snapshots()
-        .asyncMap((snapshot) async {
-      List<ChatContact> contacts = [];
-      for (var contact in snapshot.docs) {
-        final chatContact = ChatContact.fromJson(contact.data());
+        .get();
+    List<ChatContact> contacts = [];
+    for (var contact in snapshot.docs) {
+      final chatContact = ChatContact.fromJson(contact.data());
+      if (chatContact.name.compare(query)) {
         final userData =
             await _firestore.collection(CollectionPath.users).doc(chatContact.contactId).get();
 
@@ -516,8 +515,8 @@ class ChatRepository {
           ),
         );
       }
+    }
 
-      return contacts;
-    });
+    return contacts;
   }
 }

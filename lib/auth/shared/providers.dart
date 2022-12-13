@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:whatsapp_ui/auth/application/auth_notifier.dart';
 import 'package:whatsapp_ui/auth/domain/user_model.dart';
@@ -34,4 +35,8 @@ final getUserByIdProvider = StreamProvider.autoDispose.family<UserModel, String>
 
 final userStateProvider = StreamProvider.autoDispose<bool>((ref) {
   return ref.watch(authRepositoryProvider).userState();
+});
+
+final storageProvider = Provider<FlutterSecureStorage>((ref) {
+  return const FlutterSecureStorage();
 });

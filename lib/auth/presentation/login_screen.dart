@@ -28,7 +28,8 @@ class LoginScreen extends HookConsumerWidget {
     final isSignUp = useValueListenable(type) == FormType.signup;
     final validType = useValueNotifier(AutovalidateMode.disabled);
     final isOnUserInteract = useValueListenable(validType);
-    final animationCtrl = useAnimationController(duration: const Duration(milliseconds: 500));
+    final confirmInputCtrl = useAnimationController(duration: const Duration(milliseconds: 500));
+    final passwordInputCtrl = useAnimationController(duration: const Duration(milliseconds: 500));
 
     ref.listen<AsyncValue>(authNotifierProvider, (_, state) {
       state.maybeWhen(
@@ -42,6 +43,11 @@ class LoginScreen extends HookConsumerWidget {
         },
         orElse: () {},
       );
+    });
+
+    useEffect(() {
+      passwordInputCtrl.forward();
+      return null;
     });
 
     return GestureDetector(
@@ -58,7 +64,7 @@ class LoginScreen extends HookConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
-                    flex: 2,
+                    flex: 3,
                     child: Lottie.network(
                         'https://assets6.lottiefiles.com/packages/lf20_ZsoSL7RsIe.json'),
                   ),
@@ -73,14 +79,22 @@ class LoginScreen extends HookConsumerWidget {
                             inputType: InputType.email,
                           ),
                           gapH16,
-                          InputFormWidget(
-                            controller: pwdCtrl,
-                            label: 'Password',
-                            inputType: InputType.password,
+                          ShowUpAnimation(
+                            animationController: passwordInputCtrl,
+                            animationDuration: const Duration(milliseconds: 200),
+                            delayStart: const Duration(milliseconds: 200),
+                            curve: Curves.linear,
+                            direction: Direction.horizontal,
+                            offset: 0.5,
+                            child: InputFormWidget(
+                              controller: pwdCtrl,
+                              label: 'Password',
+                              inputType: InputType.password,
+                            ),
                           ),
                           gapH16,
                           ShowUpAnimation(
-                            animationController: animationCtrl,
+                            animationController: confirmInputCtrl,
                             animationDuration: const Duration(milliseconds: 200),
                             delayStart: const Duration(milliseconds: 200),
                             curve: Curves.linear,
@@ -98,13 +112,14 @@ class LoginScreen extends HookConsumerWidget {
                               },
                             ),
                           ),
-                          gapH32,
                         ],
                       )),
                   Expanded(
-                    flex: 1,
+                    flex: 2,
                     child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
+                        if (isSignUp) gapH32,
                         RoundedLoadingButton(
                           controller: btnCtrl,
                           color: primaryColor,
@@ -122,31 +137,66 @@ class LoginScreen extends HookConsumerWidget {
                             }
                             validType.value = AutovalidateMode.onUserInteraction;
                           },
-                          child: isSignUp ? const Text('Sign Up') : const Text('Login'),
+                          child: isSignUp
+                              ? Text(
+                                  'Sign Up',
+                                  style: context.sub3,
+                                )
+                              : Text(
+                                  'Login',
+                                  style: context.sub3,
+                                ),
                         ),
-                        if (isSignUp)
-                          TextButton(
-                            onPressed: () {
-                              type.value = FormType.signin;
-                              animationCtrl.reverse();
-                            },
-                            child: Text(
-                              'Back to login',
-                              style: context.sub3,
-                            ),
-                          )
-                        else
-                          TextButton(
-                            onPressed: () {
-                              type.value = FormType.signup;
-                              animationCtrl.forward();
-                            },
-                            child: Text(
-                              'Don\'t have account?',
-                              style: context.sub3,
-                            ),
-                          ),
-                        gapH32,
+                        if (isSignUp) gapH32,
+                        Flexible(
+                          child: isSignUp
+                              ? TextButton(
+                                  onPressed: () {
+                                    type.value = FormType.signin;
+                                    confirmInputCtrl.reverse();
+                                  },
+                                  child: Text(
+                                    'Back to login',
+                                    style: context.sub3,
+                                  ),
+                                )
+                              : Wrap(
+                                  alignment: WrapAlignment.center,
+                                  children: [
+                                    TextButton(
+                                      onPressed: () {
+                                        type.value = FormType.signup;
+                                        confirmInputCtrl.forward();
+                                      },
+                                      child: Text(
+                                        'Don\'t have account?',
+                                        style: context.sub3,
+                                      ),
+                                    ),
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Expanded(child: Divider(color: primaryColor)),
+                                        gapW4,
+                                        Text(
+                                          'or',
+                                          style: context.sub1.copyWith(fontWeight: FontWeight.bold),
+                                        ),
+                                        gapW4,
+                                        const Expanded(child: Divider(color: primaryColor)),
+                                      ],
+                                    ),
+                                    TextButton(
+                                      onPressed: () {},
+                                      child: Text(
+                                        'Forgot your password?',
+                                        style: context.sub3,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                        ),
+                        const Spacer(),
                       ],
                     ),
                   )
