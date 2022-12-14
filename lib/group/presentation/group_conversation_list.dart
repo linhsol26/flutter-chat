@@ -151,7 +151,6 @@ class _ConversationTile extends HookWidget {
               Text(DateFormat.Hm().format(groupModel.timeSent),
                   style: context.sub1.copyWith(
                     fontSize: 12,
-                    color: Colors.black,
                     fontWeight: FontWeight.w500,
                   )),
               if (lastJoined == null || (groupModel.timeSent.isAfter(lastJoined!)))

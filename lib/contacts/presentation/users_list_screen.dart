@@ -8,7 +8,6 @@ import 'package:whatsapp_ui/auth/presentation/user_screen.dart';
 import 'package:whatsapp_ui/auth/shared/providers.dart';
 import 'package:whatsapp_ui/chat/shared/providers.dart';
 import 'package:whatsapp_ui/contacts/shared/providers.dart';
-import 'package:whatsapp_ui/core/presentation/theme/colors.dart';
 import 'package:whatsapp_ui/core/presentation/utils/sizes.dart';
 import 'package:whatsapp_ui/core/presentation/widgets/avatar_widget.dart';
 import 'package:whatsapp_ui/core/presentation/widgets/error_widget.dart';
@@ -72,36 +71,33 @@ class UsersListScreen extends HookConsumerWidget {
                                         user.name,
                                         style: context.h1.copyWith(
                                           fontSize: 32,
-                                          color: brownColor,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                       gapH12,
                                       Text(
                                         user.phoneNumber,
-                                        style: context.sub3.copyWith(color: blackColor),
+                                        style: context.sub3,
                                       ),
                                       gapH12,
                                       Text(
                                         isOnline
                                             ? UserStatus.online.name.toUpperCase()
                                             : UserStatus.offline.name.toUpperCase(),
-                                        style: context.sub3.copyWith(color: blackColor),
+                                        style: context.sub3,
                                       ),
                                       gapH12,
                                       ElevatedButton(
                                         onPressed: () async {
                                           await ref
                                               .read(chatNotifierProvider.notifier)
-                                              .setJoinedChat(
-                                                receiverId: user.uid,
-                                              );
+                                              .setJoinedChat(receiverId: user.uid);
                                           Navigator.pop(context);
                                           context.go('/home/direct-chat', extra: user);
                                         },
                                         child: Text(
                                           'Connect to ${user.name}',
-                                          style: const TextStyle(color: Colors.white),
+                                          style: context.sub3,
                                         ),
                                       )
                                     ],

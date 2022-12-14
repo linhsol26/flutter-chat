@@ -1,5 +1,7 @@
 import 'package:animated_stream_list_nullsafety/animated_stream_list.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:whatsapp_ui/auth/shared/providers.dart';
@@ -8,6 +10,8 @@ import 'package:whatsapp_ui/chat/domain/message_reply.dart';
 import 'package:whatsapp_ui/chat/presentation/widgets/my_message_card.dart';
 import 'package:whatsapp_ui/chat/presentation/widgets/sender_group_message.dart';
 import 'package:whatsapp_ui/chat/shared/providers.dart';
+import 'package:whatsapp_ui/core/shared/extensions.dart';
+import 'package:whatsapp_ui/group/shared/providers.dart';
 
 class GroupList extends HookConsumerWidget {
   const GroupList({
@@ -62,7 +66,9 @@ class GroupList extends HookConsumerWidget {
                 );
               },
               isSeen: msg.isSeen,
-              onHover: () {},
+              onHover: () async {
+                await _showBottomSheet(context, ref, msg, isMe);
+              },
             ),
           );
         }
@@ -85,10 +91,69 @@ class GroupList extends HookConsumerWidget {
               );
             },
             senderId: !isMe ? msg.senderId : null,
+            onHover: () async {
+              await _showBottomSheet(context, ref, msg, isMe);
+            },
           ),
         );
       },
       itemRemovedBuilder: (item, index, context, animation) => const SizedBox.shrink(),
     );
+  }
+
+  _showBottomSheet(BuildContext context, WidgetRef ref, Message msg, bool isMe) async {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      ref.read(messageReplyProvider.notifier).state = MessageReply(
+                        message: msg.text,
+                        isMe: isMe,
+                        messageType: msg.type,
+                        username: 'You',
+                      );
+                    },
+                    child: Text(
+                      'Reply',
+                      style: context.sub3.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      Navigator.pop(context);
+                      await ref
+                          .read(groupRepositoryProvider)
+                          .deleteGroupMessage(groupId: groupId, messageId: msg.messageId);
+                      EasyLoading.showSuccess('Unsent!!!');
+                    },
+                    child: Text(
+                      'Unsend',
+                      style: context.sub3.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      Navigator.pop(context);
+                      await Clipboard.setData(ClipboardData(text: msg.text));
+                      EasyLoading.showSuccess('Copied!!!');
+                    },
+                    child: Text(
+                      'Copy',
+                      style: context.sub3.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
   }
 }

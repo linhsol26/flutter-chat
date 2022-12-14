@@ -3,19 +3,18 @@ import 'package:go_router/go_router.dart';
 import 'package:story_view/controller/story_controller.dart';
 import 'package:story_view/widgets/story_view.dart';
 import 'package:whatsapp_ui/core/presentation/widgets/loading_widget.dart';
-import 'package:whatsapp_ui/routing/app_router.dart';
-import 'package:whatsapp_ui/status/domain/status_model.dart';
+import 'package:whatsapp_ui/story/domain/story_model.dart';
 
-class StatusView extends StatefulWidget {
-  const StatusView({super.key, required this.status});
+class CustomStoryView extends StatefulWidget {
+  const CustomStoryView({super.key, required this.story});
 
-  final StatusModel status;
+  final StoryModel story;
 
   @override
-  State<StatusView> createState() => _StatusViewState();
+  State<CustomStoryView> createState() => _CustomStoryViewState();
 }
 
-class _StatusViewState extends State<StatusView> {
+class _CustomStoryViewState extends State<CustomStoryView> {
   late final StoryController storyController;
 
   List<StoryItem> items = [];
@@ -28,7 +27,7 @@ class _StatusViewState extends State<StatusView> {
   }
 
   void initStory() {
-    for (var url in widget.status.photoUrl) {
+    for (var url in widget.story.photoUrl) {
       items.add(StoryItem.pageImage(url: url, controller: storyController));
     }
   }
@@ -41,7 +40,8 @@ class _StatusViewState extends State<StatusView> {
           : StoryView(
               storyItems: items,
               controller: storyController,
-              onComplete: () => context.goNamed(AppRoute.home.name),
+              onComplete: () => context.pop(),
+              onVerticalSwipeComplete: (_) => context.pop(),
             ),
     );
   }

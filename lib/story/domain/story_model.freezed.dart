@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'status_model.dart';
+part of 'story_model.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -14,50 +14,50 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
-StatusModel _$StatusModelFromJson(Map<String, dynamic> json) {
-  return _StatusModel.fromJson(json);
+StoryModel _$StoryModelFromJson(Map<String, dynamic> json) {
+  return _StoryModel.fromJson(json);
 }
 
 /// @nodoc
-mixin _$StatusModel {
-  String get uid => throw _privateConstructorUsedError;
+mixin _$StoryModel {
+  String get creatorId => throw _privateConstructorUsedError;
   String get username => throw _privateConstructorUsedError;
   String get phoneNumber => throw _privateConstructorUsedError;
   List<String> get photoUrl => throw _privateConstructorUsedError;
   DateTime get createdAt => throw _privateConstructorUsedError;
   String get profilePic => throw _privateConstructorUsedError;
-  String get statusId => throw _privateConstructorUsedError;
+  String get storyId => throw _privateConstructorUsedError;
   List<String> get whoCanSee => throw _privateConstructorUsedError;
-  List<String> get isSeen => throw _privateConstructorUsedError;
+  List<String> get viewed => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
-  $StatusModelCopyWith<StatusModel> get copyWith =>
+  $StoryModelCopyWith<StoryModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $StatusModelCopyWith<$Res> {
-  factory $StatusModelCopyWith(
-          StatusModel value, $Res Function(StatusModel) then) =
-      _$StatusModelCopyWithImpl<$Res, StatusModel>;
+abstract class $StoryModelCopyWith<$Res> {
+  factory $StoryModelCopyWith(
+          StoryModel value, $Res Function(StoryModel) then) =
+      _$StoryModelCopyWithImpl<$Res, StoryModel>;
   @useResult
   $Res call(
-      {String uid,
+      {String creatorId,
       String username,
       String phoneNumber,
       List<String> photoUrl,
       DateTime createdAt,
       String profilePic,
-      String statusId,
+      String storyId,
       List<String> whoCanSee,
-      List<String> isSeen});
+      List<String> viewed});
 }
 
 /// @nodoc
-class _$StatusModelCopyWithImpl<$Res, $Val extends StatusModel>
-    implements $StatusModelCopyWith<$Res> {
-  _$StatusModelCopyWithImpl(this._value, this._then);
+class _$StoryModelCopyWithImpl<$Res, $Val extends StoryModel>
+    implements $StoryModelCopyWith<$Res> {
+  _$StoryModelCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -67,20 +67,20 @@ class _$StatusModelCopyWithImpl<$Res, $Val extends StatusModel>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? uid = null,
+    Object? creatorId = null,
     Object? username = null,
     Object? phoneNumber = null,
     Object? photoUrl = null,
     Object? createdAt = null,
     Object? profilePic = null,
-    Object? statusId = null,
+    Object? storyId = null,
     Object? whoCanSee = null,
-    Object? isSeen = null,
+    Object? viewed = null,
   }) {
     return _then(_value.copyWith(
-      uid: null == uid
-          ? _value.uid
-          : uid // ignore: cast_nullable_to_non_nullable
+      creatorId: null == creatorId
+          ? _value.creatorId
+          : creatorId // ignore: cast_nullable_to_non_nullable
               as String,
       username: null == username
           ? _value.username
@@ -102,67 +102,67 @@ class _$StatusModelCopyWithImpl<$Res, $Val extends StatusModel>
           ? _value.profilePic
           : profilePic // ignore: cast_nullable_to_non_nullable
               as String,
-      statusId: null == statusId
-          ? _value.statusId
-          : statusId // ignore: cast_nullable_to_non_nullable
+      storyId: null == storyId
+          ? _value.storyId
+          : storyId // ignore: cast_nullable_to_non_nullable
               as String,
       whoCanSee: null == whoCanSee
           ? _value.whoCanSee
           : whoCanSee // ignore: cast_nullable_to_non_nullable
               as List<String>,
-      isSeen: null == isSeen
-          ? _value.isSeen
-          : isSeen // ignore: cast_nullable_to_non_nullable
+      viewed: null == viewed
+          ? _value.viewed
+          : viewed // ignore: cast_nullable_to_non_nullable
               as List<String>,
     ) as $Val);
   }
 }
 
 /// @nodoc
-abstract class _$$_StatusModelCopyWith<$Res>
-    implements $StatusModelCopyWith<$Res> {
-  factory _$$_StatusModelCopyWith(
-          _$_StatusModel value, $Res Function(_$_StatusModel) then) =
-      __$$_StatusModelCopyWithImpl<$Res>;
+abstract class _$$_StoryModelCopyWith<$Res>
+    implements $StoryModelCopyWith<$Res> {
+  factory _$$_StoryModelCopyWith(
+          _$_StoryModel value, $Res Function(_$_StoryModel) then) =
+      __$$_StoryModelCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
-      {String uid,
+      {String creatorId,
       String username,
       String phoneNumber,
       List<String> photoUrl,
       DateTime createdAt,
       String profilePic,
-      String statusId,
+      String storyId,
       List<String> whoCanSee,
-      List<String> isSeen});
+      List<String> viewed});
 }
 
 /// @nodoc
-class __$$_StatusModelCopyWithImpl<$Res>
-    extends _$StatusModelCopyWithImpl<$Res, _$_StatusModel>
-    implements _$$_StatusModelCopyWith<$Res> {
-  __$$_StatusModelCopyWithImpl(
-      _$_StatusModel _value, $Res Function(_$_StatusModel) _then)
+class __$$_StoryModelCopyWithImpl<$Res>
+    extends _$StoryModelCopyWithImpl<$Res, _$_StoryModel>
+    implements _$$_StoryModelCopyWith<$Res> {
+  __$$_StoryModelCopyWithImpl(
+      _$_StoryModel _value, $Res Function(_$_StoryModel) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? uid = null,
+    Object? creatorId = null,
     Object? username = null,
     Object? phoneNumber = null,
     Object? photoUrl = null,
     Object? createdAt = null,
     Object? profilePic = null,
-    Object? statusId = null,
+    Object? storyId = null,
     Object? whoCanSee = null,
-    Object? isSeen = null,
+    Object? viewed = null,
   }) {
-    return _then(_$_StatusModel(
-      uid: null == uid
-          ? _value.uid
-          : uid // ignore: cast_nullable_to_non_nullable
+    return _then(_$_StoryModel(
+      creatorId: null == creatorId
+          ? _value.creatorId
+          : creatorId // ignore: cast_nullable_to_non_nullable
               as String,
       username: null == username
           ? _value.username
@@ -184,17 +184,17 @@ class __$$_StatusModelCopyWithImpl<$Res>
           ? _value.profilePic
           : profilePic // ignore: cast_nullable_to_non_nullable
               as String,
-      statusId: null == statusId
-          ? _value.statusId
-          : statusId // ignore: cast_nullable_to_non_nullable
+      storyId: null == storyId
+          ? _value.storyId
+          : storyId // ignore: cast_nullable_to_non_nullable
               as String,
       whoCanSee: null == whoCanSee
           ? _value._whoCanSee
           : whoCanSee // ignore: cast_nullable_to_non_nullable
               as List<String>,
-      isSeen: null == isSeen
-          ? _value._isSeen
-          : isSeen // ignore: cast_nullable_to_non_nullable
+      viewed: null == viewed
+          ? _value._viewed
+          : viewed // ignore: cast_nullable_to_non_nullable
               as List<String>,
     ));
   }
@@ -202,27 +202,27 @@ class __$$_StatusModelCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_StatusModel extends _StatusModel {
-  const _$_StatusModel(
-      {required this.uid,
+class _$_StoryModel extends _StoryModel {
+  const _$_StoryModel(
+      {required this.creatorId,
       required this.username,
       required this.phoneNumber,
       required final List<String> photoUrl,
       required this.createdAt,
       required this.profilePic,
-      required this.statusId,
+      required this.storyId,
       required final List<String> whoCanSee,
-      final List<String> isSeen = const <String>[]})
+      final List<String> viewed = const <String>[]})
       : _photoUrl = photoUrl,
         _whoCanSee = whoCanSee,
-        _isSeen = isSeen,
+        _viewed = viewed,
         super._();
 
-  factory _$_StatusModel.fromJson(Map<String, dynamic> json) =>
-      _$$_StatusModelFromJson(json);
+  factory _$_StoryModel.fromJson(Map<String, dynamic> json) =>
+      _$$_StoryModelFromJson(json);
 
   @override
-  final String uid;
+  final String creatorId;
   @override
   final String username;
   @override
@@ -240,7 +240,7 @@ class _$_StatusModel extends _StatusModel {
   @override
   final String profilePic;
   @override
-  final String statusId;
+  final String storyId;
   final List<String> _whoCanSee;
   @override
   List<String> get whoCanSee {
@@ -249,26 +249,27 @@ class _$_StatusModel extends _StatusModel {
     return EqualUnmodifiableListView(_whoCanSee);
   }
 
-  final List<String> _isSeen;
+  final List<String> _viewed;
   @override
   @JsonKey()
-  List<String> get isSeen {
-    if (_isSeen is EqualUnmodifiableListView) return _isSeen;
+  List<String> get viewed {
+    if (_viewed is EqualUnmodifiableListView) return _viewed;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_isSeen);
+    return EqualUnmodifiableListView(_viewed);
   }
 
   @override
   String toString() {
-    return 'StatusModel(uid: $uid, username: $username, phoneNumber: $phoneNumber, photoUrl: $photoUrl, createdAt: $createdAt, profilePic: $profilePic, statusId: $statusId, whoCanSee: $whoCanSee, isSeen: $isSeen)';
+    return 'StoryModel(creatorId: $creatorId, username: $username, phoneNumber: $phoneNumber, photoUrl: $photoUrl, createdAt: $createdAt, profilePic: $profilePic, storyId: $storyId, whoCanSee: $whoCanSee, viewed: $viewed)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_StatusModel &&
-            (identical(other.uid, uid) || other.uid == uid) &&
+            other is _$_StoryModel &&
+            (identical(other.creatorId, creatorId) ||
+                other.creatorId == creatorId) &&
             (identical(other.username, username) ||
                 other.username == username) &&
             (identical(other.phoneNumber, phoneNumber) ||
@@ -278,59 +279,58 @@ class _$_StatusModel extends _StatusModel {
                 other.createdAt == createdAt) &&
             (identical(other.profilePic, profilePic) ||
                 other.profilePic == profilePic) &&
-            (identical(other.statusId, statusId) ||
-                other.statusId == statusId) &&
+            (identical(other.storyId, storyId) || other.storyId == storyId) &&
             const DeepCollectionEquality()
                 .equals(other._whoCanSee, _whoCanSee) &&
-            const DeepCollectionEquality().equals(other._isSeen, _isSeen));
+            const DeepCollectionEquality().equals(other._viewed, _viewed));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
       runtimeType,
-      uid,
+      creatorId,
       username,
       phoneNumber,
       const DeepCollectionEquality().hash(_photoUrl),
       createdAt,
       profilePic,
-      statusId,
+      storyId,
       const DeepCollectionEquality().hash(_whoCanSee),
-      const DeepCollectionEquality().hash(_isSeen));
+      const DeepCollectionEquality().hash(_viewed));
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_StatusModelCopyWith<_$_StatusModel> get copyWith =>
-      __$$_StatusModelCopyWithImpl<_$_StatusModel>(this, _$identity);
+  _$$_StoryModelCopyWith<_$_StoryModel> get copyWith =>
+      __$$_StoryModelCopyWithImpl<_$_StoryModel>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_StatusModelToJson(
+    return _$$_StoryModelToJson(
       this,
     );
   }
 }
 
-abstract class _StatusModel extends StatusModel {
-  const factory _StatusModel(
-      {required final String uid,
+abstract class _StoryModel extends StoryModel {
+  const factory _StoryModel(
+      {required final String creatorId,
       required final String username,
       required final String phoneNumber,
       required final List<String> photoUrl,
       required final DateTime createdAt,
       required final String profilePic,
-      required final String statusId,
+      required final String storyId,
       required final List<String> whoCanSee,
-      final List<String> isSeen}) = _$_StatusModel;
-  const _StatusModel._() : super._();
+      final List<String> viewed}) = _$_StoryModel;
+  const _StoryModel._() : super._();
 
-  factory _StatusModel.fromJson(Map<String, dynamic> json) =
-      _$_StatusModel.fromJson;
+  factory _StoryModel.fromJson(Map<String, dynamic> json) =
+      _$_StoryModel.fromJson;
 
   @override
-  String get uid;
+  String get creatorId;
   @override
   String get username;
   @override
@@ -342,13 +342,13 @@ abstract class _StatusModel extends StatusModel {
   @override
   String get profilePic;
   @override
-  String get statusId;
+  String get storyId;
   @override
   List<String> get whoCanSee;
   @override
-  List<String> get isSeen;
+  List<String> get viewed;
   @override
   @JsonKey(ignore: true)
-  _$$_StatusModelCopyWith<_$_StatusModel> get copyWith =>
+  _$$_StoryModelCopyWith<_$_StoryModel> get copyWith =>
       throw _privateConstructorUsedError;
 }

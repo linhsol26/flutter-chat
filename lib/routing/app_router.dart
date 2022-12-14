@@ -20,9 +20,9 @@ import 'package:whatsapp_ui/group/presentation/group_screen.dart';
 import 'package:whatsapp_ui/landing/presentation/landing_screen.dart';
 import 'package:whatsapp_ui/routing/go_router_refresh_stream.dart';
 import 'package:whatsapp_ui/settings/presentation/settings_screen.dart';
-import 'package:whatsapp_ui/status/domain/status_model.dart';
-import 'package:whatsapp_ui/status/presentation/confirm_status_screen.dart';
-import 'package:whatsapp_ui/status/presentation/widgets/status_view.dart';
+import 'package:whatsapp_ui/story/domain/story_model.dart';
+import 'package:whatsapp_ui/story/presentation/confirm_story_screen.dart';
+import 'package:whatsapp_ui/story/presentation/widgets/custom_story_view.dart';
 
 enum AppRoute {
   landing,
@@ -35,7 +35,7 @@ enum AppRoute {
   users,
   contactUserWrapper,
   status,
-  confirmStatus,
+  confirmStory,
   statusView,
   editGroup,
   createGroup,
@@ -80,18 +80,14 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 type: state.extra != null ? state.extra as UserScreenType : UserScreenType.create),
           ),
           GoRoute(
-            path: 'status',
-            name: AppRoute.status.name,
-            builder: (context, state) => const SizedBox.shrink(),
-            routes: [
-              GoRoute(
-                path: 'status-view',
-                name: AppRoute.statusView.name,
-                builder: (context, state) => StatusView(
-                  status: state.extra as StatusModel,
-                ),
+            path: 'status-view',
+            name: AppRoute.statusView.name,
+            pageBuilder: (context, state) => MaterialPage(
+              fullscreenDialog: true,
+              child: CustomStoryView(
+                story: state.extra as StoryModel,
               ),
-            ],
+            ),
           ),
           GoRoute(
             path: 'settings',
@@ -105,9 +101,9 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             },
             routes: [
               GoRoute(
-                path: 'confirm-status',
-                name: AppRoute.confirmStatus.name,
-                builder: (context, state) => ConfirmStatusScreen(
+                path: 'confirm-story',
+                name: AppRoute.confirmStory.name,
+                builder: (context, state) => ConfirmStoryScreen(
                   image: state.extra as File,
                 ),
               ),

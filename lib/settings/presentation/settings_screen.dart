@@ -51,6 +51,8 @@ class SettingsScreen extends HookConsumerWidget {
                 leading: Text('Sign out', style: context.sub1.copyWith(fontSize: 18)),
                 trailing: const Icon(Icons.logout_rounded),
                 onTap: () {
+                  ref.read(authRepositoryProvider).updateUserState(false);
+
                   FirebaseAuth.instance.signOut();
                 },
               ),

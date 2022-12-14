@@ -1,10 +1,13 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_zoom_drawer/config.dart';
@@ -16,6 +19,8 @@ import 'package:whatsapp_ui/auth/shared/providers.dart';
 import 'package:whatsapp_ui/chat/domain/chat_contact.dart';
 import 'package:whatsapp_ui/chat/shared/providers.dart';
 import 'package:whatsapp_ui/contacts/presentation/contact_user_wrapper.dart';
+import 'package:whatsapp_ui/core/domain/failure.dart';
+import 'package:whatsapp_ui/core/presentation/snackbar/snackbar.dart';
 import 'package:whatsapp_ui/core/presentation/theme/colors.dart';
 import 'package:whatsapp_ui/core/presentation/utils/files.dart';
 import 'package:whatsapp_ui/core/presentation/widgets/conversation_list.dart';
@@ -26,6 +31,8 @@ import 'package:whatsapp_ui/group/presentation/group_conversation_list.dart';
 import 'package:whatsapp_ui/group/shared/providers.dart';
 import 'package:whatsapp_ui/routing/app_router.dart';
 import 'package:whatsapp_ui/settings/presentation/settings_screen.dart';
+import 'package:whatsapp_ui/story/presentation/confirm_story_screen.dart';
+import 'package:whatsapp_ui/story/shared/providers.dart';
 
 import 'widgets/search/custom_search_chat_delegate.dart';
 import 'widgets/search/custom_search_user_delegate.dart';
@@ -81,6 +88,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
             'Connect with others',
           ],
         );
+
+    ref.listen<AsyncValue<void>>(storyNotifierProvider, (_, state) {
+      state.maybeWhen(
+        data: (_) {
+          EasyLoading.showSuccess('Added story!!!');
+        },
+        error: (error, stackTrace) {
+          EasyLoading.dismiss();
+          (error as Failure).show(context);
+        },
+        loading: () => EasyLoading.show(dismissOnTap: false),
+        orElse: () {},
+      );
+    });
 
     return ZoomDrawer(
       controller: drawerCtrl,
@@ -162,11 +183,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
         floatingActionButtonLocation: ExpandableFab.location,
         floatingActionButton: selectedIndex.value == 0 || selectedIndex.value == 1
             ? ExpandableFab(
-                closeButtonStyle: ExpandableFabCloseButtonStyle(
-                    child: Icon(
-                  Icons.close,
-                  color: Theme.of(context).floatingActionButtonTheme.backgroundColor,
-                )),
+                closeButtonStyle: const ExpandableFabCloseButtonStyle(
+                    child: Icon(Icons.close, color: whiteColor)),
                 distance: 80,
                 child: const Icon(Icons.add, color: Colors.white),
                 children: [
@@ -177,7 +195,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
 
                       if (image != null) {
                         // ignore: use_build_context_synchronously
-                        context.goNamed(AppRoute.confirmStatus.name, extra: image);
+                        // context.pushNamed(AppRoute.confirmStory.name, extra: image);
+
+                        final editableImage = await Navigator.push<File?>(
+                          context,
+                          MaterialPageRoute(builder: (context) => ConfirmStoryScreen(image: image)),
+                        );
+
+                        if (editableImage != null) {
+                          ref
+                              .read(storyNotifierProvider.notifier)
+                              .addStory(storyImage: editableImage);
+                        } else {
+                          showError(context);
+                        }
                       }
                     },
                     backgroundColor: primaryColor,

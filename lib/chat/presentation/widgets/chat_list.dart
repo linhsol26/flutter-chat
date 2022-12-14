@@ -1,6 +1,7 @@
 import 'package:animated_stream_list_nullsafety/animated_stream_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:whatsapp_ui/auth/shared/providers.dart';
@@ -94,6 +95,7 @@ class ChatList extends HookConsumerWidget {
                                   Navigator.pop(context);
                                   await ref.read(chatRepositoryProvider).deleteMessage(
                                       receiverUserId: receiverId, messageId: msg.messageId);
+                                  EasyLoading.showSuccess('Unsent!!!');
                                 },
                                 child: Text(
                                   'Unsend',
@@ -104,6 +106,7 @@ class ChatList extends HookConsumerWidget {
                                 onPressed: () async {
                                   await Clipboard.setData(ClipboardData(text: msg.text));
                                   Navigator.pop(context);
+                                  EasyLoading.showSuccess('Copied!!!');
                                 },
                                 child: Text(
                                   'Copy',

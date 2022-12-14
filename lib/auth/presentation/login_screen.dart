@@ -37,6 +37,7 @@ class LoginScreen extends HookConsumerWidget {
         data: (_) {
           btnCtrl.success();
           if (_ is! bool) {
+            ref.read(authRepositoryProvider).updateUserState(true);
             context.goNamed(isSignUp ? AppRoute.user.name : AppRoute.home.name);
           } else {
             type.value = FormType.signin;

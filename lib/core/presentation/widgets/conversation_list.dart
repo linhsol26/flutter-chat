@@ -1,4 +1,7 @@
-import 'package:advstory/advstory.dart';
+// ignore_for_file: use_build_context_synchronously
+
+import 'dart:io';
+
 import 'package:animated_stream_list_nullsafety/animated_stream_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -10,22 +13,24 @@ import 'package:whatsapp_ui/auth/domain/user_model.dart';
 import 'package:whatsapp_ui/auth/shared/providers.dart';
 import 'package:whatsapp_ui/chat/domain/chat_contact.dart';
 import 'package:whatsapp_ui/chat/shared/providers.dart';
+import 'package:whatsapp_ui/core/presentation/snackbar/snackbar.dart';
 import 'package:whatsapp_ui/core/presentation/theme/colors.dart';
+import 'package:whatsapp_ui/core/presentation/utils/files.dart';
+import 'package:whatsapp_ui/core/presentation/utils/sizes.dart';
 import 'package:whatsapp_ui/core/presentation/widgets/avatar_widget.dart';
-import 'package:whatsapp_ui/core/presentation/widgets/error_widget.dart';
 import 'package:whatsapp_ui/core/presentation/widgets/loading_widget.dart';
 import 'package:whatsapp_ui/core/presentation/widgets/slide_menu.dart';
 import 'package:whatsapp_ui/core/shared/extensions.dart';
-import 'package:whatsapp_ui/status/shared/providers.dart';
+import 'package:whatsapp_ui/routing/app_router.dart';
+import 'package:whatsapp_ui/story/presentation/confirm_story_screen.dart';
+import 'package:whatsapp_ui/story/shared/providers.dart';
 
 class ConversationList extends HookConsumerWidget {
   const ConversationList({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final statusAsync = ref.watch(getStatusProvider);
-    final myName =
-        ref.read(currentUserStreamProvider.select((data) => data.whenData((value) => value?.name)));
+    final storiesAsync = ref.watch(getStoriesProvider);
 
     useAutomaticKeepAlive(wantKeepAlive: true);
 
@@ -34,40 +39,79 @@ class ConversationList extends HookConsumerWidget {
       child: Column(
         mainAxisSize: MainAxisSize.max,
         children: [
-          statusAsync.maybeWhen(
+          storiesAsync.maybeWhen(
             data: (stories) {
               if (stories.isEmpty) {
-                return const SizedBox.shrink();
+                return Column(
+                  children: [
+                    AvatarWidget(
+                      type: AvatarType.plus,
+                      onTap: () async {
+                        final image = await pickImageFromGallery(context);
+
+                        if (image != null) {
+                          final editableImage = await Navigator.push<File?>(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ConfirmStoryScreen(image: image)),
+                          );
+
+                          if (editableImage != null) {
+                            ref
+                                .read(storyNotifierProvider.notifier)
+                                .addStory(storyImage: editableImage);
+                          } else {
+                            showError(context);
+                          }
+                        }
+                      },
+                    ),
+                    gapH4,
+                    Text(
+                      'Add a story',
+                      maxLines: 1,
+                      overflow: TextOverflow.fade,
+                      style: context.p3,
+                    ),
+                  ],
+                );
               }
-              return SizedBox(
-                height: 100,
-                child: AdvStory(
-                    storyCount: stories.length,
-                    storyBuilder: (index) {
-                      return Story(
-                        contentCount: stories[index].photoUrl.length,
-                        contentBuilder: (contentIndex) => ImageContent(
-                          cacheKey: stories[index].statusId,
-                          header: Text(
-                            stories[index].username,
-                            style: context.h1,
-                          ),
-                          duration: const Duration(seconds: 3),
-                          url: stories[index].photoUrl[contentIndex],
-                          errorBuilder: () => const CustomErrorWidget(),
+              return Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                height: 80,
+                width: double.infinity,
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: stories.length,
+                  itemBuilder: (context, index) {
+                    final myId = ref.read(authRepositoryProvider).currentUser?.uid;
+                    final alreadySeen = stories[index].viewed.contains(myId);
+                    return Column(
+                      children: [
+                        AvatarWidget(
+                          borderWidth: alreadySeen ? 1 : 2,
+                          roundedColor: alreadySeen ? greyColor : primaryColor,
+                          imgUrl: stories[index].profilePic,
+                          onTap: () {
+                            ref
+                                .read(storyRepositoryProvider)
+                                .setViewed(creatorId: stories[index].creatorId);
+                            context.pushNamed(AppRoute.statusView.name, extra: stories[index]);
+                          },
                         ),
-                      );
-                    },
-                    trayBuilder: (index) => AdvStoryTray(
-                          size: const Size(60, 60),
-                          username: Text(
-                            myName.value != null && myName.value == stories[index].username
-                                ? 'My story'
-                                : stories[index].username,
-                            style: context.sub2,
-                          ),
-                          url: stories[index].profilePic,
-                        )),
+                        gapH4,
+                        Text(
+                          stories[index].creatorId == myId ? 'My stories' : stories[index].username,
+                          maxLines: 1,
+                          overflow: TextOverflow.fade,
+                          style: context.p3,
+                        ),
+                      ],
+                    );
+                  },
+                  separatorBuilder: (_, __) => gapW8,
+                ),
               );
             },
             orElse: () => const LoadingWidget(),

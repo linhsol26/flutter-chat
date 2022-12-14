@@ -2,12 +2,14 @@ import 'dart:io';
 
 // import 'package:enough_giphy_flutter/enough_giphy_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:whatsapp_ui/core/presentation/snackbar/snackbar.dart';
 
 Future<File?> pickImageFromGallery(BuildContext context) async {
   File? image;
   try {
+    EasyLoading.show(dismissOnTap: false);
     final pickedImage = await ImagePicker().pickImage(source: ImageSource.gallery);
 
     if (pickedImage != null) {
@@ -16,6 +18,7 @@ Future<File?> pickImageFromGallery(BuildContext context) async {
   } catch (e) {
     showError(context);
   }
+  EasyLoading.dismiss();
   return image;
 }
 

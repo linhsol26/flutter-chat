@@ -19,6 +19,7 @@ class SenderGroupMessageCard extends HookConsumerWidget {
     required this.repliedText,
     required this.username,
     required this.repliedMessageType,
+    required this.onHover,
     this.senderId,
   }) : super(key: key);
   final String message;
@@ -29,6 +30,7 @@ class SenderGroupMessageCard extends HookConsumerWidget {
   final String username;
   final MessageType repliedMessageType;
   final String? senderId;
+  final VoidCallback onHover;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -72,96 +74,99 @@ class SenderGroupMessageCard extends HookConsumerWidget {
           },
         );
       },
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.65),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (sender != null)
-                Row(
+      child: GestureDetector(
+        onTap: () => onHover.call(),
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.65),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (sender != null)
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16.0),
+                        child: Text(
+                          sender.name,
+                          textAlign: TextAlign.start,
+                          style: context.sub1.copyWith(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 16.0),
-                      child: Text(
-                        sender.name,
-                        textAlign: TextAlign.start,
-                        style: context.sub1.copyWith(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
+                    Card(
+                      elevation: 1,
+                      shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(15),
+                        bottomRight: Radius.circular(15),
+                        bottomLeft: Radius.circular(15),
+                      )),
+                      color: greyColor,
+                      margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (isReplying) ...[
+                              gapH4,
+                              Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: const BoxDecoration(
+                                    color: subColor,
+                                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Transform.rotate(
+                                            angle: pi,
+                                            child: const Icon(Icons.reply, size: 12),
+                                          ),
+                                          Text(
+                                            username,
+                                            style: context.sub1.copyWith(
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      gapH4,
+                                      messageType.displayReply(repliedText, context),
+                                    ],
+                                  )),
+                              gapH8,
+                            ],
+                            messageType.display(message, context),
+                          ],
                         ),
                       ),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 16.0, bottom: 4),
+                      child: Text(date,
+                          style: context.sub1.copyWith(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          )),
+                    )
                   ],
                 ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Card(
-                    elevation: 1,
-                    shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(15),
-                      bottomRight: Radius.circular(15),
-                      bottomLeft: Radius.circular(15),
-                    )),
-                    color: greyColor,
-                    margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (isReplying) ...[
-                            gapH4,
-                            Container(
-                                padding: const EdgeInsets.all(10),
-                                decoration: const BoxDecoration(
-                                  color: subColor,
-                                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Transform.rotate(
-                                          angle: pi,
-                                          child: const Icon(Icons.reply, size: 12),
-                                        ),
-                                        Text(
-                                          username,
-                                          style: context.sub1.copyWith(
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    gapH4,
-                                    messageType.displayReply(repliedText, context),
-                                  ],
-                                )),
-                            gapH8,
-                          ],
-                          messageType.display(message, context),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 16.0, bottom: 4),
-                    child: Text(date,
-                        style: context.sub1.copyWith(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                        )),
-                  )
-                ],
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
