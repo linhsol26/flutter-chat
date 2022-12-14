@@ -47,10 +47,9 @@ class StoryRepository {
         storyImgUrls = [...story.photoUrl];
         storyImgUrls.add(imgUrl);
 
-        await _firestore
-            .collection(CollectionPath.stories)
-            .doc(storySnapshot.docs[0].id)
-            .update({'photoUrl': storyImgUrls});
+        await _firestore.collection(CollectionPath.stories).doc(storySnapshot.docs[0].id).update({
+          'photoUrl': [...storyImgUrls]
+        });
       } else {
         storyImgUrls = [imgUrl];
       }
@@ -106,7 +105,7 @@ class StoryRepository {
     if (alreadyExisted) return;
 
     await _firestore.collection(CollectionPath.stories).doc(creatorId).update({
-      'viewed': [myId, ...viewed],
+      'viewed': [myId, ...viewed].toList(),
     });
   }
 }

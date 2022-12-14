@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:multiple_result/multiple_result.dart';
 import 'package:whatsapp_ui/auth/domain/user_model.dart';
@@ -14,8 +15,9 @@ class AuthRepository {
   final FirebaseAuth _auth;
   final FirebaseFirestore _firestore;
   final FirebaseStorage _storage;
+  final FirebaseMessaging _messaging;
 
-  AuthRepository(this._auth, this._firestore, this._storage);
+  AuthRepository(this._auth, this._firestore, this._storage, this._messaging);
 
   Stream<User?> authStateChanges() => _auth.authStateChanges();
 
@@ -32,6 +34,21 @@ class AuthRepository {
         await _firestore.collection(CollectionPath.users).doc(currentUser?.uid ?? '').get();
 
     return user.data() != null ? UserModel.fromJson(user.data()!) : null;
+  }
+
+  Future<void> saveDeviceToken() async {
+    final token = await FirebaseMessaging.instance.getToken();
+
+    await _firestore
+        .collection(CollectionPath.tokens)
+        .doc(currentUser?.uid ?? '')
+        .set({'device-token': token});
+  }
+
+  Future<String> deviceTokenById(String id) async {
+    final token = await _firestore.collection(CollectionPath.tokens).doc(id).get();
+
+    return token.data()?['device-token'] ?? '';
   }
 
   Stream<UserModel?> get currentUserDataStream {
@@ -127,6 +144,9 @@ class AuthRepository {
     String downloadUrl = await snap.ref.getDownloadURL();
     return downloadUrl;
   }
+
+  Future<void> removeStorageFromFirebase(String ref) async =>
+      await _storage.ref().child(ref).delete();
 
   Stream<UserModel> getUserById(String id) {
     return _firestore

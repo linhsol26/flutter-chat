@@ -1,8 +1,11 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -10,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_zoom_drawer/config.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:go_router/go_router.dart';
@@ -29,13 +33,17 @@ import 'package:whatsapp_ui/core/shared/extensions.dart';
 import 'package:whatsapp_ui/group/domain/group_model.dart';
 import 'package:whatsapp_ui/group/presentation/group_conversation_list.dart';
 import 'package:whatsapp_ui/group/shared/providers.dart';
+import 'package:whatsapp_ui/notification/infrastructure/notification_repository.dart';
 import 'package:whatsapp_ui/routing/app_router.dart';
 import 'package:whatsapp_ui/settings/presentation/settings_screen.dart';
 import 'package:whatsapp_ui/story/presentation/confirm_story_screen.dart';
 import 'package:whatsapp_ui/story/shared/providers.dart';
-
 import 'widgets/search/custom_search_chat_delegate.dart';
 import 'widgets/search/custom_search_user_delegate.dart';
+
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  log("Handling a background message");
+}
 
 class HomeScreen extends StatefulHookConsumerWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -49,6 +57,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    ref.read(authRepositoryProvider).saveDeviceToken();
+    setUpInteractedMessage();
   }
 
   @override
@@ -69,6 +79,88 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
       case AppLifecycleState.inactive:
       case AppLifecycleState.paused:
         ref.read(authRepositoryProvider).updateUserState(false);
+    }
+  }
+
+  Future<void> setUpInteractedMessage() async {
+    //Get the message from tapping on the notification when app is not in foreground
+    RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+
+    if (initialMessage != null) {
+      await _mapToType(initialMessage);
+    }
+
+    //Initialize FlutterLocalNotifications
+    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+        FlutterLocalNotificationsPlugin();
+
+    const AndroidNotificationChannel channel = AndroidNotificationChannel(
+      'schedular_channel', // id
+      'Schedular Notifications', // title
+      description: 'This channel is used for Schedular app notifications.', // description
+      importance: Importance.max,
+    );
+
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
+
+    flutterLocalNotificationsPlugin.initialize(
+        const InitializationSettings(
+          android: AndroidInitializationSettings("@mipmap/ic_launcher"),
+        ),
+        onDidReceiveNotificationResponse: (_) =>
+            _mapToType(RemoteMessage.fromMap(jsonDecode(_.payload!))));
+
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
+    //This listens for messages when app is in background
+    FirebaseMessaging.onMessageOpenedApp.listen(_mapToType);
+
+    //Listen to messages in Foreground
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      RemoteNotification? notification = message.notification;
+      AndroidNotification? android = message.notification?.android;
+
+      //Construct local notification using our created channel
+      if (notification != null && android != null) {
+        flutterLocalNotificationsPlugin.show(
+          notification.hashCode,
+          notification.title,
+          notification.body,
+          payload: message.toString(),
+          NotificationDetails(
+            android: AndroidNotificationDetails(
+              channel.id,
+              channel.name,
+              channelDescription: channel.description,
+              icon: "@mipmap/ic_launcher", //Your app icon goes here
+            ),
+          ),
+        );
+      }
+    });
+  }
+
+  _mapToType(RemoteMessage message) async {
+    final json = message.data;
+    final type = json['type'];
+    final data = json['data'];
+
+    if (type == NotificationType.direct.name) {
+      final parsedData = UserModel.fromJson(jsonDecode(data));
+      ref.read(chatNotifierProvider.notifier).setJoinedChat(
+            receiverId: parsedData.uid,
+          );
+
+      navigatorKey.currentContext?.push('/home/direct-chat', extra: parsedData);
+    } else if (type == NotificationType.group.name) {
+      final parsedData = GroupModel.fromJson(data);
+      ref.read(groupNotifierProvider.notifier).setJoinedGroupChat(
+            groupId: parsedData.groupId,
+          );
+
+      navigatorKey.currentContext?.push('/home/group-chat', extra: parsedData);
     }
   }
 

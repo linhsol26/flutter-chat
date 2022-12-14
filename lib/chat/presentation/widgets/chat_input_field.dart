@@ -18,7 +18,7 @@ class ChatInputField extends HookConsumerWidget {
 
   final String receiverId;
   final bool isGroup;
-  final VoidCallback callback;
+  final Function(dynamic) callback;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -63,7 +63,7 @@ class ChatInputField extends HookConsumerWidget {
 
                               ref.read(messageReplyProvider.notifier).state = null;
 
-                              callback.call();
+                              callback.call(image);
                             }
                           },
                           icon: const Icon(Icons.camera_alt, color: Colors.grey),
@@ -75,14 +75,14 @@ class ChatInputField extends HookConsumerWidget {
                               ref.read(chatNotifierProvider.notifier).sendFileMessage(
                                     video,
                                     receiverId,
-                                    MessageType.image,
+                                    MessageType.video,
                                     isGroup,
                                     messageReply,
                                   );
 
                               ref.read(messageReplyProvider.notifier).state = null;
 
-                              callback.call();
+                              callback.call(video);
                             }
                           },
                           icon: const Icon(Icons.attach_file, color: Colors.grey),
@@ -117,7 +117,7 @@ class ChatInputField extends HookConsumerWidget {
                             messageReply,
                           );
 
-                      callback.call();
+                      callback.call(messageController.text.trim());
                       messageController.clear();
                       ref.read(messageReplyProvider.notifier).state = null;
                     },

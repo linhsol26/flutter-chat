@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -9,7 +10,11 @@ import 'package:whatsapp_ui/auth/infrastructure/auth_repository.dart';
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   return AuthRepository(
-      FirebaseAuth.instance, FirebaseFirestore.instance, FirebaseStorage.instance);
+    FirebaseAuth.instance,
+    FirebaseFirestore.instance,
+    FirebaseStorage.instance,
+    FirebaseMessaging.instance,
+  );
 });
 
 final authStateChangesProvider = StreamProvider.autoDispose<User?>((ref) {

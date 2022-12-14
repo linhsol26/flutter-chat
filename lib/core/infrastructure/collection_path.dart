@@ -4,4 +4,5 @@ class CollectionPath {
   static String get messages => 'messages';
   static String get stories => 'stories';
   static String get groups => 'groups';
+  static String get tokens => 'tokens';
 }

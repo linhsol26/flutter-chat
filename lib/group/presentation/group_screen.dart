@@ -94,7 +94,7 @@ class GroupScreen extends HookConsumerWidget {
             child: ChatInputField(
                 receiverId: group.groupId,
                 isGroup: true,
-                callback: () {
+                callback: (msg) {
                   SchedulerBinding.instance.addPostFrameCallback((_) {
                     if (scrollController.hasClients) {
                       scrollController.animateTo(

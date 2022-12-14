@@ -429,9 +429,9 @@ class ChatRepository {
         .doc(receiverUserId)
         .collection(CollectionPath.messages)
         .get()
-        .then((value) {
+        .then((value) async {
       for (var element in value.docs) {
-        _firestore
+        await _firestore
             .collection(CollectionPath.users)
             .doc(_auth.currentUser?.uid)
             .collection(CollectionPath.chats)

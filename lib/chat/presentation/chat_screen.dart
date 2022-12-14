@@ -14,6 +14,8 @@ import 'package:whatsapp_ui/core/presentation/widgets/avatar_widget.dart';
 import 'package:whatsapp_ui/core/presentation/widgets/error_widget.dart';
 import 'package:whatsapp_ui/core/shared/enums.dart';
 import 'package:whatsapp_ui/core/shared/extensions.dart';
+import 'package:whatsapp_ui/notification/domain/notification_payload.dart';
+import 'package:whatsapp_ui/notification/infrastructure/notification_repository.dart';
 import 'package:whatsapp_ui/routing/app_router.dart';
 
 class ChatScreen extends HookConsumerWidget {
@@ -77,7 +79,7 @@ class ChatScreen extends HookConsumerWidget {
               padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
               child: ChatInputField(
                   receiverId: user.uid,
-                  callback: () {
+                  callback: (msg) async {
                     SchedulerBinding.instance.addPostFrameCallback((_) {
                       if (scrollController.hasClients) {
                         scrollController.animateTo(
@@ -89,6 +91,14 @@ class ChatScreen extends HookConsumerWidget {
                     });
 
                     ref.read(chatRepositoryProvider).setJoinedChat(receiverId: user.uid);
+
+                    if (msg is String) {
+                      final currentUser = await ref.read(authRepositoryProvider).currentUserData;
+                      ref.read(notificationRepositoryProvider).sendChatNotifications(
+                          receiverId: user.uid,
+                          payload: NotificationPayload(body: msg, title: currentUser!.name),
+                          data: currentUser);
+                    }
                   }),
             )
           ],
