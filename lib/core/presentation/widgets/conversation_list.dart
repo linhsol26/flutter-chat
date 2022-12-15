@@ -32,8 +32,6 @@ class ConversationList extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final storiesAsync = ref.watch(getStoriesProvider);
 
-    useAutomaticKeepAlive(wantKeepAlive: true);
-
     return Padding(
       padding: const EdgeInsets.only(top: 10.0),
       child: Column(

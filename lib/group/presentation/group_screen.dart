@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:whatsapp_ui/auth/shared/providers.dart';
 import 'package:whatsapp_ui/chat/presentation/widgets/chat_input_field.dart';
 import 'package:whatsapp_ui/core/presentation/theme/colors.dart';
 import 'package:whatsapp_ui/core/presentation/widgets/avatar_widget.dart';
@@ -11,6 +12,8 @@ import 'package:whatsapp_ui/core/shared/extensions.dart';
 import 'package:whatsapp_ui/group/domain/group_model.dart';
 import 'package:whatsapp_ui/group/presentation/group_list.dart';
 import 'package:whatsapp_ui/group/shared/providers.dart';
+import 'package:whatsapp_ui/notification/domain/notification_payload.dart';
+import 'package:whatsapp_ui/notification/infrastructure/notification_repository.dart';
 import 'package:whatsapp_ui/routing/app_router.dart';
 
 class GroupScreen extends HookConsumerWidget {
@@ -94,7 +97,7 @@ class GroupScreen extends HookConsumerWidget {
             child: ChatInputField(
                 receiverId: group.groupId,
                 isGroup: true,
-                callback: (msg) {
+                callback: (msg) async {
                   SchedulerBinding.instance.addPostFrameCallback((_) {
                     if (scrollController.hasClients) {
                       scrollController.animateTo(
@@ -108,6 +111,14 @@ class GroupScreen extends HookConsumerWidget {
                   ref
                       .read(groupNotifierProvider.notifier)
                       .setJoinedGroupChat(groupId: group.groupId);
+
+                  if (msg is String) {
+                    final currentUser = await ref.read(authRepositoryProvider).currentUserData;
+                    ref.read(notificationRepositoryProvider).sendGroupNotifications(
+                          payload: NotificationPayload(body: msg, title: currentUser!.name),
+                          data: group,
+                        );
+                  }
                 }),
           )
         ],

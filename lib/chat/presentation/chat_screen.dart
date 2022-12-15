@@ -95,9 +95,10 @@ class ChatScreen extends HookConsumerWidget {
                     if (msg is String) {
                       final currentUser = await ref.read(authRepositoryProvider).currentUserData;
                       ref.read(notificationRepositoryProvider).sendChatNotifications(
-                          receiverId: user.uid,
-                          payload: NotificationPayload(body: msg, title: currentUser!.name),
-                          data: currentUser);
+                            receiverId: user.uid,
+                            payload: NotificationPayload(body: msg, title: currentUser!.name),
+                            data: currentUser,
+                          );
                     }
                   }),
             )

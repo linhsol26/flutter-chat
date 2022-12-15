@@ -53,12 +53,11 @@ class NotificationRepository {
   Future<void> sendGroupNotifications({
     required NotificationPayload payload,
     required GroupModel data,
-    required List<String> memberIds,
   }) async {
     List<String> tokens = [];
     final key = Keys.serverKey;
 
-    for (var id in memberIds) {
+    for (var id in data.memberIds) {
       if (id != _authRepository.currentUser?.uid) {
         final token = await _authRepository.deviceTokenById(id);
         tokens.add(token);

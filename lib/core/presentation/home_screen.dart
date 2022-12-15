@@ -129,7 +129,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
           notification.hashCode,
           notification.title,
           notification.body,
-          payload: message.toString(),
+          payload: jsonEncode(message.toMap()),
           NotificationDetails(
             android: AndroidNotificationDetails(
               channel.id,
@@ -143,6 +143,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
     });
   }
 
+  @pragma('vm:entry-point')
   _mapToType(RemoteMessage message) async {
     final json = message.data;
     final type = json['type'];

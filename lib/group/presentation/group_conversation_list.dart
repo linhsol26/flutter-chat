@@ -19,8 +19,6 @@ class GroupConversationList extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // useAutomaticKeepAlive(wantKeepAlive: true);
-
     final user =
         ref.watch(currentUserStreamProvider).maybeWhen(data: (user) => user, orElse: () => null);
 
