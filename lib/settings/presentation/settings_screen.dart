@@ -27,8 +27,10 @@ class SettingsScreen extends HookConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ListTile(
-                leading: const AvatarWidget(roundedColor: primaryColor),
+                leading: const AvatarWidget(),
                 title: Text(user.name,
+                    maxLines: 2,
+                    overflow: TextOverflow.fade,
                     style: context.sub1.copyWith(fontSize: 16, fontWeight: FontWeight.w300)),
                 subtitle: Text(user.phoneNumber, style: context.sub1.copyWith(fontSize: 12)),
               ),
@@ -41,6 +43,7 @@ class SettingsScreen extends HookConsumerWidget {
               ),
               SwitchListTile(
                 title: Text('Dark theme', maxLines: 1, style: context.sub1.copyWith(fontSize: 18)),
+                activeColor: primaryColor,
                 value: theme == ThemeMode.dark,
                 onChanged: (value) {
                   ref.read(themeModeProvider.notifier).state =

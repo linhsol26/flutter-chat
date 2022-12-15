@@ -8,6 +8,7 @@ import 'package:whatsapp_ui/auth/domain/user_model.dart';
 import 'package:whatsapp_ui/auth/infrastructure/auth_repository.dart';
 import 'package:whatsapp_ui/core/domain/failure.dart';
 import 'package:whatsapp_ui/core/infrastructure/collection_path.dart';
+import 'package:whatsapp_ui/core/shared/extensions.dart';
 import 'package:whatsapp_ui/story/domain/story_model.dart';
 
 class StoryRepository {
@@ -81,14 +82,21 @@ class StoryRepository {
         .where('createdAt')
         .snapshots()
         .asyncMap((snapshot) {
-      List<StoryModel> status = [];
+      List<StoryModel> stories = [];
       for (var tempData in snapshot.docs) {
-        StoryModel tempStatus = StoryModel.fromJson(tempData.data());
-        if (tempStatus.whoCanSee.contains(_auth.currentUser!.uid)) {
-          status.add(tempStatus);
+        StoryModel tempStories = StoryModel.fromJson(tempData.data());
+        if (tempStories.whoCanSee.contains(_auth.currentUser!.uid)) {
+          stories.add(tempStories);
         }
       }
-      return status;
+
+      final indexOfMe = stories.indexWhere(
+        (element) => element.creatorId == _auth.currentUser?.uid,
+      );
+
+      stories.swap(0, indexOfMe);
+
+      return stories;
     });
   }
 

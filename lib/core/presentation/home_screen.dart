@@ -25,6 +25,7 @@ import 'package:whatsapp_ui/chat/shared/providers.dart';
 import 'package:whatsapp_ui/contacts/presentation/contact_user_wrapper.dart';
 import 'package:whatsapp_ui/core/domain/failure.dart';
 import 'package:whatsapp_ui/core/presentation/snackbar/snackbar.dart';
+import 'package:whatsapp_ui/core/presentation/theme/app_theme.dart';
 import 'package:whatsapp_ui/core/presentation/theme/colors.dart';
 import 'package:whatsapp_ui/core/presentation/utils/files.dart';
 import 'package:whatsapp_ui/core/presentation/widgets/conversation_list.dart';
@@ -155,7 +156,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
 
       navigatorKey.currentContext?.push('/home/direct-chat', extra: parsedData);
     } else if (type == NotificationType.group.name) {
-      final parsedData = GroupModel.fromJson(data);
+      final parsedData = GroupModel.fromJson(jsonDecode(data));
       ref.read(groupNotifierProvider.notifier).setJoinedGroupChat(
             groupId: parsedData.groupId,
           );
@@ -168,6 +169,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
   Widget build(BuildContext context) {
     final drawerCtrl = useMemoized(() => ZoomDrawerController());
     final selectedIndex = useState(0);
+    final isDark = ref.watch(themeModeProvider) == ThemeMode.dark;
     final listTitle = ref.watch(currentUserStreamProvider).maybeWhen(
           data: (user) => [
             'Welcome, ${user?.name}',
@@ -202,6 +204,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
       mainScreenTapClose: true,
       menuScreenTapClose: true,
       showShadow: true,
+      shadowLayer1Color: isDark ? null : greyColor,
+      shadowLayer2Color: isDark ? null : backgroundLightColor.withOpacity(0.5),
       menuScreen: const SettingsScreen(),
       mainScreen: Scaffold(
         appBar: AppBar(
@@ -286,9 +290,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
                       final image = await pickImageFromGallery(context);
 
                       if (image != null) {
-                        // ignore: use_build_context_synchronously
-                        // context.pushNamed(AppRoute.confirmStory.name, extra: image);
-
                         final editableImage = await Navigator.push<File?>(
                           context,
                           MaterialPageRoute(builder: (context) => ConfirmStoryScreen(image: image)),

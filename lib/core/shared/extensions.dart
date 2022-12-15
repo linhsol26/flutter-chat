@@ -85,3 +85,11 @@ extension MessageTypeEx on MessageType {
 extension Compare on String {
   bool compare(String query) => toLowerCase().similarityTo(query.toLowerCase()) > 0.0;
 }
+
+extension SwappableList<E> on List<E> {
+  void swap(int first, int second) {
+    final temp = this[first];
+    this[first] = this[second];
+    this[second] = temp;
+  }
+}

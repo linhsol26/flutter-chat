@@ -51,24 +51,35 @@ class NotificationRepository {
   }
 
   Future<void> sendGroupNotifications({
-    required String receiverId,
     required NotificationPayload payload,
     required GroupModel data,
+    required List<String> memberIds,
   }) async {
-    final token = await _authRepository.deviceTokenById(receiverId);
+    List<String> tokens = [];
     final key = Keys.serverKey;
 
-    if (token.isEmpty) return;
+    for (var id in memberIds) {
+      if (id != _authRepository.currentUser?.uid) {
+        final token = await _authRepository.deviceTokenById(id);
+        tokens.add(token);
+      }
+    }
+
+    if (tokens.isEmpty) return;
 
     try {
-      await http.post(Uri.parse(endpoint), headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'key=$key',
-      }, body: {
-        'to': token,
-        'notification': payload.toJson(),
-        'data': {'type': NotificationType.group.name, 'data': data.toJson()},
-      });
+      for (var token in tokens) {
+        await http.post(Uri.parse(endpoint),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'key=$key',
+            },
+            body: jsonEncode({
+              'to': token,
+              'notification': payload.toJson(),
+              'data': {'type': NotificationType.group.name, 'data': data.toJson()},
+            }));
+      }
     } catch (e) {
       log('Notifications error: $e');
       return;
