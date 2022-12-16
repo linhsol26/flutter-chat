@@ -125,7 +125,6 @@ class GroupScreen extends HookConsumerWidget {
         body: GroupList(
           groupId: group.groupId,
           scrollController: scrollController,
-          receiverName: group.name,
         ),
       ),
     );

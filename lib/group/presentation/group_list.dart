@@ -18,11 +18,9 @@ class GroupList extends HookConsumerWidget {
     Key? key,
     required this.groupId,
     required this.scrollController,
-    this.receiverName,
   }) : super(key: key);
 
   final String groupId;
-  final String? receiverName;
   final ScrollController scrollController;
 
   @override
@@ -37,14 +35,7 @@ class GroupList extends HookConsumerWidget {
       itemBuilder: (Message msg, index, context, animation) {
         final me = ref.read(authRepositoryProvider).currentUser;
         final isMe = msg.senderId == me?.uid;
-        final notMe = msg.receiverId == me?.uid;
         final timeSent = DateFormat.Hm().format(msg.timeSent);
-
-        if (!msg.isSeen && notMe) {
-          ref
-              .read(chatNotifierProvider.notifier)
-              .setSeen(receiverId: groupId, messageId: msg.messageId);
-        }
 
         if (isMe) {
           return SizeTransition(
@@ -56,13 +47,14 @@ class GroupList extends HookConsumerWidget {
               messageType: msg.type,
               repliedText: msg.repliedMessage,
               repliedMessageType: msg.repliedMessageType,
-              username: msg.repliedTo != receiverName ? 'You' : msg.repliedTo,
+              username: msg.repliedTo,
               onLeftSwipe: () {
                 ref.read(messageReplyProvider.notifier).state = MessageReply(
                   message: msg.text,
                   isMe: isMe,
                   messageType: msg.type,
-                  username: msg.repliedTo == receiverName ? 'You' : msg.repliedTo,
+                  username: msg.repliedTo,
+                  replyTo: msg.senderId,
                 );
               },
               isSeen: msg.isSeen,
@@ -79,15 +71,16 @@ class GroupList extends HookConsumerWidget {
             message: msg.text,
             date: timeSent,
             messageType: msg.type,
-            username: msg.repliedTo == receiverName ? 'You' : msg.repliedTo,
             repliedText: msg.repliedMessage,
             repliedMessageType: msg.repliedMessageType,
+            username: isMe ? 'You' : msg.repliedTo,
             onRightSwipe: () {
               ref.read(messageReplyProvider.notifier).state = MessageReply(
                 message: msg.text,
                 isMe: isMe,
                 messageType: msg.type,
-                username: msg.repliedTo == receiverName ? 'You' : msg.repliedTo,
+                username: '',
+                replyTo: msg.senderId,
               );
             },
             senderId: !isMe ? msg.senderId : null,
@@ -119,6 +112,7 @@ class GroupList extends HookConsumerWidget {
                         isMe: isMe,
                         messageType: msg.type,
                         username: 'You',
+                        replyTo: msg.receiverId,
                       );
                     },
                     child: Text(

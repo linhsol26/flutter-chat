@@ -106,6 +106,7 @@ class CreateGroupScreen extends HookConsumerWidget with DismissKeyboard {
                                   child: CheckboxListTile(
                                     title: Text(user.name,
                                         style: context.p1.copyWith(fontWeight: FontWeight.w300)),
+                                    activeColor: primaryColor,
                                     value: selected.contains(user),
                                     onChanged: (value) {
                                       if (value != null && value) {

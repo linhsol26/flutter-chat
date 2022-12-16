@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:whatsapp_ui/auth/shared/providers.dart';
 import 'package:whatsapp_ui/chat/shared/providers.dart';
 import 'package:whatsapp_ui/core/presentation/theme/app_theme.dart';
 import 'package:whatsapp_ui/core/presentation/utils/sizes.dart';
@@ -11,6 +12,9 @@ class MessageReplyPreview extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final messageReply = ref.watch(messageReplyProvider);
+    final replyTo = ref
+        .read(getUserByIdProvider(messageReply?.replyTo ?? ''))
+        .maybeWhen(data: (v) => v.name, orElse: () => '');
     final isDark = ref.watch(themeModeProvider) == ThemeMode.dark;
 
     return Container(
@@ -29,9 +33,7 @@ class MessageReplyPreview extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  messageReply?.isMe ?? false
-                      ? 'Replying to yourself'
-                      : 'Replying to ${messageReply?.username ?? 'other'}',
+                  messageReply?.isMe ?? false ? 'Replying to yourself' : 'Replying to $replyTo',
                   style: context.sub1.copyWith(fontWeight: FontWeight.w500),
                 ),
                 gapH4,

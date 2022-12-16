@@ -40,6 +40,8 @@ class SenderGroupMessageCard extends HookConsumerWidget {
         .watch(getUserByIdProvider(senderId!))
         .maybeWhen(data: (user) => user, orElse: () => null);
 
+    final me = ref.watch(currentUserStreamProvider).whenData((value) => value?.name).value;
+
     return SwipeableTile.swipeToTrigger(
       isElevated: false,
       behavior: HitTestBehavior.deferToChild,
@@ -133,12 +135,17 @@ class SenderGroupMessageCard extends HookConsumerWidget {
                                         children: [
                                           Transform.rotate(
                                             angle: pi,
-                                            child: const Icon(Icons.reply, size: 12),
+                                            child: const Icon(
+                                              Icons.reply,
+                                              size: 12,
+                                              color: blackColor,
+                                            ),
                                           ),
                                           Text(
-                                            username,
+                                            me == username ? 'You' : username,
                                             style: context.sub1.copyWith(
                                               fontSize: 10,
+                                              color: blackColor,
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),

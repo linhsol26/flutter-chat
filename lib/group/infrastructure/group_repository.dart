@@ -176,7 +176,7 @@ class GroupRepository {
         .map((event) => GroupModel.fromJson(event.data()!));
   }
 
-  Future<Result<Failure, void>> addMembers({
+  Future<Result<Failure, List<String>>> addMembers({
     required String groupId,
     required List<String> currentMemberIds,
     required List<UserModel> selectedUsers,
@@ -207,7 +207,7 @@ class GroupRepository {
         }
       }
 
-      return const Success(null);
+      return Success(memberIds);
     } on FirebaseException catch (e) {
       return Error(Failure(msg: e.message));
     } on SocketException {

@@ -58,11 +58,11 @@ class ChatList extends HookConsumerWidget {
               username: msg.repliedTo != receiverName ? 'You' : msg.repliedTo,
               onLeftSwipe: () {
                 ref.read(messageReplyProvider.notifier).state = MessageReply(
-                  message: msg.text,
-                  isMe: isMe,
-                  messageType: msg.type,
-                  username: 'You',
-                );
+                    message: msg.text,
+                    isMe: isMe,
+                    messageType: msg.type,
+                    username: 'You',
+                    replyTo: receiverId);
               },
               isSeen: msg.isSeen,
               onHover: () {
@@ -79,11 +79,11 @@ class ChatList extends HookConsumerWidget {
                                 onPressed: () {
                                   Navigator.pop(context);
                                   ref.read(messageReplyProvider.notifier).state = MessageReply(
-                                    message: msg.text,
-                                    isMe: isMe,
-                                    messageType: msg.type,
-                                    username: 'You',
-                                  );
+                                      message: msg.text,
+                                      isMe: isMe,
+                                      messageType: msg.type,
+                                      username: 'You',
+                                      replyTo: receiverId);
                                 },
                                 child: Text(
                                   'Reply',
@@ -129,16 +129,16 @@ class ChatList extends HookConsumerWidget {
             message: msg.text,
             date: timeSent,
             messageType: msg.type,
-            username: msg.repliedTo == receiverName ? 'You' : msg.repliedTo,
+            username: msg.repliedTo == receiverName ? msg.repliedTo : 'You',
             repliedText: msg.repliedMessage,
             repliedMessageType: msg.repliedMessageType,
             onRightSwipe: () {
               ref.read(messageReplyProvider.notifier).state = MessageReply(
-                message: msg.text,
-                isMe: isMe,
-                messageType: msg.type,
-                username: msg.repliedTo == receiverName ? 'You' : receiverName ?? '',
-              );
+                  message: msg.text,
+                  isMe: isMe,
+                  messageType: msg.type,
+                  username: msg.repliedTo == receiverName ? receiverName ?? '' : 'You',
+                  replyTo: receiverId);
             },
             onHover: () {
               showModalBottomSheet(
@@ -154,12 +154,12 @@ class ChatList extends HookConsumerWidget {
                               onPressed: () {
                                 Navigator.pop(context);
                                 ref.read(messageReplyProvider.notifier).state = MessageReply(
-                                  message: msg.text,
-                                  isMe: isMe,
-                                  messageType: msg.type,
-                                  username:
-                                      msg.repliedTo == receiverName ? 'You' : receiverName ?? '',
-                                );
+                                    message: msg.text,
+                                    isMe: isMe,
+                                    messageType: msg.type,
+                                    username:
+                                        msg.repliedTo == receiverName ? 'You' : receiverName ?? '',
+                                    replyTo: receiverId);
                               },
                               child: Text(
                                 'Reply',

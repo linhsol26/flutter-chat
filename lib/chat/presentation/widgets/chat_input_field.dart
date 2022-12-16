@@ -63,7 +63,7 @@ class ChatInputField extends HookConsumerWidget {
 
                               ref.read(messageReplyProvider.notifier).state = null;
 
-                              callback.call(image);
+                              callback.call(MessageType.image.name);
                             }
                           },
                           icon: const Icon(Icons.camera_alt, color: Colors.grey),
@@ -82,7 +82,7 @@ class ChatInputField extends HookConsumerWidget {
 
                               ref.read(messageReplyProvider.notifier).state = null;
 
-                              callback.call(video);
+                              callback.call(MessageType.video.name);
                             }
                           },
                           icon: const Icon(Icons.attach_file, color: Colors.grey),

@@ -1,13 +1,15 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:swipeable_tile/swipeable_tile.dart';
+import 'package:whatsapp_ui/auth/shared/providers.dart';
 import 'package:whatsapp_ui/core/presentation/theme/colors.dart';
 import 'package:whatsapp_ui/core/presentation/utils/sizes.dart';
 import 'package:whatsapp_ui/core/shared/enums.dart';
 import 'package:whatsapp_ui/core/shared/extensions.dart';
 
-class MyMessageCard extends StatelessWidget {
+class MyMessageCard extends HookConsumerWidget {
   final String message;
   final String date;
   final MessageType messageType;
@@ -17,6 +19,7 @@ class MyMessageCard extends StatelessWidget {
   final MessageType repliedMessageType;
   final bool isSeen;
   final VoidCallback onHover;
+  final bool isGroup;
 
   const MyMessageCard(
       {Key? key,
@@ -28,12 +31,16 @@ class MyMessageCard extends StatelessWidget {
       required this.username,
       required this.repliedMessageType,
       required this.isSeen,
+      this.isGroup = false,
       required this.onHover})
       : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isReplying = repliedText.isNotEmpty;
+
+    final me = ref.watch(currentUserStreamProvider).whenData((value) => value?.name).value;
+
     return SwipeableTile.swipeToTrigger(
       isElevated: false,
       behavior: HitTestBehavior.deferToChild,
@@ -97,39 +104,40 @@ class MyMessageCard extends StatelessWidget {
                         if (isReplying) ...[
                           gapH4,
                           Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: const BoxDecoration(
-                                color: greyColor,
-                                borderRadius: BorderRadius.all(Radius.circular(5)),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Transform.rotate(
-                                        angle: pi,
-                                        child: const Icon(
-                                          Icons.reply,
-                                          size: 12,
-                                          color: blackColor,
-                                        ),
+                            padding: const EdgeInsets.all(10),
+                            decoration: const BoxDecoration(
+                              color: greyColor,
+                              borderRadius: BorderRadius.all(Radius.circular(5)),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Transform.rotate(
+                                      angle: pi,
+                                      child: const Icon(
+                                        Icons.reply,
+                                        size: 12,
+                                        color: blackColor,
                                       ),
-                                      Text(
-                                        username,
-                                        style: context.sub1.copyWith(
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold,
-                                          color: blackColor,
-                                        ),
+                                    ),
+                                    Text(
+                                      me == username ? 'You' : username,
+                                      style: context.sub1.copyWith(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                        color: blackColor,
                                       ),
-                                    ],
-                                  ),
-                                  gapH4,
-                                  messageType.displayReply(repliedText, context),
-                                ],
-                              )),
+                                    ),
+                                  ],
+                                ),
+                                gapH4,
+                                messageType.displayReply(repliedText, context),
+                              ],
+                            ),
+                          ),
                           gapH8,
                         ],
                         messageType.display(message, context),

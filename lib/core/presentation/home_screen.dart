@@ -4,11 +4,9 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
@@ -109,6 +107,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
     flutterLocalNotificationsPlugin.initialize(
         const InitializationSettings(
           android: AndroidInitializationSettings("@mipmap/ic_launcher"),
+          iOS: DarwinInitializationSettings(),
         ),
         onDidReceiveNotificationResponse: (_) =>
             _mapToType(RemoteMessage.fromMap(jsonDecode(_.payload!))));
@@ -224,11 +223,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
                 )),
           ),
           actions: [
-            if (kDebugMode)
-              IconButton(
-                onPressed: () => FirebaseAuth.instance.signOut(),
-                icon: const Icon(Icons.logout),
-              ),
+            // if (kDebugMode)
+            //   IconButton(
+            //     onPressed: () => FirebaseAuth.instance.signOut(),
+            //     icon: const Icon(Icons.logout),
+            //   ),
             IconButton(
               icon: const Icon(Icons.search, color: primaryColor),
               onPressed: () async {

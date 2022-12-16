@@ -24,6 +24,7 @@ mixin _$MessageReply {
   bool get isMe => throw _privateConstructorUsedError;
   MessageType get messageType => throw _privateConstructorUsedError;
   String get username => throw _privateConstructorUsedError;
+  String get replyTo => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -38,7 +39,11 @@ abstract class $MessageReplyCopyWith<$Res> {
       _$MessageReplyCopyWithImpl<$Res, MessageReply>;
   @useResult
   $Res call(
-      {String message, bool isMe, MessageType messageType, String username});
+      {String message,
+      bool isMe,
+      MessageType messageType,
+      String username,
+      String replyTo});
 }
 
 /// @nodoc
@@ -58,6 +63,7 @@ class _$MessageReplyCopyWithImpl<$Res, $Val extends MessageReply>
     Object? isMe = null,
     Object? messageType = null,
     Object? username = null,
+    Object? replyTo = null,
   }) {
     return _then(_value.copyWith(
       message: null == message
@@ -76,6 +82,10 @@ class _$MessageReplyCopyWithImpl<$Res, $Val extends MessageReply>
           ? _value.username
           : username // ignore: cast_nullable_to_non_nullable
               as String,
+      replyTo: null == replyTo
+          ? _value.replyTo
+          : replyTo // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
@@ -89,7 +99,11 @@ abstract class _$$_MessageReplyCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String message, bool isMe, MessageType messageType, String username});
+      {String message,
+      bool isMe,
+      MessageType messageType,
+      String username,
+      String replyTo});
 }
 
 /// @nodoc
@@ -107,6 +121,7 @@ class __$$_MessageReplyCopyWithImpl<$Res>
     Object? isMe = null,
     Object? messageType = null,
     Object? username = null,
+    Object? replyTo = null,
   }) {
     return _then(_$_MessageReply(
       message: null == message
@@ -125,6 +140,10 @@ class __$$_MessageReplyCopyWithImpl<$Res>
           ? _value.username
           : username // ignore: cast_nullable_to_non_nullable
               as String,
+      replyTo: null == replyTo
+          ? _value.replyTo
+          : replyTo // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -136,7 +155,8 @@ class _$_MessageReply extends _MessageReply {
       {required this.message,
       required this.isMe,
       required this.messageType,
-      required this.username})
+      required this.username,
+      required this.replyTo})
       : super._();
 
   factory _$_MessageReply.fromJson(Map<String, dynamic> json) =>
@@ -150,10 +170,12 @@ class _$_MessageReply extends _MessageReply {
   final MessageType messageType;
   @override
   final String username;
+  @override
+  final String replyTo;
 
   @override
   String toString() {
-    return 'MessageReply(message: $message, isMe: $isMe, messageType: $messageType, username: $username)';
+    return 'MessageReply(message: $message, isMe: $isMe, messageType: $messageType, username: $username, replyTo: $replyTo)';
   }
 
   @override
@@ -166,13 +188,14 @@ class _$_MessageReply extends _MessageReply {
             (identical(other.messageType, messageType) ||
                 other.messageType == messageType) &&
             (identical(other.username, username) ||
-                other.username == username));
+                other.username == username) &&
+            (identical(other.replyTo, replyTo) || other.replyTo == replyTo));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, message, isMe, messageType, username);
+      Object.hash(runtimeType, message, isMe, messageType, username, replyTo);
 
   @JsonKey(ignore: true)
   @override
@@ -193,7 +216,8 @@ abstract class _MessageReply extends MessageReply {
       {required final String message,
       required final bool isMe,
       required final MessageType messageType,
-      required final String username}) = _$_MessageReply;
+      required final String username,
+      required final String replyTo}) = _$_MessageReply;
   const _MessageReply._() : super._();
 
   factory _MessageReply.fromJson(Map<String, dynamic> json) =
@@ -207,6 +231,8 @@ abstract class _MessageReply extends MessageReply {
   MessageType get messageType;
   @override
   String get username;
+  @override
+  String get replyTo;
   @override
   @JsonKey(ignore: true)
   _$$_MessageReplyCopyWith<_$_MessageReply> get copyWith =>

@@ -148,6 +148,15 @@ class ChatRepository {
     required bool isGroup,
   }) async {
     final senderId = _auth.currentUser!.uid;
+    String repliedTo = '';
+    if (messageReply != null) {
+      final snapshot =
+          await _firestore.collection(CollectionPath.users).doc(messageReply.replyTo).get();
+      final receiver = UserModel.fromJson(snapshot.data()!);
+
+      repliedTo = messageReply.isMe ? senderUsername : receiver.name;
+    }
+
     final message = Message(
       senderId: senderId,
       receiverId: receiverUserId,
@@ -157,11 +166,7 @@ class ChatRepository {
       messageId: messageId,
       isSeen: false,
       repliedMessage: messageReply?.message ?? '',
-      repliedTo: messageReply != null
-          ? messageReply.isMe
-              ? senderUsername
-              : receiverUsername
-          : '',
+      repliedTo: repliedTo,
       repliedMessageType: messageReply?.messageType ?? MessageType.text,
     );
 
@@ -296,7 +301,7 @@ class ChatRepository {
       final imgUrl = await _authRepository.storeFileToFirebase(ref, file);
 
       UserModel? receiver;
-      if (!isGroup) {
+      if (isGroup) {
         receiver = await _firestore
             .collection(CollectionPath.users)
             .doc(receiverUid)

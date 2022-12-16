@@ -170,6 +170,7 @@ class EditGroupScreen extends HookConsumerWidget {
 
                                   if (response.isSuccess()) {
                                     await showSuccess(context);
+                                    ref.refresh(getListMembersProvider(response.getSuccess()!));
                                     Navigator.pop(context);
                                   } else {
                                     btnCtrl.error();
@@ -301,6 +302,7 @@ class _ListMembersAvailableState extends State<_ListMembersAvailable> {
             child: CheckboxListTile(
               title:
                   Text(widget.user.name, style: context.p1.copyWith(fontWeight: FontWeight.w300)),
+              activeColor: primaryColor,
               value: widget.availableUsers.contains(widget.user),
               checkboxShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
               onChanged: (value) {
