@@ -91,8 +91,8 @@ class UserScreen extends HookConsumerWidget with DismissKeyboard {
                           )
                         else
                           image.value == null
-                              ? const CircleAvatar(
-                                  backgroundImage: NetworkImage(defaultAvatar),
+                              ? CircleAvatar(
+                                  backgroundImage: NetworkImage(user?.profilePic ?? defaultAvatar),
                                   radius: 58,
                                 )
                               : CircleAvatar(
@@ -134,7 +134,8 @@ class UserScreen extends HookConsumerWidget with DismissKeyboard {
                         if (formKey.currentState!.validate()) {
                           dismiss();
                           btnCtrl.start();
-                          ref.read(authNotifierProvider.notifier).saveUserInf(
+
+                          ref.read(authNotifierProvider.notifier).editUserInf(
                                 image.value,
                                 nameCtrl.text.trim(),
                                 phoneCtrl.text.trim(),

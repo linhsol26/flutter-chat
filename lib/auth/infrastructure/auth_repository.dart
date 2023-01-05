@@ -104,6 +104,37 @@ class AuthRepository {
     }
   }
 
+  Future<Result<Failure, void>> editUserInfo(File? image, String name, String phoneNumber) async {
+    try {
+      String? imgPath;
+      final uid = _auth.currentUser?.uid;
+      final snapshotUser = await _firestore.collection(CollectionPath.users).doc(uid).get();
+      final currentUser = UserModel.fromJson(snapshotUser.data()!);
+
+      if (image != null) {
+        imgPath = await storeFileToFirebase('profilePic/$uid', image);
+      } else {
+        imgPath = currentUser.profilePic;
+      }
+
+      final user = UserModel(
+        name: name,
+        uid: uid!,
+        profilePic: imgPath,
+        phoneNumber: phoneNumber,
+        groups: currentUser.groups,
+      );
+
+      await _firestore.collection(CollectionPath.users).doc(uid).update(user.toJson());
+
+      return const Success(null);
+    } on FirebaseException catch (e) {
+      return Error(Failure(msg: e.message));
+    } on SocketException {
+      return const Error(Failure.noConnection());
+    }
+  }
+
   Future<Result<Failure, dynamic>> signUpWithEmailPassword(String email, String password) async {
     try {
       await _auth.createUserWithEmailAndPassword(email: email, password: password);

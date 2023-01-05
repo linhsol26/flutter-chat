@@ -45,4 +45,13 @@ class AuthNotifier extends StateNotifier<AsyncValue> {
       (success) => const AsyncData(null),
     );
   }
+
+  Future<void> editUserInf(File? image, String name, String phoneNumber) async {
+    state = const AsyncLoading();
+    final result = await _authRepository.saveUserInfo(image, name, phoneNumber);
+    state = result.when(
+      (error) => AsyncError(error, StackTrace.fromString(error.toString())),
+      (success) => const AsyncData(null),
+    );
+  }
 }

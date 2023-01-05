@@ -27,7 +27,7 @@ class SettingsScreen extends HookConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ListTile(
-                leading: const AvatarWidget(),
+                leading: AvatarWidget(imgUrl: user.profilePic),
                 title: Text(user.name,
                     maxLines: 2,
                     overflow: TextOverflow.fade,
