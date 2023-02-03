@@ -18,7 +18,6 @@ import 'package:whatsapp_ui/core/presentation/theme/colors.dart';
 import 'package:whatsapp_ui/core/presentation/utils/files.dart';
 import 'package:whatsapp_ui/core/presentation/utils/sizes.dart';
 import 'package:whatsapp_ui/core/presentation/widgets/avatar_widget.dart';
-import 'package:whatsapp_ui/core/presentation/widgets/loading_widget.dart';
 import 'package:whatsapp_ui/core/presentation/widgets/slide_menu.dart';
 import 'package:whatsapp_ui/core/shared/extensions.dart';
 import 'package:whatsapp_ui/routing/app_router.dart';
@@ -112,7 +111,7 @@ class ConversationList extends HookConsumerWidget {
                 ),
               );
             },
-            orElse: () => const LoadingWidget(),
+            orElse: () => const SizedBox.shrink(),
           ),
           Expanded(
             child: AnimatedStreamList<ChatContact>(
